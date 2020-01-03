@@ -5,11 +5,11 @@ include_directories("${PROJECT_SOURCE_DIR}/include"
                     )
 include_directories(${CMAKE_SOURCE_DIR}/MathFunctions/include)
 
-# build executable idfa using sources files
-add_executable(idfa 
-                idfa.cpp)
+# build executable analyzer using sources files
+add_executable(analyzer 
+                analyzer.cpp)
 
-# link library MathFunctions with target executable idfa
+# link library MathFunctions with target executable analyzer
 if(USE_MYMATH)
-    target_link_libraries(idfa MathFunctions)
+    target_link_libraries(analyzer MathFunctions)
 endif()

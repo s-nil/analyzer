@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # set project name
-project(idfa VERSION 5.0 LANGUAGES CXX)
+project(analyzer VERSION 5.0 LANGUAGES CXX)
 
 # For the testing purpose
 # an option BUILD_TESTING is created{default is ON}
@@ -19,7 +19,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
 # define an option 
 # -DUSE_MYMATH=1/0/on/off/ON/OFF
-option(USE_MYMATH "Use idfa provided math implementation" ON)
+option(USE_MYMATH "Use analyzer provided math implementation" ON)
 
 # use a bool option
 if(USE_MYMATH)
@@ -29,13 +29,13 @@ if(USE_MYMATH)
     # list(APPEND EXTRA_LIBS MathFunctions)
 endif()
 
-# copy idfa.h.in modifying its contents
-configure_file(idfa.h.in ${PROJECT_SOURCE_DIR}/include/idfa.h)
+# copy analyzer.h.in modifying its contents
+configure_file(analyzer.h.in ${PROJECT_SOURCE_DIR}/include/analyzer.h)
 
 add_subdirectory(src)
 
-# include directories for idfa
-target_include_directories(idfa PUBLIC
+# include directories for analyzer
+target_include_directories(analyzer PUBLIC
                             "${PROJECT_SOURCE_DIR}/include"
                             "${PROJECT_BINARY_DIR}/include"
                             )
@@ -49,9 +49,9 @@ if(BUILD_TESTING)
     # enable_testing()
 
     # add a test to be run by ctest
-    add_test(NAME Runs COMMAND idfa 2)
+    add_test(NAME Runs COMMAND analyzer 2)
     
-    # add_test(NAME Usage COMMAND idfa)
+    # add_test(NAME Usage COMMAND analyzer)
     # set_tests_properties(Usage
     #     PROPERTIES PASS_REGULAR_EXPRESSION "Usage: .*number")
     
@@ -69,7 +69,7 @@ if(BUILD_TESTING)
     endfunction(do_test)
     
     # calling the test function
-    do_test(idfa 1 "3 is 1.73205")
-    do_test(idfa 2 "9 is 3")
+    do_test(analyzer 1 "3 is 1.73205")
+    do_test(analyzer 2 "9 is 3")
     
 endif()

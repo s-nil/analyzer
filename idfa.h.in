@@ -1,3 +1,0 @@
-#define idfa_VERSION_MAJOR @idfa_VERSION_MAJOR@
-#define idfa_VERSION_MINOR @idfa_VERSION_MINOR@
-#cmakedefine USE_MYMATH

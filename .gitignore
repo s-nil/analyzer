@@ -32,6 +32,10 @@
 *.out
 *.app
 
+### llvm bitcode ###
+*.bc
+*.ll
+
 ### CMake ###
 CMakeLists.txt.user
 CMakeCache.txt
