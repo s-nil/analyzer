@@ -19,7 +19,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
 
 # copy analyzer.h.in modifying its contents
-configure_file(analyzer.h.in ${PROJECT_SOURCE_DIR}/include/analyzer.h)
+configure_file(config.h.in ${PROJECT_BINARY_DIR}/config.h)
 
 add_subdirectory(src)
 
@@ -27,6 +27,7 @@ add_subdirectory(src)
 target_include_directories(analyzer PUBLIC
                             "${PROJECT_SOURCE_DIR}/include"
                             "${PROJECT_BINARY_DIR}/include"
+			                "${PROJECT_BINARY_DIR}"
                             )
 
 
