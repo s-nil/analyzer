@@ -17,17 +17,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 # https://cmake.org/cmake/help/v3.4/manual/cmake-buildsystem.7.html#id31
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
-# define an option 
-# -DUSE_MYMATH=1/0/on/off/ON/OFF
-option(USE_MYMATH "Use analyzer provided math implementation" ON)
-
-# use a bool option
-if(USE_MYMATH)
-    # add a subdirectory to build
-    add_subdirectory(MathFunctions)
-    # append MathFunctions in EXTRA_LIBS    
-    # list(APPEND EXTRA_LIBS MathFunctions)
-endif()
 
 # copy analyzer.h.in modifying its contents
 configure_file(analyzer.h.in ${PROJECT_SOURCE_DIR}/include/analyzer.h)

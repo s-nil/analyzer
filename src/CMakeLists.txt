@@ -8,8 +8,3 @@ include_directories(${CMAKE_SOURCE_DIR}/MathFunctions/include)
 # build executable analyzer using sources files
 add_executable(analyzer 
                 analyzer.cpp)
-
-# link library MathFunctions with target executable analyzer
-if(USE_MYMATH)
-    target_link_libraries(analyzer MathFunctions)
-endif()

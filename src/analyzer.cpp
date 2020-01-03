@@ -2,10 +2,6 @@
 #include <cmath>
 #include "analyzer.h"
 
-#ifdef USE_MYMATH
-#include "MathFunctions.h"
-#endif
-
 using namespace std;
 
 int main(int argc, char **argv)
@@ -18,15 +14,6 @@ int main(int argc, char **argv)
 
     double n;
     cin >> n;
-
-    // using a library
-    #ifdef USE_MYMATH
-        cout << "My Math\n";
-        cout << n << " is " << mysqrt(n);
-    // not using a library
-    #else 
-        cout << n << " is " << sqrt(n);
-    #endif
 
     return 0;
 }
