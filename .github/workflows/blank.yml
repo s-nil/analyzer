@@ -13,4 +13,7 @@ jobs:
       run: echo Hello, world!
     - name: Run a multi-line script
       run: |
-        ls -l
+        mkdir build
+        cd build
+        cmake ..
+        make
