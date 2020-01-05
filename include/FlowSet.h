@@ -2,18 +2,19 @@
 #define _A_FLOWSET_H_
 
 #include <iostream>
+#include "llvm/IR/Value.h"
 
 using namespace std;
 
 namespace A{
 
-template<typename T>
+template<class T>
 class FlowSet
 {
     class Node;
 
 public:
-    FlowSet<T>()
+    FlowSet() noexcept
     {
         pRootNode = nullptr;
     }
@@ -22,7 +23,7 @@ public:
 
     Iterator begin()
     {
-        return Iterator(this->pRootNode);
+        return Iterator(pRootNode);
     }
 
     Iterator end()
@@ -35,14 +36,16 @@ public:
     class Iterator
     {
     public:
-        Iterator(): currentNode(pRootNode){}
+        Iterator() noexcept:
+	    currentNode(pRootNode){ }
 
-        Iterator(const Node* pNode): currentNode(pNode){}
+        Iterator(const Node* pNode) noexcept: 
+	    currentNode(pNode){	}
 
         Iterator& operator=(Node* node)
         {
             this->currentNode = node;
-            return &this;
+            return *this;
         }
 
         // prefix
@@ -50,36 +53,40 @@ public:
         {
             if(currentNode)
                 currentNode = currentNode->next;
-            return &this;
+            return *this;
         }
 
-        // prefix
-        Iterator& operator++(int)
+        // postfix : must be non reference
+        Iterator operator++(int)
         {
             Iterator it = *this;
-            ++*this;
+            ++(*this);
             return it;
         }
 
-        Iterator& operator!=(const Iterator& it)
+        bool operator!=(const Iterator& it)
         {
             return this->currentNode != it.currentNode;
         }
 
-        int operator*()
+	bool operator==(const Iterator& it)
+	{
+	    return this->currentNode == it.currentNode;
+	}
+
+        T operator*()
         {
             return currentNode->data;
         }
 
 
     private:
-        Node* currentNode;
+        const Node* currentNode;
     };
     
 private:
     class Node
     {
-    public:
         T data;
         Node* next;
 
@@ -88,13 +95,14 @@ private:
 
     Node* getNode(T d)
     {
-        Node *n = new Node;
-        n->data = d;
-        n->next = nullptr;
-        return n;
+        Node *newNode = new Node;
+        newNode->data = d;
+        newNode->next = nullptr;
+
+        return newNode;
     }
 
-    Node* getRoot()
+    Node*& getRootNode()
     {
         return pRootNode;
     }
@@ -102,6 +110,9 @@ private:
     static Node* pRootNode;
 
 };
+
+template <typename T>
+typename FlowSet<T>::Node* FlowSet<T>::pRootNode = nullptr;
 
 }   //  
 

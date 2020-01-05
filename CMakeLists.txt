@@ -16,18 +16,30 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 # put all the library target files in
 # https://cmake.org/cmake/help/v3.4/manual/cmake-buildsystem.7.html#id31
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
-
+# required to create a shared object
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+# http://llvm.org/docs/CMake.html#id15 // embedding LLVM
+find_package(LLVM REQUIRED CONFIG)
+# message(${LLVM_PACKAGE_VERSION})
+# message(${LLVM_DIR})
+# message(${LLVM_INCLUDE_DIRS})
+# message(${LLVM_TOOLS_BINARY_DIR})
+# message(${LLVM_LIBRARY_DIR})
+# set(LLVM_LIBRARY_DIR "${LLVM_LIBRARY_DIR} ${CMAKE_BINARY_DIR}/lib")
 
 # copy analyzer.h.in modifying its contents
 configure_file(config.h.in ${PROJECT_BINARY_DIR}/config.h)
 
 add_subdirectory(src)
+add_subdirectory(tests)
+add_subdirectory(examples)
 
 # include directories for analyzer
 target_include_directories(analyzer PUBLIC
                             "${PROJECT_SOURCE_DIR}/include"
                             "${PROJECT_BINARY_DIR}/include"
 			                "${PROJECT_BINARY_DIR}"
+					"${LLVM_INCLUDE_DIRS}"
                             )
 
 

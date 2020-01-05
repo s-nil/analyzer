@@ -1,19 +1,16 @@
 #include "FlowSet.h"
 
 template <typename T>
-typename A::FlowSet<T>::Node* A::FlowSet<T>::pRootNode = nullptr;
-
-template <typename T>
 void A::FlowSet<T>::push_back(T data)
 {
     Node* pTemp = getNode(data);
-    if(!getRoot())
+    if(!getRootNode())	
     {
-        this->getRoot() = pTemp;
+        getRootNode() = pTemp;
     }
     else
     {
-        Node* nTmp = getRoot();
+        Node* nTmp = getRootNode();
         while (nTmp->next)
         {
             nTmp = nTmp->next;
@@ -21,3 +18,5 @@ void A::FlowSet<T>::push_back(T data)
         nTmp->next = pTemp;        
     }   
 }
+
+template class A::FlowSet<llvm::Value*>;
