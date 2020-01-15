@@ -18,13 +18,15 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 # required to create a shared object
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # http://llvm.org/docs/CMake.html#id15 // embedding LLVM
 find_package(LLVM REQUIRED CONFIG)
-# message(${LLVM_PACKAGE_VERSION})
-# message(${LLVM_DIR})
-# message(${LLVM_INCLUDE_DIRS})
-# message(${LLVM_TOOLS_BINARY_DIR})
-# message(${LLVM_LIBRARY_DIR})
+
+message(${LLVM_PACKAGE_VERSION})
+message(${LLVM_DIR})
+message(${LLVM_INCLUDE_DIRS})
+message(${LLVM_TOOLS_BINARY_DIR})
+message(${LLVM_LIBRARY_DIR})
 # set(LLVM_LIBRARY_DIR "${LLVM_LIBRARY_DIR} ${CMAKE_BINARY_DIR}/lib")
 
 # copy analyzer.h.in modifying its contents
