@@ -19,12 +19,18 @@ namespace {
         {
             errs() << "function name: " << F.getName().str() << '\n';
 
-	    A::FlowSet<llvm::Value*> l;
-
-	    for(auto it = l.begin(); it!=l.end(); ++it)
-	    {
-		errs() << *it << " ";
-	    }
+            A::IterableList<llvm::Value*> l;
+            if(F.arg_size() > 0)
+            {
+                for(int i=0; i<F.arg_size(); ++i)
+                {
+                    l.push_back(static_cast<llvm::Value*>(F.getArg(i)));
+                }
+            }
+	        for(auto it = l.begin(); it!=l.end(); ++it)
+	        {
+		        errs() << (*it) << " ";
+	        }
             return false;
         }
     };

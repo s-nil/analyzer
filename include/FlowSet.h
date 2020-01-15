@@ -1,5 +1,5 @@
-#ifndef _A_FLOWSET_H_
-#define _A_FLOWSET_H_
+#ifndef _A_ITERABLE_LIST_H_
+#define _A_ITERABLE_LIST_H_
 
 #include <iostream>
 #include "llvm/IR/Value.h"
@@ -9,12 +9,12 @@ using namespace std;
 namespace A{
 
 template<class T>
-class FlowSet
+class IterableList
 {
     class Node;
 
 public:
-    FlowSet() noexcept
+    IterableList() noexcept
     {
         pRootNode = nullptr;
     }
@@ -90,7 +90,7 @@ private:
         T data;
         Node* next;
 
-        friend class FlowSet;
+        friend class IterableList;
     };
 
     Node* getNode(T d)
@@ -112,7 +112,7 @@ private:
 };
 
 template <typename T>
-typename FlowSet<T>::Node* FlowSet<T>::pRootNode = nullptr;
+typename IterableList<T>::Node* IterableList<T>::pRootNode = nullptr;
 
 }   //  
 

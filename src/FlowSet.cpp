@@ -1,7 +1,7 @@
 #include "FlowSet.h"
 
 template <typename T>
-void A::FlowSet<T>::push_back(T data)
+void A::IterableList<T>::push_back(T data)
 {
     Node* pTemp = getNode(data);
     if(!getRootNode())	
@@ -19,4 +19,4 @@ void A::FlowSet<T>::push_back(T data)
     }   
 }
 
-template class A::FlowSet<llvm::Value*>;
+template class A::IterableList<llvm::Value*>;
