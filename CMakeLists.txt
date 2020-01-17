@@ -22,11 +22,13 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # http://llvm.org/docs/CMake.html#id15 // embedding LLVM
 find_package(LLVM REQUIRED CONFIG)
 
-message(${LLVM_PACKAGE_VERSION})
-message(${LLVM_DIR})
-message(${LLVM_INCLUDE_DIRS})
-message(${LLVM_TOOLS_BINARY_DIR})
-message(${LLVM_LIBRARY_DIR})
+message(STATUS "Found LLVM : ${LLVM_PACKAGE_VERSION}")
+message(STATUS "LLVMConfig.cmake found at : ${LLVM_DIR}")
+message(STATUS "LLVM headers found at : ${LLVM_INCLUDE_DIRS}")
+message(STATUS "LLVM Binaries found at : ${LLVM_TOOLS_BINARY_DIR}")
+message(STATUS "LLVM Libraries found at : ${LLVM_LIBRARY_DIR}")
+
+message(STATUS "Using Compiler : ${CMAKE_CXX_COMPILER}")
 # set(LLVM_LIBRARY_DIR "${LLVM_LIBRARY_DIR} ${CMAKE_BINARY_DIR}/lib")
 
 # copy analyzer.h.in modifying its contents
@@ -40,8 +42,8 @@ add_subdirectory(examples)
 target_include_directories(analyzer PUBLIC
                             "${PROJECT_SOURCE_DIR}/include"
                             "${PROJECT_BINARY_DIR}/include"
-			                "${PROJECT_BINARY_DIR}"
-					"${LLVM_INCLUDE_DIRS}"
+		            "${PROJECT_BINARY_DIR}"
+			    "${LLVM_INCLUDE_DIRS}"
                             )
 
 
