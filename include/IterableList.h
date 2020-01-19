@@ -8,7 +8,7 @@ using namespace std;
 
 namespace A{
 
-template<class T>
+template<typename T>
 class IterableList
 {
     class Node;
@@ -115,6 +115,5 @@ template <typename T>
 typename IterableList<T>::Node* IterableList<T>::pRootNode = nullptr;
 
 }   //  
-
 
 #endif  // 

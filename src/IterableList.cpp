@@ -20,3 +20,4 @@ void A::IterableList<T>::push_back(T data)
 }
 
 template class A::IterableList<llvm::Value*>;
+template class A::IterableList<int>;
