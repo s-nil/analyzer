@@ -11,7 +11,6 @@ namespace L
         public:
             Derived(){}
             Derived(T v) : Base<T>(v){}
-            ~Derived();
 
             void set(const T& val);
             T& get();

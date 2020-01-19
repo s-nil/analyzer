@@ -15,8 +15,6 @@ namespace L
             data = d;
         }
 
-        ~Base();
-
         void set(const T& val);
         T& get();
         void print();
