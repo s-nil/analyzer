@@ -5,7 +5,7 @@
 #include "llvm/Analysis/LoopPass.h"
 #include "llvm/ADT/Statistic.h"
 #include "IterableList.h"
-#include "FlowSet.h"
+#include "AbstractFlowSet.h"
 #include <vector>
 
 using namespace llvm;
@@ -34,7 +34,10 @@ namespace {
 	        }
 
             A::IterableList<int> ll;
-            A::FlowSet<int> aa;
+            A::AbstractFlowSet<int> aa;
+            aa.push_back(1);
+            aa.push_back(2);
+            aa.display();
 
             return false;
         }
