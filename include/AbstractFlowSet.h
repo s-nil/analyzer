@@ -1,3 +1,13 @@
+/**
+ * @file AbstractFlowSet.h
+ * @author Sunil Singh (sunilp896@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2020-01-21
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 #ifndef _A_ABSTRACT_FLOW_SET_H_
 #define _A_ABSTRACT_FLOW_SET_H
 
@@ -30,7 +40,7 @@ public:
     bool IsSubSet(FlowSet<T>* other);
     // std::vector<T> ToList();
 
-    void display();
+    void Display();
 };
 
 template class A::FlowSet<int>;

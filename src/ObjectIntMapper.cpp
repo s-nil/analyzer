@@ -1,5 +1,22 @@
+/**
+ * @file ObjectIntMapper.cpp
+ * @author Sunil Singh (sunilp896@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2020-01-21
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 #include "ObjectIntMapper.h"
 
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ * @param obj 
+ * @return int 
+ */
 template<typename T>
 int A::ObjectIntMapper<T>::Add(T obj)
 {
@@ -8,6 +25,13 @@ int A::ObjectIntMapper<T>::Add(T obj)
     return counter++;
 }
 
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ * @param obj 
+ * @return int 
+ */
 template<typename T>
 int A::ObjectIntMapper<T>::GetInt(T obj)
 {
@@ -18,12 +42,27 @@ int A::ObjectIntMapper<T>::GetInt(T obj)
     return Add(obj);
 }
 
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ * @param idx 
+ * @return T 
+ */
 template<typename T>
 T A::ObjectIntMapper<T>::GetObject(int idx)
 {
     return intToObject[idx];    
 }
 
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ * @param obj 
+ * @return true 
+ * @return false 
+ */
 template<typename T>
 bool A::ObjectIntMapper<T>::Contains(T obj)
 {
@@ -37,6 +76,12 @@ bool A::ObjectIntMapper<T>::Contains(T obj)
     return 0;
 }
 
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ * @return int 
+ */
 template<typename T>
 int A::ObjectIntMapper<T>::Size()
 {

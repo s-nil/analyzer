@@ -1,3 +1,13 @@
+/**
+ * @file ObjectIntMapper.h
+ * @author Sunil Singh (sunilp896@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2020-01-21
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 #ifndef _A_OBJECT_INT_MAPPER_H_
 #define _A_OBJECT_INT_MAPPER_H_
 #include <vector>

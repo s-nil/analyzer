@@ -1,3 +1,13 @@
+/**
+ * @file t1.cpp
+ * @author Sunil Singh (sunilp896@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2020-01-21
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 #include <cstdio>
 #include <cstdlib>
 

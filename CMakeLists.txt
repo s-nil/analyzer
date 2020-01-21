@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # set project name
-project(analyzer VERSION 1.0 LANGUAGES CXX)
+project(analyzer VERSION 0.1 LANGUAGES CXX)
 
 # For the testing purpose
 # an option BUILD_TESTING is created{default is ON}

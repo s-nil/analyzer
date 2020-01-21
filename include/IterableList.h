@@ -1,3 +1,14 @@
+/**
+ * @file IterableList.h
+ * @author Sunil Singh (sunilp896@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2020-01-21
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
+
 #ifndef _A_ITERABLE_LIST_H_
 #define _A_ITERABLE_LIST_H_
 
@@ -21,6 +32,7 @@ public:
     }
 
     class Iterator;
+
 
     Iterator begin()
     {

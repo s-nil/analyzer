@@ -1,3 +1,13 @@
+/**
+ * @file FlowSet.h
+ * @author Sunil Singh (sunilp896@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2020-01-21
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 #ifndef _A_FLOW_SET_H_
 #define _A_FLOW_SET_H_
 
@@ -31,7 +41,7 @@ public:
     virtual bool Contains(T obj) = 0;
     virtual bool IsSubSet(FlowSet<T>* other) = 0;
     // std::vector<T> ToList();
-    virtual void display() = 0;
+    virtual void Display() = 0;
     virtual ~FlowSet(){};
 private:
 
