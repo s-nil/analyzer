@@ -1,3 +1,13 @@
+/**
+ * @file pass1.cpp
+ * @author Sunil Singh (sunilp896@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2020-01-21
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 #include "llvm/Pass.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/BasicBlock.h"
@@ -6,6 +16,7 @@
 #include "llvm/ADT/Statistic.h"
 #include "IterableList.h"
 #include "AbstractFlowSet.h"
+#include "ObjectIntMapper.h"
 #include <vector>
 
 using namespace llvm;
@@ -37,7 +48,14 @@ namespace {
             A::AbstractFlowSet<int> aa;
             aa.push_back(1);
             aa.push_back(2);
-            aa.display();
+            aa.Display();
+
+            A::ObjectIntMapper<int> oim;
+            errs() << oim.Size()<<'\n';
+            oim.Add(21);
+            oim.Add(213);
+            oim.Add(521);
+            errs() << oim.Size()<<'\n';
 
             return false;
         }
