@@ -43,7 +43,7 @@ public:
     virtual void Remove(T obj, FlowSet<T>* dest) = 0;    
     virtual bool Contains(T obj) = 0;
     virtual bool IsSubSet(FlowSet<T>* other) = 0;
-    std::list<T> ToList() = 0;
+    virtual std::list<T> ToList() = 0;
     virtual void Display() = 0;
     virtual ~FlowSet(){}
 private:
