@@ -9,14 +9,19 @@
  * 
  */
 #ifndef _A_ABSTRACT_FLOW_SET_H_
-#define _A_ABSTRACT_FLOW_SET_H
+#define _A_ABSTRACT_FLOW_SET_H_
 
 #include "FlowSet.h"
 
 namespace A{
 
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ */
 template <class T>
-class AbstractFlowSet : public FlowSet<T>, public IterableList<T>{
+class AbstractFlowSet : public FlowSet<T>{
 public:
     AbstractFlowSet(){}
     
@@ -38,12 +43,14 @@ public:
     void Remove(T obj, FlowSet<T>* dest);    
     bool Contains(T obj);
     bool IsSubSet(FlowSet<T>* other);
-    // std::vector<T> ToList();
-
+    std::list<T> ToList();
     void Display();
+
+    Iterable<T>& begin();
+    Iterable<T>& end();
 };
 
-template class A::FlowSet<int>;
+// template class A::FlowSet<int>;
 }   // end namespace
 
 #endif  // end _A_ABSTRACT_FLOW_SET_H_

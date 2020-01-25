@@ -11,17 +11,20 @@
 #ifndef _A_FLOW_SET_H_
 #define _A_FLOW_SET_H_
 
-#include "IterableList.h"
-#include <vector>
+#include "Iterable.h"
+#include <list>
 
 namespace A{
 
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ */
 template<typename T>
-class FlowSet
+class FlowSet : public Iterable<T>
 {
 public:
-    // FlowSet(){}
-
     virtual FlowSet<T>* Clone() = 0;
     virtual FlowSet<T>* EmptySet() = 0;
     virtual void Copy(FlowSet<T>* dest) = 0;
@@ -40,9 +43,9 @@ public:
     virtual void Remove(T obj, FlowSet<T>* dest) = 0;    
     virtual bool Contains(T obj) = 0;
     virtual bool IsSubSet(FlowSet<T>* other) = 0;
-    // std::vector<T> ToList();
+    std::list<T> ToList() = 0;
     virtual void Display() = 0;
-    virtual ~FlowSet(){};
+    virtual ~FlowSet(){}
 private:
 
 };

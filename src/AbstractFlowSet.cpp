@@ -238,15 +238,23 @@ bool A::AbstractFlowSet<T>::IsSubSet(A::FlowSet<T>* other)
  * @brief 
  * 
  * @tparam T 
+ * @return std::list<T> 
+ */
+template<typename T>
+std::list<T> A::AbstractFlowSet<T>::ToList()
+{
+
+}
+    
+/**
+ * @brief 
+ * 
+ * @tparam T 
  */
 template<typename T>
 void A::AbstractFlowSet<T>::Display()
 {
-    for (auto i = this->begin(); i != this->end() ; ++i)
-    {
-        llvm::errs() << *i <<' '; 
-    }
-    llvm::errs() <<'\n';
+
 }
 
 template class A::AbstractFlowSet<int>;

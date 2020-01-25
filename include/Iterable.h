@@ -18,8 +18,17 @@
 
 using namespace std;
 
+/**
+ * @brief 
+ * 
+ */
 namespace A{
 
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ */
 template<typename T>
 class Iterable
 {

@@ -16,6 +16,11 @@
 
 namespace A
 {
+    /**
+     * @brief 
+     * 
+     * @tparam T 
+     */
     template<typename T>
     class ObjectIntMapper
     {

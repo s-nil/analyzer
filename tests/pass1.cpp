@@ -14,8 +14,9 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Analysis/LoopPass.h"
 #include "llvm/ADT/Statistic.h"
-#include "IterableList.h"
+#include "Iterable.h"
 #include "AbstractFlowSet.h"
+#include "AbstractBoundedFlowSet.h"
 #include "ObjectIntMapper.h"
 #include <vector>
 
@@ -30,25 +31,6 @@ namespace {
         virtual bool runOnFunction(Function &F)
         {
             errs() << "function name: " << F.getName().str() << '\n';
-
-            A::IterableList<llvm::Value*> l;
-            if(F.arg_size() > 0)
-            {
-                for(int i=0; i<F.arg_size(); ++i)
-                {
-                    l.push_back(static_cast<llvm::Value*>(F.getArg(i)));
-                }
-            }
-	        for(auto it = l.begin(); it!=l.end(); ++it)
-	        {
-		        errs() << (*it) << " ";
-	        }
-
-            A::IterableList<int> ll;
-            A::AbstractFlowSet<int> aa;
-            aa.push_back(1);
-            aa.push_back(2);
-            aa.Display();
 
             A::ObjectIntMapper<int> oim;
             errs() << oim.Size()<<'\n';
