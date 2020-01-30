@@ -22,7 +22,7 @@ namespace A{
  * @tparam T 
  */
 template<typename T>
-class FlowSet : public Iterable<T>
+class FlowSet
 {
 public:
     virtual FlowSet<T>* Clone() = 0;
@@ -42,9 +42,9 @@ public:
     virtual void Remove(T obj) = 0;
     virtual void Remove(T obj, FlowSet<T>* dest) = 0;    
     virtual bool Contains(T obj) = 0;
+    virtual bool Equals(FlowSet<T>* other) = 0;
     virtual bool IsSubSet(FlowSet<T>* other) = 0;
     virtual std::list<T> ToList() = 0;
-    virtual void Display() = 0;
     virtual ~FlowSet(){}
 private:
 

@@ -42,9 +42,9 @@ public:
     void Remove(T obj);
     void Remove(T obj, FlowSet<T>* dest);    
     bool Contains(T obj);
+    bool Equals(FlowSet<T>* other);
     bool IsSubSet(FlowSet<T>* other);
     std::list<T> ToList();
-    void Display();
 
     Iterable<T>& begin();
     Iterable<T>& end();

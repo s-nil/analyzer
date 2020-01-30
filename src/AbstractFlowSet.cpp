@@ -229,6 +229,20 @@ bool A::AbstractFlowSet<T>::Contains(T obj)
  * @return false 
  */
 template<typename T>
+bool A::AbstractFlowSet<T>::Equals(A::FlowSet<T>* other)
+{
+
+}
+
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ * @param other 
+ * @return true 
+ * @return false 
+ */
+template<typename T>
 bool A::AbstractFlowSet<T>::IsSubSet(A::FlowSet<T>* other)
 {
     
@@ -242,17 +256,6 @@ bool A::AbstractFlowSet<T>::IsSubSet(A::FlowSet<T>* other)
  */
 template<typename T>
 std::list<T> A::AbstractFlowSet<T>::ToList()
-{
-
-}
-    
-/**
- * @brief 
- * 
- * @tparam T 
- */
-template<typename T>
-void A::AbstractFlowSet<T>::Display()
 {
 
 }
