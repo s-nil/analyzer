@@ -27,6 +27,7 @@ int A::ObjectIntMapper<T>::Add(T obj)
 
 /**
  * @brief 
+ * Return the index of the object
  * 
  * @tparam T 
  * @param obj 
@@ -86,6 +87,18 @@ template<typename T>
 int A::ObjectIntMapper<T>::Size()
 {
     return counter;
+}
+
+template<typename T>
+bool A::ObjectIntMapper<T>::operator==(A::ObjectIntMapper<T> rhs)
+{
+    return intToObject == rhs.intToObject && counter == rhs.counter && objectToInt == rhs.objectToInt;
+}
+
+template<typename T>
+bool A::ObjectIntMapper<T>::operator!=(A::ObjectIntMapper<T> rhs)
+{
+    return !operator==(rhs);
 }
 
 template class A::ObjectIntMapper<int>;

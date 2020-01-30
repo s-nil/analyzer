@@ -38,6 +38,8 @@ namespace A
         bool Contains(T obj);
         int Size();
 
+        bool operator==(ObjectIntMapper<T> rhs);
+        bool operator!=(ObjectIntMapper<T> rhs); 
     private:
         std::vector<T> intToObject;
         int counter;
