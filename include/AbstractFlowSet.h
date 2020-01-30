@@ -45,9 +45,6 @@ public:
     bool Equals(FlowSet<T>* other);
     bool IsSubSet(FlowSet<T>* other);
     std::list<T> ToList();
-
-    Iterable<T>& begin();
-    Iterable<T>& end();
 };
 
 // template class A::FlowSet<int>;

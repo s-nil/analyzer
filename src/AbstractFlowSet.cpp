@@ -19,7 +19,7 @@
 template<typename T>
 A::FlowSet<T>* A::AbstractFlowSet<T>::Clone()
 {
-
+  //TODO
 }
 
 /**
@@ -31,8 +31,9 @@ A::FlowSet<T>* A::AbstractFlowSet<T>::Clone()
 template<typename T>
 A::FlowSet<T>* A::AbstractFlowSet<T>::EmptySet()
 {
-
+  //TODO
 }
+
  /**
   * @brief 
   * 
@@ -42,7 +43,7 @@ A::FlowSet<T>* A::AbstractFlowSet<T>::EmptySet()
 template<typename T>
 void A::AbstractFlowSet<T>::Copy(A::FlowSet<T>* dest)
 {
-
+  //TODO
 }
 
 /**
@@ -53,7 +54,7 @@ void A::AbstractFlowSet<T>::Copy(A::FlowSet<T>* dest)
 template<typename T>
 void A::AbstractFlowSet<T>::Clear()
 {
-
+  //TODO
 }
 
 /**
@@ -65,7 +66,7 @@ void A::AbstractFlowSet<T>::Clear()
 template<typename T>
 void A::AbstractFlowSet<T>::Union(A::FlowSet<T>* other)
 {
-
+  //TODO
 }
 
 /**
@@ -78,7 +79,7 @@ void A::AbstractFlowSet<T>::Union(A::FlowSet<T>* other)
 template<typename T>
 void A::AbstractFlowSet<T>::Union(A::FlowSet<T>* other, A::FlowSet<T>* dest)
 {
-
+  //TODO
 }
 
 /**
@@ -90,7 +91,7 @@ void A::AbstractFlowSet<T>::Union(A::FlowSet<T>* other, A::FlowSet<T>* dest)
 template<typename T>
 void A::AbstractFlowSet<T>::Intersection(A::FlowSet<T>* other)
 {
-
+  //TODO
 }
 
 /**
@@ -103,7 +104,7 @@ void A::AbstractFlowSet<T>::Intersection(A::FlowSet<T>* other)
 template<typename T>
 void A::AbstractFlowSet<T>::Intersection(A::FlowSet<T>* other, A::FlowSet<T>* dest)
 {
-
+  //TODO
 }
 
 /**
@@ -115,7 +116,7 @@ void A::AbstractFlowSet<T>::Intersection(A::FlowSet<T>* other, A::FlowSet<T>* de
 template<typename T>
 void A::AbstractFlowSet<T>::Difference(A::FlowSet<T>* other)
 {
-
+  //TODO
 }
 
 /**
@@ -128,7 +129,7 @@ void A::AbstractFlowSet<T>::Difference(A::FlowSet<T>* other)
 template<typename T>
 void A::AbstractFlowSet<T>::Difference(A::FlowSet<T>* other, A::FlowSet<T>* dest)
 {
-
+  //TODO
 }
 
 /**
@@ -141,7 +142,7 @@ void A::AbstractFlowSet<T>::Difference(A::FlowSet<T>* other, A::FlowSet<T>* dest
 template<typename T>
 bool A::AbstractFlowSet<T>::IsEmpty()
 {
-
+  //TODO
 }
 
 /**
@@ -153,7 +154,7 @@ bool A::AbstractFlowSet<T>::IsEmpty()
 template<typename T>
 int A::AbstractFlowSet<T>::Size()
 {
-
+  //TODO
 }
 
 /**
@@ -165,7 +166,7 @@ int A::AbstractFlowSet<T>::Size()
 template<typename T>
 void A::AbstractFlowSet<T>::Add(T obj)
 {
-
+  //TODO
 }
 
 /**
@@ -178,7 +179,7 @@ void A::AbstractFlowSet<T>::Add(T obj)
 template<typename T>
 void A::AbstractFlowSet<T>::Add(T obj, A::FlowSet<T>* dest)
 {
-
+  //TODO
 }
 
 /**
@@ -190,7 +191,7 @@ void A::AbstractFlowSet<T>::Add(T obj, A::FlowSet<T>* dest)
 template<typename T>
 void A::AbstractFlowSet<T>::Remove(T obj)
 {
-
+  //TODO
 }
 
 /**
@@ -203,7 +204,7 @@ void A::AbstractFlowSet<T>::Remove(T obj)
 template<typename T>
 void A::AbstractFlowSet<T>::Remove(T obj, A::FlowSet<T>* dest)
 {
-
+  //TODO
 }
 
 /**
@@ -217,7 +218,7 @@ void A::AbstractFlowSet<T>::Remove(T obj, A::FlowSet<T>* dest)
 template<typename T>
 bool A::AbstractFlowSet<T>::Contains(T obj)
 {
-
+  //TODO
 }
 
 /**
@@ -231,7 +232,7 @@ bool A::AbstractFlowSet<T>::Contains(T obj)
 template<typename T>
 bool A::AbstractFlowSet<T>::Equals(A::FlowSet<T>* other)
 {
-
+  //TODO
 }
 
 /**
@@ -245,7 +246,7 @@ bool A::AbstractFlowSet<T>::Equals(A::FlowSet<T>* other)
 template<typename T>
 bool A::AbstractFlowSet<T>::IsSubSet(A::FlowSet<T>* other)
 {
-    
+  //TODO
 }
 
 /**
@@ -257,7 +258,7 @@ bool A::AbstractFlowSet<T>::IsSubSet(A::FlowSet<T>* other)
 template<typename T>
 std::list<T> A::AbstractFlowSet<T>::ToList()
 {
-
+  //TODO
 }
 
 template class A::AbstractFlowSet<int>;
