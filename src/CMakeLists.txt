@@ -9,4 +9,5 @@ include_directories("${PROJECT_SOURCE_DIR}/include"
 add_library(analyzer 
                 ObjectIntMapper.cpp
                 AbstractBoundedFlowSet.cpp
-                AbstractFlowSet.cpp)
+                AbstractFlowSet.cpp
+                ArrayPackedSet.cpp)
