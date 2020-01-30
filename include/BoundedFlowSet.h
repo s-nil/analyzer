@@ -22,7 +22,7 @@ namespace A
      * @tparam T 
      */
     template<typename T>
-    class BoundedFlowSet : public FlowSet<T>
+    class BoundedFlowSet
     {
 	public:
 	    virtual void Complement() = 0;
