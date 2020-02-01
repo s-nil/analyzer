@@ -14,10 +14,11 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Analysis/LoopPass.h"
 #include "llvm/ADT/Statistic.h"
-#include "Iterable.h"
 #include "AbstractFlowSet.h"
 #include "AbstractBoundedFlowSet.h"
 #include "ObjectIntMapper.h"
+#include "ArrayPackedSet.h"
+#include "llvm/ADT/BitVector.h"
 #include <vector>
 
 using namespace llvm;
@@ -38,6 +39,33 @@ namespace {
             oim.Add(213);
             oim.Add(521);
             errs() << oim.Size()<<'\n';
+
+            A::ArrayPackedSet<int> aps(oim);
+            // errs() << aps.Size() << '\n';
+            // errs() << aps.IsEmpty() << '\n';
+
+            // A::ArrayPackedSet<int> aps1(oim);
+            // errs() << aps1.Size() << '\n';
+            // errs() << aps1.IsEmpty() << '\n';
+
+            // aps.Copy(&aps1);
+            // errs() << aps1.Size() << '\n';
+            // errs() << aps1.IsEmpty() << '\n';
+
+            // auto ls = aps.ToList();
+            // llvm::errs() << ls.size()<<'\n';
+            // for (auto i = ls.begin(); i != ls.end(); ++i)
+            // {
+            //     llvm::errs() << *i <<'\n';
+            // }
+
+            // llvm::BitVector bits(10);
+            // bits.set(0);
+            // bits.set(5);
+            
+            // errs() << bits.empty() <<'\n';
+            // errs() << bits.count() <<'\n';
+                
 
             return false;
         }

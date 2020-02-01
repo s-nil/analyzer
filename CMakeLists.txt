@@ -35,7 +35,7 @@ message(STATUS "Using Compiler : ${CMAKE_CXX_COMPILER}")
 configure_file(config.h.in ${PROJECT_BINARY_DIR}/config.h)
 
 add_subdirectory(src)
-add_subdirectory(tests)
+add_subdirectory(passes)
 add_subdirectory(examples)
 
 # include directories for analyzer
