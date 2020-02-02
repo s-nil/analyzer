@@ -10,4 +10,5 @@ add_library(analyzer
                 ObjectIntMapper.cpp
                 AbstractBoundedFlowSet.cpp
                 AbstractFlowSet.cpp
-                ArrayPackedSet.cpp)
+                ArrayPackedSet.cpp
+                ArrayValueUniverse.cpp)
