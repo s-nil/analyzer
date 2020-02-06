@@ -43,7 +43,59 @@ cd build
 cmake ..
 make
 ```
-The library has beem built now. But to use this library you need to write a pass for a perticular data flow analysis. 
+The library has been built now. But to use this library you need to write a pass for a perticular data flow analysis. 
 
 ### Usage
+Example is to check whether or not local variables are initialized or not.
 
+- Create a class inheriting BackwardFlowAnalysis or ForwardFlowAnalysis
+	example:
+```cpp
+class InitAnalysis : public ForwardFlowAnalysis<N,A>
+```
+where,
+N is Node type and A is Abstratct Type.
+- Create a parameterized constructor with cfg of the method. Call constructor of parent class with the cfg. Specify what are the data flow values while creating an object of ArrayPackedSet or ArraySparseSet and after that call DoAnalysis().
+	example:
+```cpp
+InitAnalysis(CFG g){
+	ForwardFlowAnalysis(g);
+	FlowSet<local> *fs= new ArrayPackedSet<local>;
+	allLocals = fs;
+	DoAnalysis();
+}
+```
+- Override ```EntryInitialFlow()``` and ```NewInitialFlow()``` and return the appropriate object.
+	example:
+```cpp
+FlowSet<local> EntryInitialFlow(){
+	return new ArrayPackedSet<local>();
+}
+
+FlowSet<local> NewInitialFlow(){
+	FlowSet<local> *ret = new ArrayPackedSet<local>();
+	ret->Copy(allLocals);
+	return ret;
+}
+
+```
+- Override ```Merge()```,```Copy()``` and ```FlowThrough()```.
+	example:
+```cpp
+void Merge(FlowSet<local> in1, FlowSet<local> in2, FlowSet<local> out){
+	out.Intersection(in1,in2);
+}
+
+void Copy(FlowSet<local> src, FlowSet<local> dest){
+	dest.Copy(src);
+}
+
+void Flowthrough(FlowSet<local> in, BasicBlock bb, FlowSet<local> out){
+	for(Instruction i : bb){
+		// 'i.typeof' and 'i.pointer' are not syntactically acurate for now
+		if(i.typeof == store & i.pointer is in allLocals){
+			out.add(i.pointer);
+		}
+	}
+}
+```
