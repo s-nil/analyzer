@@ -26,7 +26,7 @@ namespace A
     {
     public:
         ObjectIntMapper(){
-            intToObject = std::vector<int>();
+            intToObject = std::vector<T>();
             objectToInt = llvm::DenseMap<T,int>();
             counter = 0;
         }
