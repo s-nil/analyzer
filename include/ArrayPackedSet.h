@@ -16,25 +16,10 @@ template<typename T>
 class ArrayPackedSet : public AbstractBoundedFlowSet<T>
 {
 public:
-    /**
-     * @brief Construct a new Array Packed Set object
-     * 
-     */
     ArrayPackedSet(){}
-    /**
-     * @brief Destroy the Array Packed Set object
-     * 
-     */
     ~ArrayPackedSet(){}
 
-    /**
-     * @brief Construct a new Array Packed Set object
-     * 
-     */
     ArrayPackedSet(ObjectIntMapper<T> mapper);
-    /**
-     * @brief Construct a new Array Packed Set object
-     */
     ArrayPackedSet(ObjectIntMapper<T> mapper, llvm::BitVector bits);
 
     void Complement();  //TODO

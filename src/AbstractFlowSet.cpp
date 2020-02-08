@@ -262,3 +262,4 @@ std::list<T> A::AbstractFlowSet<T>::ToList()
 }
 
 template class A::AbstractFlowSet<int>;
+template class A::AbstractFlowSet<char*>;

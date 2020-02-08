@@ -11,4 +11,5 @@ add_library(analyzer
                 AbstractBoundedFlowSet.cpp
                 AbstractFlowSet.cpp
                 ArrayPackedSet.cpp
+                ArraySparseSet.cpp
                 ArrayValueUniverse.cpp)
