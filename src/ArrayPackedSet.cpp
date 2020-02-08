@@ -137,6 +137,7 @@ void A::ArrayPackedSet<T>::Union(A::FlowSet<T>* otherFlow, A::FlowSet<T>* destFl
     if(SameType(otherFlow) && SameType(destFlow)){
         A::ArrayPackedSet<T>* other = dynamic_cast<A::ArrayPackedSet<T>*>(otherFlow);
         A::ArrayPackedSet<T>* dest = dynamic_cast<A::ArrayPackedSet<T>*>(destFlow);
+        
         llvm::BitVector tmp(this->bits);
         tmp |= other->bits;
         dest->bits = tmp;
@@ -172,6 +173,7 @@ void A::ArrayPackedSet<T>::Intersection(A::FlowSet<T>* otherFlow, A::FlowSet<T>*
     if(SameType(otherFlow) && SameType(destFlow)){
         A::ArrayPackedSet<T>* other = dynamic_cast<A::ArrayPackedSet<T>*>(otherFlow);
         A::ArrayPackedSet<T>* dest  = dynamic_cast<A::ArrayPackedSet<T>*>(destFlow);
+
         llvm::BitVector tmp(this->bits);
         tmp &= other->bits;
         dest->bits = tmp;
@@ -207,6 +209,7 @@ void A::ArrayPackedSet<T>::Difference(A::FlowSet<T>* otherFlow, A::FlowSet<T>* d
     if(SameType(otherFlow) && SameType(destFlow)){
         A::ArrayPackedSet<T>* other = dynamic_cast<A::ArrayPackedSet<T>*>(otherFlow);
         A::ArrayPackedSet<T>* dest  = dynamic_cast<A::ArrayPackedSet<T>*>(destFlow);
+        
         llvm::BitVector tmp(this->bits);
         tmp.reset(other->bits);
         dest->bits = tmp;
@@ -306,12 +309,12 @@ bool A::ArrayPackedSet<T>::Contains(T obj){
  * @return false 
  */
 template<typename T>
-bool A::ArrayPackedSet<T>::Equals(A::FlowSet<T>* other){
-    if(SameType(other)){
-        A::ArrayPackedSet<T>* other = dynamic_cast<A::ArrayPackedSet<T>*>(other);
+bool A::ArrayPackedSet<T>::Equals(A::FlowSet<T>* otherFlow){
+    if(SameType(otherFlow)){
+        A::ArrayPackedSet<T>* other = dynamic_cast<A::ArrayPackedSet<T>*>(otherFlow);
         return bits == other->bits;
     }else{
-        return A::AbstractBoundedFlowSet<T>::Equals(other);
+        return A::AbstractBoundedFlowSet<T>::Equals(otherFlow);
     }
 }
 
@@ -417,3 +420,4 @@ llvm::BitVector A::ArrayPackedSet<T>::CopyBitSet(A::ArrayPackedSet<T>* o){
 }
 
 template class A::ArrayPackedSet<int>;
+template class A::ArrayPackedSet<char*>;
