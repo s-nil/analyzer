@@ -46,6 +46,61 @@ public:
     bool Equals(FlowSet<T>* other);
     bool IsSubSet(FlowSet<T>* other);
     std::list<T> ToList();
+
+    class Iterator{
+    public:
+	typedef Iterator self_type;
+	typedef T value_type;
+	typedef T& reference;
+	typedef T* pointer;
+	typedef std::input_iterator_tag iterator_category;
+	Iterator(){
+	    idx = -1;
+	}
+	Iterator(ArrayPackedSet<T>* obj){
+	    if(obj->IsEmpty()){
+		idx = -1;
+	    }else{
+	        setObject = obj;
+		idx = obj->bits.find_first();
+	    }
+	}
+	Iterator(const Iterator& cit){
+	    setObject = cit.setObject;
+	    idx = cit.idx;
+	}
+	Iterator& operator++(){
+	    if(idx == setObject->bits.find_last()){
+		idx = -1;
+	    }else{
+		idx = setObject->bits.find_next(idx);
+	    }
+	    return *this;
+	}
+	Iterator operator++(int){
+	    self_type tmp(*this);
+	    operator++();
+	    return tmp;
+	}
+	bool operator==(const Iterator& rhs){
+	   return idx == rhs.idx;
+	}
+	bool operator!=(const Iterator& rhs){
+	    return idx != rhs.idx;
+	}
+	value_type operator*(){
+	    return setObject->map.GetObject(idx);
+	}
+    private:
+	ArrayPackedSet<T>* setObject;
+	int idx;
+    };
+    Iterator begin(){
+	return Iterator(this);
+    }
+    Iterator end(){
+	return Iterator();
+    }
 private:
     A::ObjectIntMapper<T> map;
     llvm::BitVector bits;
