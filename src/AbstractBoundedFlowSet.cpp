@@ -45,5 +45,5 @@ A::FlowSet<T>* A::AbstractBoundedFlowSet<T>::TopSet()
 
 }
 
-template class A::AbstractBoundedFlowSet<int>;
+// template class A::AbstractBoundedFlowSet<int>;
 template class A::AbstractBoundedFlowSet<char*>;

@@ -12,6 +12,7 @@
 #define _A_ABSTRACT_FLOW_SET_H_
 
 #include "FlowSet.h"
+#include "llvm/Support/raw_ostream.h"
 
 namespace A{
 
@@ -25,7 +26,7 @@ class AbstractFlowSet : public FlowSet<T>{
 public:
     AbstractFlowSet(){}
     
-    FlowSet<T>* Clone();
+    // FlowSet<T>* Clone();         // implement in child class
     FlowSet<T>* EmptySet();
     void Copy(FlowSet<T>* dest);
     void Clear();
@@ -35,8 +36,8 @@ public:
     void Intersection(FlowSet<T>* other, FlowSet<T>* dest);
     void Difference(FlowSet<T>* other);
     void Difference(FlowSet<T>* other, FlowSet<T>* dest);
-    bool IsEmpty();
-    int Size();
+    // bool IsEmpty();              // implement in child class
+    // int Size();                  // implement in child class
     void Add(T obj);
     void Add(T obj, FlowSet<T>* dest);    
     void Remove(T obj);
@@ -44,7 +45,7 @@ public:
     bool Contains(T obj);
     bool Equals(FlowSet<T>* other);
     bool IsSubSet(FlowSet<T>* other);
-    std::list<T> ToList();
+    // std::list<T> ToList();          // implement in child class
 };
 
 // template class A::FlowSet<int>;
