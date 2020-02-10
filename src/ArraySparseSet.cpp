@@ -80,7 +80,10 @@ void A::ArraySparseSet<T>::Union(A::FlowSet<T>* other){
     if(this == other){
         return;
     }else{
-        Union(other,this);
+        if(SameType(other))
+            Union(other,this);
+        else
+            A::AbstractFlowSet<T>::Union(other);
     }    
 }
 
@@ -113,7 +116,7 @@ void A::ArraySparseSet<T>::Union(A::FlowSet<T>* otherFlow, A::FlowSet<T>* destFl
             }
         }
     }else{
-        A::AbstractFlowSet<T>::Union(otherFlow,destFlow);
+        this->A::AbstractFlowSet<T>::Union(otherFlow,destFlow);
     }
 }
 
@@ -128,7 +131,10 @@ void A::ArraySparseSet<T>::Intersection(A::FlowSet<T>* other){
     if(this == other){
         return;
     }else{
-        Intersection(other,this);
+        if(SameType(other))
+            Intersection(other,this);
+        else
+            A::AbstractFlowSet<T>::Intersection(other);
     }
 }
 
@@ -185,7 +191,10 @@ void A::ArraySparseSet<T>::Difference(A::FlowSet<T>* other){
     if(this == other){
         return;
     }else{
-        Difference(other,this);
+        if(SameType(other))
+            Difference(other,this);
+        else
+            A::AbstractFlowSet<T>::Difference(other);
     }
 }
 
@@ -333,18 +342,29 @@ bool A::ArraySparseSet<T>::Equals(A::FlowSet<T>* otherFlow){
     }
 }
 
-// /**
-//  * @brief 
-//  * 
-//  * @tparam T 
-//  * @param other 
-//  * @return true 
-//  * @return false 
-//  */
-// template<typename T>
-// bool A::ArraySparseSet<T>::IsSubSet(A::FlowSet<T>* other){
-
-// }
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ * @param other 
+ * @return true 
+ * @return false 
+ */
+template<typename T>
+bool A::ArraySparseSet<T>::IsSubSet(A::FlowSet<T>* otherFlow){
+    if(SameType(otherFlow)){
+        A::ArraySparseSet<T>* other = dynamic_cast<A::ArraySparseSet<T>*>(otherFlow);
+        for(auto i : other->elements){
+            if(!this->Contains(i)){
+                return false;
+            }
+        }
+        return true;
+    }else{
+        return A::AbstractFlowSet<T>::IsSubSet(otherFlow);
+    }
+    
+}
 
 /**
  * @brief 
@@ -378,13 +398,15 @@ bool A::ArraySparseSet<T>::SameType(A::FlowSet<T>* o){
 
 // template<typename T>
 // void A::ArraySparseSet<T>::Add(T obj, A::FlowSet<T>* dest){
-
+//   auto tmp = this->Clone();
+//   tmp->Add(obj);
+//   tmp->Copy(dest);
 // }
 
 // template<typename T>
 // void A::ArraySparseSet<T>::Remove(T obj, A::FlowSet<T>* dest){
-
+//   auto tmp = this->Clone();
+//   tmp->Remove(obj);
+//   tmp->Copy(dest);
 // }
-
-
 template class A::ArraySparseSet<char*>;

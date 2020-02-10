@@ -32,7 +32,7 @@ namespace A{
         // void Remove(T obj, FlowSet<T>* dest);    // TODO
         bool Contains(T obj);
         bool Equals(FlowSet<T>* other);
-        // bool IsSubSet(FlowSet<T>* other);        //  TODO
+        bool IsSubSet(FlowSet<T>* other);        //  TODO
         std::list<T> ToList();
 
         class Iterator{
