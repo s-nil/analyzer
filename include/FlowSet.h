@@ -11,7 +11,6 @@
 #ifndef _A_FLOW_SET_H_
 #define _A_FLOW_SET_H_
 
-#include "Iterable.h"
 #include <list>
 
 namespace A{
