@@ -121,7 +121,10 @@ void A::ArrayPackedSet<T>::Union(A::FlowSet<T>* other){
     if(this == other){
         return;
     }else{
-        Union(other,this);
+        if(SameType(other))
+            Union(other,this);
+        else
+            A::AbstractBoundedFlowSet<T>::Union(other);
     }
 }
 
@@ -157,7 +160,10 @@ void A::ArrayPackedSet<T>::Intersection(A::FlowSet<T>* other){
     if(other == this){
         return;
     }else{
-        Intersection(other,this);
+        if(SameType(other))
+            Intersection(other,this);
+        else
+            A::AbstractBoundedFlowSet<T>::Intersection(other);
     }
 }
 
@@ -193,7 +199,10 @@ void A::ArrayPackedSet<T>::Difference(A::FlowSet<T>* other){
     if(other == this){
         bits.reset(dynamic_cast<A::ArrayPackedSet<T>*>(other)->bits);
     }else{
-        Difference(other,this);
+        if(SameType(other))
+            Difference(other,this);
+        else
+            A::AbstractBoundedFlowSet<T>::Difference(other);
     }
 }
 
@@ -249,7 +258,13 @@ int A::ArrayPackedSet<T>::Size(){
  */
 template<typename T>
 void A::ArrayPackedSet<T>::Add(T obj){
-    bits.set(map.GetInt(obj));
+    if(map.Contains(obj))
+        bits.set(map.GetInt(obj));
+    else{
+        map.Add(obj);
+        bits.resize(map.Size());
+        bits.set(map.GetInt(obj));
+    }
 }
 
 // /**
@@ -272,7 +287,8 @@ void A::ArrayPackedSet<T>::Add(T obj){
  */
 template<typename T>
 void A::ArrayPackedSet<T>::Remove(T obj){
-    bits.reset(map.GetInt(obj));
+    if(map.Contains(obj))
+        bits.reset(map.GetInt(obj));
 }
 
 // /**
