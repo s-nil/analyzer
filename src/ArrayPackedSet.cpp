@@ -107,7 +107,7 @@ void A::ArrayPackedSet<T>::Copy(A::FlowSet<T>* dest){
  */
 template<typename T>
 void A::ArrayPackedSet<T>::Clear(){
-    bits.clear();
+    bits.reset();
 }
 
 /**
@@ -238,7 +238,7 @@ bool A::ArrayPackedSet<T>::IsEmpty(){
  */
 template<typename T>
 int A::ArrayPackedSet<T>::Size(){
-    return bits.size();
+    return bits.count();
 }
 
 /**
@@ -419,5 +419,5 @@ llvm::BitVector A::ArrayPackedSet<T>::CopyBitSet(A::ArrayPackedSet<T>* o){
     return o->bits;
 }
 
-template class A::ArrayPackedSet<int>;
+// template class A::ArrayPackedSet<int>;
 template class A::ArrayPackedSet<char*>;
