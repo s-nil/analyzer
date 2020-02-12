@@ -9,17 +9,8 @@
  * 
  */
 #include "AbstractBoundedFlowSet.h"
-
-/**
- * @brief 
- * 
- * @tparam T 
- */
-template<typename T>
-void A::AbstractBoundedFlowSet<T>::Complement()
-{
-
-}
+#include "ArrayPackedSet.h"
+#include "ArraySparseSet.h"
 
 /**
  * @brief 
@@ -28,21 +19,15 @@ void A::AbstractBoundedFlowSet<T>::Complement()
  * @param dest 
  */
 template<typename T>
-void A::AbstractBoundedFlowSet<T>::Complement(A::FlowSet<T>* dest)
-{
+void A::AbstractBoundedFlowSet<T>::Complement(A::FlowSet<T>* destFlow){
+    ArrayPackedSet<T>* tmp = dynamic_cast<ArrayPackedSet<T>*>(this->Clone());
+    ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
+    dest->Clear();
+    tmp->Complement();
 
-}
-
-/**
- * @brief 
- * 
- * @tparam T 
- * @return A::FlowSet<T>* 
- */
-template<typename T>
-A::FlowSet<T>* A::AbstractBoundedFlowSet<T>::TopSet()
-{
-
+    for(auto i : *tmp){
+        dest->Add(i);
+    }
 }
 
 // template class A::AbstractBoundedFlowSet<int>;

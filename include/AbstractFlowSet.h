@@ -24,8 +24,7 @@ namespace A{
 template <class T>
 class AbstractFlowSet : public FlowSet<T>{
 public:
-    AbstractFlowSet(){}
-    
+
     // FlowSet<T>* Clone();         // implement in child class
     FlowSet<T>* EmptySet();
     void Copy(FlowSet<T>* dest);

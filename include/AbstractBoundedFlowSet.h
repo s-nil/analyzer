@@ -24,11 +24,9 @@ namespace A
     class AbstractBoundedFlowSet : public BoundedFlowSet<T> , public AbstractFlowSet<T>
     {
     public:
-        AbstractBoundedFlowSet(){}
+        // AbstractBoundedFlowSet(){}
 
-        void Complement();
 	    void Complement(FlowSet<T>* dest);
-	    FlowSet<T>* TopSet();
     };
 }
 

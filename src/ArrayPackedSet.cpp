@@ -34,7 +34,9 @@ A::ArrayPackedSet<T>::ArrayPackedSet(ObjectIntMapper<T> mapper, llvm::BitVector 
  */
 template<typename T>
 void A::ArrayPackedSet<T>::Complement(){
-    //TODO
+    auto tmp = bits;
+    bits.clear();
+    bits = tmp.flip();
 }
 
 /**
@@ -44,8 +46,21 @@ void A::ArrayPackedSet<T>::Complement(){
  * @param dest 
  */
 template<typename T>
-void A::ArrayPackedSet<T>::Complement(A::FlowSet<T>* dest){
-    //TODO
+void A::ArrayPackedSet<T>::Complement(A::FlowSet<T>* destFlow){
+    if(this == destFlow){
+        this->Complement();
+        return;
+    }
+
+    if(SameType(destFlow)){
+        A::ArrayPackedSet<T>* dest = dynamic_cast<A::ArrayPackedSet<T>*>(destFlow);
+        assert(this->map == dest->map);
+        // CopyBitSet(dest);
+        dest->bits.clear();
+        dest->bits = bits.flip();
+    }else{
+        A::AbstractBoundedFlowSet<T>::Complement(destFlow);
+    }    
 }
 
 /**
@@ -56,7 +71,8 @@ void A::ArrayPackedSet<T>::Complement(A::FlowSet<T>* dest){
  */
 template<typename T>
 A::FlowSet<T>* A::ArrayPackedSet<T>::TopSet(){
-    //TODO
+    auto tmp = bits;
+    bits |= tmp.flip();
 }
 
 /**
