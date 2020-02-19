@@ -47,7 +47,6 @@ public:
     // std::list<T> ToList();          // implement in child class
 };
 
-// template class A::FlowSet<int>;
 }   // end namespace
 
 #endif  // end _A_ABSTRACT_FLOW_SET_H_
