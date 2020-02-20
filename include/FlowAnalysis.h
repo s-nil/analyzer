@@ -20,21 +20,23 @@ namespace A{
      * @tparam T 
      */
     template<typename T>
-    class FlowAnalysis{
+    class FlowAnalysis : public AbstractFlowAnalysis<T>{
     public:
         FlowAnalysis(){}
         ~FlowAnalysis(){}
 
-        T NewInitialFlowSet();
-        T EntryInitialFlowSet();
-        void Merge(T in1, T in2, T out);
-        void Copy(T in1, T in2);
-        T GetFlowBefore(llvm::BasicBlock* node);
-        void doAnalysis();
-    };
+        T NewInitialFlowSet() override;
+        T EntryInitialFlowSet() override;
+        void Merge(T in1, T in2, T out) override;
+        void Copy(T in1, T in2) override;
+        T GetFlowBefore(llvm::BasicBlock* node) override;
 
-template class A::AbstractFlowAnalysis<int>;
-template class A::AbstractFlowAnalysis<char*>;
+        void Compute();
+
+    private:
+        llvm::DenseMap<llvm::BasicBlock*,T> finalInSet;
+        llvm::DenseMap<llvm::BasicBlock*,T> finalOutSet;
+    };
 }
 
 #endif
