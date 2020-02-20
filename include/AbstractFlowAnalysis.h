@@ -13,6 +13,7 @@
 
 #include "llvm/IR/Function.h"
 #include "llvm/ADT/DenseMap.h"
+#include "llvm/Support/raw_ostream.h"
 
 namespace A{
     /**
@@ -23,6 +24,7 @@ namespace A{
     template<typename T>
     class AbstractFlowAnalysis{
     public:
+        AbstractFlowAnalysis():func(nullptr){}
         virtual ~AbstractFlowAnalysis(){}
         
         virtual T NewInitialFlowSet() = 0;
@@ -30,10 +32,11 @@ namespace A{
         virtual void Merge(T in1, T in2, T out) = 0;
         virtual void Copy(T in1, T in2) = 0;
         virtual T GetFlowBefore(llvm::BasicBlock* node) = 0;
-        virtual void doAnalysis() = 0;
-
-    private:
-        llvm::DenseMap<llvm::BasicBlock*,T> finalInSet;
+        virtual void DoAnalysis() = 0;
+        virtual bool IsForward() = 0;
+        void SetFunction(llvm::Function*);
+    protected:
+        llvm::Function* func;
     };
 }
 
