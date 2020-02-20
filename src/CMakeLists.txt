@@ -12,4 +12,9 @@ add_library(analyzer
                 AbstractFlowSet.cpp
                 ArrayPackedSet.cpp
                 ArraySparseSet.cpp
+                AbstractFlowAnalysis.cpp
+                FlowAnalysis.cpp
+                ForwardFlowAnalysis.cpp
+                BackwardFlowAnalysis.cpp
+                NodeData.cpp
                 ArrayValueUniverse.cpp)
