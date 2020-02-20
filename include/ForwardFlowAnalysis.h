@@ -19,11 +19,14 @@ namespace A{
      * @tparam T 
      */
     template<typename T>
-    class ForwardFlowAnalysis
-    {
+    class ForwardFlowAnalysis : public FlowAnalysis<T>{
     public:
         ForwardFlowAnalysis(){}
         ~ForwardFlowAnalysis(){}
+
+        void DoAnalysis() override;
+        inline bool IsForward() override;
+    private:
     };    
 }
 
