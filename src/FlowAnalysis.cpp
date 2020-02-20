@@ -1,5 +1,7 @@
 #include "FlowAnalysis.h"
 #include "llvm/Support/raw_ostream.h"
+#include "ArrayPackedSet.h"
+#include "ArraySparseSet.h"
 
 /**
  * @brief 
@@ -66,9 +68,13 @@ T A::FlowAnalysis<T>::GetFlowBefore(llvm::BasicBlock* node){
  * @tparam T 
  */
 template<typename T>
-void A::FlowAnalysis<T>::doAnalysis(){
-    llvm::errs() << "hello in flowAnalysis\n";
+void A::FlowAnalysis<T>::Compute(){
+    llvm::Function* func = this->func;
+    llvm::errs() << func->getName().str()<<'\n';
 }
 
+
+template class A::FlowAnalysis<A::ArrayPackedSet<char*>>;
+template class A::FlowAnalysis<A::ArraySparseSet<char*>>;
 template class A::FlowAnalysis<int>;
 template class A::FlowAnalysis<char*>;
