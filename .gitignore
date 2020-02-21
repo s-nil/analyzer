@@ -78,3 +78,6 @@ docs/latex
 
 # test pass
 passes/test_pass
+
+# dot files
+*.dot
