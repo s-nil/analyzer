@@ -14,6 +14,7 @@
 #include "llvm/IR/Function.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/Support/raw_ostream.h"
+#include "FunctionCFG.h"
 
 namespace A{
     /**
@@ -24,7 +25,7 @@ namespace A{
     template<typename T>
     class AbstractFlowAnalysis{
     public:
-        AbstractFlowAnalysis():func(nullptr){}
+        AbstractFlowAnalysis():func(nullptr),graph(nullptr){}
         virtual ~AbstractFlowAnalysis(){}
         
         virtual T NewInitialFlowSet() = 0;
@@ -37,6 +38,7 @@ namespace A{
         void SetFunction(llvm::Function*);
     protected:
         llvm::Function* func;
+        A::FunctionCFG* graph;
     };
 }
 
