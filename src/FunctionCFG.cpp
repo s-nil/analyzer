@@ -6,7 +6,11 @@ A::FunctionCFG::FunctionCFG(llvm::Function* f){
     this->func  = f;
     Nodes = new std::vector<Node*>(0);
 
-    DFS();
+    for (llvm::df_iterator<llvm::BasicBlock*> I = llvm::df_begin(&func->getEntryBlock()),
+                                            IE=llvm::df_end(&func->getEntryBlock()); I != IE; ++I){
+        A::Node* node = new A::Node(*I,Nodes->size());
+        Nodes->push_back(node);
+    }
 }
 
 std::list<llvm::BasicBlock*> A::FunctionCFG::GetHeads(){
@@ -47,27 +51,4 @@ std::list<llvm::BasicBlock*> A::FunctionCFG::GetOut(A::Node* n,Direction dir){
         std::copy(n->GetPreds().begin(),n->GetPreds().end(),std::back_inserter(lst));
     }
     return lst;    
-}
-
-void A::FunctionCFG::DFS(){
-    llvm::BasicBlock* bb = &func->getEntryBlock();
-    llvm::DenseMap<llvm::BasicBlock*,bool> visited;
-    std::stack<llvm::BasicBlock*> stk;
-    stk.push(bb);
-
-    while (!stk.empty()){
-        auto s = stk.top();
-        stk.pop();
-        if(!visited[s]){
-            // llvm::errs() << s->getName().str()<<'\n';
-            A::Node* node = new A::Node(s,Nodes->size());
-            Nodes->push_back(node);
-            visited[s] = 1;
-        }
-        for(llvm::succ_iterator itb = succ_begin(s),ite=succ_end(s); itb!=ite; ++itb){
-            if(!visited[*itb]){
-                stk.push(*itb);
-            }
-        }
-    }
 }

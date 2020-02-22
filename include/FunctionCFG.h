@@ -55,7 +55,6 @@ namespace A{
         unsigned NumBB;
         std::vector<Node*> *Nodes;
         llvm::Function* func;
-        void DFS();
     };
     
 }
