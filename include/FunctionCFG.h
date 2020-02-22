@@ -54,7 +54,6 @@ namespace A{
 
         unsigned NumBB;
         std::vector<Node*> *Nodes;
-        llvm::DenseMap<llvm::BasicBlock*,unsigned> *BBNodeMap;
         llvm::Function* func;
         void DFS();
     };
