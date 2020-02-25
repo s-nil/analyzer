@@ -22,9 +22,9 @@ public:
     ArrayPackedSet(ObjectIntMapper<T> mapper);
     ArrayPackedSet(ObjectIntMapper<T> mapper, llvm::BitVector bits);
 
-    void Complement();  //TODO
-    void Complement(FlowSet<T>* dest);  //TODO
-	FlowSet<T>* TopSet();   //  TODO
+    void Complement();
+    void Complement(FlowSet<T>* dest);
+	FlowSet<T>* TopSet();
 
     FlowSet<T>* Clone();
     FlowSet<T>* EmptySet();
