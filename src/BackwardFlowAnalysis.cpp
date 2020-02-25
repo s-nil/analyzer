@@ -6,6 +6,7 @@
 template<typename T>
 void A::BackwardFlowAnalysis<T>::DoAnalysis(){
     llvm::errs() << "in bfa\n";
+    this->Compute();
 }
 
 template<typename T>

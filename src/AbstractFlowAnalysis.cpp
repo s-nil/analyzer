@@ -10,5 +10,3 @@ void A::AbstractFlowAnalysis<T>::SetFunction(llvm::Function* f){
 
 template class A::AbstractFlowAnalysis<A::ArrayPackedSet<char*>>;
 template class A::AbstractFlowAnalysis<A::ArraySparseSet<char*>>;
-template class A::AbstractFlowAnalysis<int>;
-template class A::AbstractFlowAnalysis<char*>;
