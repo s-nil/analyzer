@@ -21,6 +21,7 @@ public:
 
     ArrayPackedSet(ObjectIntMapper<T> mapper);
     ArrayPackedSet(ObjectIntMapper<T> mapper, llvm::BitVector bits);
+	ArrayPackedSet(llvm::Function* F);
 
     void Complement();
     void Complement(FlowSet<T>* dest);

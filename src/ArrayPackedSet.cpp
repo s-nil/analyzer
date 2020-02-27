@@ -27,6 +27,16 @@ A::ArrayPackedSet<T>::ArrayPackedSet(ObjectIntMapper<T> mapper, llvm::BitVector 
     this->bits = bits;
 }
 
+template<typename T>
+A::ArrayPackedSet<T>::ArrayPackedSet(llvm::Function* F){
+    auto universe = A::ValueUniverse<T>(F);
+
+    auto mapper = A::ObjectIntMapper<T>(&universe);
+    map = mapper;
+    bits = llvm::BitVector(mapper.Size());
+}
+
+
 /**
  * @brief 
  * 
@@ -453,3 +463,4 @@ llvm::BitVector A::ArrayPackedSet<T>::CopyBitSet(A::ArrayPackedSet<T>* o){
 
 // template class A::ArrayPackedSet<int>;
 template class A::ArrayPackedSet<char*>;
+template class A::ArrayPackedSet<A::Variable*>;
