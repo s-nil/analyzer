@@ -51,7 +51,7 @@ int A::ObjectIntMapper<T>::GetInt(T obj)
  * @return T 
  */
 template<typename T>
-T A::ObjectIntMapper<T>::GetObject(int idx)
+inline T A::ObjectIntMapper<T>::GetObject(int idx)
 {
     return intToObject[idx];    
 }
@@ -65,7 +65,7 @@ T A::ObjectIntMapper<T>::GetObject(int idx)
  * @return false 
  */
 template<typename T>
-bool A::ObjectIntMapper<T>::Contains(T obj)
+inline bool A::ObjectIntMapper<T>::Contains(T obj)
 {
     if(objectToInt.find(obj) != objectToInt.end())
         return 1;
@@ -79,22 +79,22 @@ bool A::ObjectIntMapper<T>::Contains(T obj)
  * @return int 
  */
 template<typename T>
-int A::ObjectIntMapper<T>::Size()
+inline int A::ObjectIntMapper<T>::Size()
 {
     return counter;
 }
 
 template<typename T>
-bool A::ObjectIntMapper<T>::operator==(A::ObjectIntMapper<T> rhs)
+inline bool A::ObjectIntMapper<T>::operator==(A::ObjectIntMapper<T> rhs)
 {
     return intToObject == rhs.intToObject && counter == rhs.counter && objectToInt == rhs.objectToInt;
 }
 
 template<typename T>
-bool A::ObjectIntMapper<T>::operator!=(A::ObjectIntMapper<T> rhs)
+inline bool A::ObjectIntMapper<T>::operator!=(A::ObjectIntMapper<T> rhs)
 {
     return !operator==(rhs);
 }
 
-template class A::ObjectIntMapper<int>;
 template class A::ObjectIntMapper<char*>;
+template class A::ObjectIntMapper<A::Variable*>;

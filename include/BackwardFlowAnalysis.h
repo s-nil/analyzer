@@ -25,7 +25,7 @@ namespace A{
         ~BackwardFlowAnalysis(){}
 
         void DoAnalysis() override;
-        inline bool IsForward() override;
+        bool IsForward() override;
     private:
     };    
 }

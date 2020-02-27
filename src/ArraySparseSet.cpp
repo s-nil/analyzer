@@ -410,3 +410,4 @@ bool A::ArraySparseSet<T>::SameType(A::FlowSet<T>* o){
 //   tmp->Copy(dest);
 // }
 template class A::ArraySparseSet<char*>;
+template class A::ArraySparseSet<A::Variable*>;

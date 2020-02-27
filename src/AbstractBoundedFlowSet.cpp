@@ -32,3 +32,4 @@ void A::AbstractBoundedFlowSet<T>::Complement(A::FlowSet<T>* destFlow){
 
 // template class A::AbstractBoundedFlowSet<int>;
 template class A::AbstractBoundedFlowSet<char*>;
+template class A::AbstractBoundedFlowSet<A::Variable*>;

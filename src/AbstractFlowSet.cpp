@@ -375,3 +375,4 @@ bool A::AbstractFlowSet<T>::IsSubSet(A::FlowSet<T>* other){
 
 // template class A::AbstractFlowSet<int>;
 template class A::AbstractFlowSet<char*>;
+template class A::AbstractFlowSet<A::Variable*>;

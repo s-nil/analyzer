@@ -1,6 +1,7 @@
 #ifndef _A_ARRAY_SPARSE_SET_H_
 #define _A_ARRAY_SPARSE_SET_H_
 #include "AbstractFlowSet.h"
+#include "Variable.h"
 #include <vector>
 #include <list>
 

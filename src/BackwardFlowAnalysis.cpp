@@ -10,9 +10,11 @@ void A::BackwardFlowAnalysis<T>::DoAnalysis(){
 }
 
 template<typename T>
-bool A::BackwardFlowAnalysis<T>::IsForward(){
+inline bool A::BackwardFlowAnalysis<T>::IsForward(){
     return false;
 }
 
 template class A::BackwardFlowAnalysis<A::ArrayPackedSet<char*>>;
 template class A::BackwardFlowAnalysis<A::ArraySparseSet<char*>>;
+template class A::BackwardFlowAnalysis<A::ArrayPackedSet<A::Variable*>>;
+template class A::BackwardFlowAnalysis<A::ArraySparseSet<A::Variable*>>;
