@@ -28,11 +28,11 @@ namespace A{
         AbstractFlowAnalysis():func(nullptr),graph(nullptr){}
         virtual ~AbstractFlowAnalysis(){}
         
-        virtual T NewInitialFlowSet() = 0;
-        virtual T EntryInitialFlowSet() = 0;
-        virtual void Merge(T in1, T in2, T out) = 0;
-        virtual void Copy(T in1, T in2) = 0;
-        virtual T GetFlowBefore(llvm::BasicBlock* node) = 0;
+        virtual T* NewInitialFlowSet() = 0;
+        virtual T* EntryInitialFlowSet() = 0;
+        virtual void Merge(T* in1, T* in2, T* out) = 0;
+        virtual void Copy(T* in1, T* in2) = 0;
+        virtual void FlowThrough(llvm::BasicBlock* node, T* in, T* out) = 0;
         virtual void DoAnalysis() = 0;
         virtual bool IsForward() = 0;
         void SetFunction(llvm::Function*);
