@@ -16,6 +16,7 @@
 #include <list>
 #include <stack>
 #include "llvm/ADT/SmallVector.h"
+#include <queue>
 
 namespace A{
     /**
@@ -29,23 +30,21 @@ namespace A{
         FlowAnalysis(){}
         ~FlowAnalysis(){}
 
-        // T NewInitialFlowSet() override;
-        // T EntryInitialFlowSet() override;
-        // void Merge(T in1, T in2, T out) override;
-        // void Copy(T in1, T in2) override;
-        T GetFlowBefore(llvm::BasicBlock* node) override;
-
+        T* GetFlowBefore(llvm::BasicBlock*);
+        T* GetFlowAfter(llvm::BasicBlock*);
+        void SetFlowBefore(llvm::BasicBlock* node, T*);
+        void SetFlowAfter(llvm::BasicBlock* node, T*);
         void Compute();
-
     private:
         std::vector<A::NodeData<T>*> NodesDataList();
         void AddOutData(llvm::DenseMap<llvm::BasicBlock*,A::NodeData<T>*>&, 
                                                         std::vector<llvm::BasicBlock*>&, A::NodeData<T>*);
         A::NodeData<T>* CreateAndReturnNodeData(llvm::DenseMap<llvm::BasicBlock*,A::NodeData<T>*>&, 
                                                         llvm::BasicBlock*, A::NodeData<T>*);
+        void InitializeFlows(std::vector<A::NodeData<T>*>&);
 
-        llvm::DenseMap<llvm::BasicBlock*,T> finalInSet;
-        llvm::DenseMap<llvm::BasicBlock*,T> finalOutSet;
+        llvm::DenseMap<llvm::BasicBlock*,T*> finalInSet;
+        llvm::DenseMap<llvm::BasicBlock*,T*> finalOutSet;
     };
 }
 
