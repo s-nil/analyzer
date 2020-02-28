@@ -17,5 +17,6 @@ add_library(analyzer
                 ForwardFlowAnalysis.cpp
                 BackwardFlowAnalysis.cpp
                 NodeData.cpp
+                Variable.cpp
                 FunctionCFG.cpp
-                ArrayValueUniverse.cpp)
+                ValueUniverse.cpp)
