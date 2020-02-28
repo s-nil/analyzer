@@ -13,6 +13,8 @@
 #include <vector>
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/Support/raw_ostream.h"
+#include "ValueUniverse.h"
+#include "llvm/IR/Value.h"
 
 namespace A
 {
@@ -29,6 +31,16 @@ namespace A
             intToObject = std::vector<T>();
             objectToInt = llvm::DenseMap<T,int>();
             counter = 0;
+        }
+        
+        ObjectIntMapper(ValueUniverse<T>* values){
+            intToObject = std::vector<T>(values->Size());
+            objectToInt = llvm::DenseMap<T,int>();
+            counter = 0;
+            for(auto I = values->begin(), IE = values->end(); I != IE; ++I){
+                Add(*I);
+            }
+            
         }
         ~ObjectIntMapper(){}
 
