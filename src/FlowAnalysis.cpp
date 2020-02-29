@@ -62,7 +62,7 @@ void A::FlowAnalysis<T>::Compute(){
     std::vector<A::NodeData<T>*> lstNodes = NodesDataList();
 
     InitializeFlows(lstNodes);
-    
+
     std::queue<A::NodeData<T>*> queueNodes;
     for (auto& e : lstNodes){
         queueNodes.push(e);
@@ -74,16 +74,16 @@ void A::FlowAnalysis<T>::Compute(){
         A::NodeData<T>* node = queueNodes.front();
         queueNodes.pop();
 
+        auto tmpOut = node->GetOutFlow()->Clone();
+        auto tmpIn = node->GetInFlow()->Clone();
+        
         if(node->GetINcomingN().size() < 0)
             continue;
 
         if(node->GetINcomingN().size() > 1){
-            llvm::errs() <<":"<< node->GetINcomingN().size()<<" "<<node->GetInFlow() <<" "<<node->GetOutFlow() << " " << node->GetNodeName() <<"\n";
-            
             bool copy = false;
             for (unsigned i = 0; i < node->GetINcomingN().size(); ++i){
                 auto outFlow = node->GetINcomingN()[i]->GetOutFlow();
-                // auto outFlow = n->GetOutFlow();
                 if(!copy)
                     this->Copy(outFlow,node->GetInFlow()), copy = true;
                 else{
@@ -92,14 +92,17 @@ void A::FlowAnalysis<T>::Compute(){
                     this->Copy(tmp,node->GetInFlow());
                 }
             }
-        }else{
-            llvm::errs() << node->GetINcomingN().size()<<" "<<node->GetInFlow() <<" "<<node->GetOutFlow() << " " << node->GetNodeName() <<"\n";
         }
         
         this->FlowThrough(node->GetNode(),node->GetInFlow(),node->GetOutFlow());
         
+        if(!node->GetOutFlow()->Equals(tmpOut))
+            queueNodes.push(node);
+
+        if(!node->GetInFlow()->Equals(tmpIn))
+            queueNodes.push(node);
     }
-        
+
 }
 
 /**
@@ -222,7 +225,5 @@ void A::FlowAnalysis<T>::InitializeFlows(std::vector<A::NodeData<T>*>& lstNodes)
     }
 }
 
-template class A::FlowAnalysis<A::ArrayPackedSet<char*>>;
-template class A::FlowAnalysis<A::ArraySparseSet<char*>>;
-template class A::FlowAnalysis<A::ArrayPackedSet<A::Variable*>>;
-template class A::FlowAnalysis<A::ArraySparseSet<A::Variable*>>;
+template class A::FlowAnalysis<A::ArrayPackedSet<A::Variable>>;
+template class A::FlowAnalysis<A::ArraySparseSet<A::Variable>>;
