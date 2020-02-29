@@ -1,25 +1,43 @@
 #include "ValueUniverse.h"
+#define RESET   "\033[0m"
+#define BLACK   "\033[30m"      /* Black */
+#define RED     "\033[31m"      /* Red */
 
 template<>
-A::ValueUniverse<A::Variable*>::ValueUniverse(llvm::Function* f){
-    llvm::errs() << "Same\n";
-    ele = std::vector<A::Variable*>();
+A::ValueUniverse<A::Variable>::ValueUniverse(llvm::Function* f){
+    bool noCallSite = 1;
+    ele = std::vector<A::Variable>();
     for (auto I = f->arg_begin(); I != f->arg_end(); ++I){
-        A::Variable* var = new A::Variable(I);
+        // llvm::errs() << I->getName()<< '\n';
+        A::Variable var = A::Variable(I);
         ele.push_back(var);
     }
     for (llvm::inst_iterator I = llvm::inst_begin(*f); I != llvm::inst_end(*f); ++I){
-        llvm::Value* v = &*I;
+        llvm::CallSite cs(&*I);
+        if(cs.getInstruction() && !(*I).isLifetimeStartOrEnd()){
+            noCallSite = 0;
+            llvm::errs() << *I << '\n';
+            break;
+        }
+        if((*I).isLifetimeStartOrEnd()){
+            continue;
+        }
         if((*I).hasName()){
-            A::Variable* var = new A::Variable(v);
+            llvm::Value* v = &*I;
+            // llvm::errs() << (*I).getName()<<'\n';
+            A::Variable var = A::Variable(v);
             ele.push_back(var);
         }
+    }
+    if(!(noCallSite == 1)){
+        llvm::errs() << RED <<"Assertion : a function call is found.\n" << RESET <<'\n';
+        exit(1);        
     }
 }
 
 template<>
 A::ValueUniverse<char*>::ValueUniverse(llvm::Function* f){
-    llvm::errs() << "Not Same\n";
+
 }
 
 /**
@@ -77,5 +95,4 @@ inline auto A::ValueUniverse<T>::end() -> A::ValueUniverse<T>::Iterator{
     return A::ValueUniverse<T>::Iterator();
 }
 
-template class A::ValueUniverse<char*>;
-template class A::ValueUniverse<A::Variable*>;
+template class A::ValueUniverse<A::Variable>;
