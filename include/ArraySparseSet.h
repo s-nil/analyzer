@@ -10,7 +10,7 @@ namespace A{
     class ArraySparseSet : public AbstractFlowSet<T>{
     public:
         ArraySparseSet(){
-            elements = std::vector<T>(0);
+            elements = std::vector<T>();
         }
         ~ArraySparseSet(){}
 
@@ -100,12 +100,6 @@ namespace A{
         ArraySparseSet(const ArraySparseSet<T>* ref);
         bool SameType(A::FlowSet<T>* o);
     };    
-
-// template<typename T>
-// struct is_pointer{static const bool v = false;};
-
-// template<typename T>
-// struct is_pointer<T*>{static const bool v = true;};
 }
 
 #endif
