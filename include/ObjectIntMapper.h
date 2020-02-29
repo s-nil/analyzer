@@ -15,6 +15,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include "ValueUniverse.h"
 #include "llvm/IR/Value.h"
+#include <map>
 
 namespace A
 {
@@ -29,15 +30,16 @@ namespace A
     public:
         ObjectIntMapper(){
             intToObject = std::vector<T>();
-            objectToInt = llvm::DenseMap<T,int>();
+            objectToInt = std::map<T,int>();
             counter = 0;
         }
         
-        ObjectIntMapper(ValueUniverse<T>* values){
-            intToObject = std::vector<T>(values->Size());
-            objectToInt = llvm::DenseMap<T,int>();
+        ObjectIntMapper(ValueUniverse<T>& values){
+            intToObject = std::vector<T>();
+            objectToInt = std::map<T,int>();
             counter = 0;
-            for(auto I = values->begin(), IE = values->end(); I != IE; ++I){
+
+            for(auto I = values.begin(), IE = values.end(); I != IE; ++I){
                 Add(*I);
             }
             
@@ -55,8 +57,8 @@ namespace A
     private:
         std::vector<T> intToObject;
         int counter;
-        llvm::DenseMap<T,int> objectToInt; 
-
+        // llvm::DenseMap<T,int> objectToInt; 
+        std::map<T,int> objectToInt;
     };    
 }
 

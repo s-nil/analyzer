@@ -96,5 +96,4 @@ inline bool A::ObjectIntMapper<T>::operator!=(A::ObjectIntMapper<T> rhs)
     return !operator==(rhs);
 }
 
-template class A::ObjectIntMapper<char*>;
-template class A::ObjectIntMapper<A::Variable*>;
+template class A::ObjectIntMapper<A::Variable>;
