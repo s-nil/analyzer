@@ -8,7 +8,5 @@ void A::AbstractFlowAnalysis<T>::SetFunction(llvm::Function* f){
     graph = new A::FunctionCFG(f);
 }
 
-template class A::AbstractFlowAnalysis<A::ArrayPackedSet<char*>>;
-template class A::AbstractFlowAnalysis<A::ArraySparseSet<char*>>;
-template class A::AbstractFlowAnalysis<A::ArrayPackedSet<A::Variable*>>;
-template class A::AbstractFlowAnalysis<A::ArraySparseSet<A::Variable*>>;
+template class A::AbstractFlowAnalysis<A::ArrayPackedSet<A::Variable>>;
+template class A::AbstractFlowAnalysis<A::ArraySparseSet<A::Variable>>;

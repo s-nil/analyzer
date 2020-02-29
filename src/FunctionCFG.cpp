@@ -9,7 +9,7 @@
 A::FunctionCFG::FunctionCFG(llvm::Function* f){
     this->NumBB = f->size();
     this->func  = f;
-    Nodes = new std::vector<Node*>(0);
+    Nodes = new std::vector<Node*>();
 
     for (llvm::df_iterator<llvm::BasicBlock*> I = llvm::df_begin(&func->getEntryBlock()),
                                             IE=llvm::df_end(&func->getEntryBlock()); I != IE; ++I){

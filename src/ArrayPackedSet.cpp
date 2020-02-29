@@ -27,13 +27,20 @@ A::ArrayPackedSet<T>::ArrayPackedSet(ObjectIntMapper<T> mapper, llvm::BitVector 
     this->bits = bits;
 }
 
+/**
+ * @brief Construct a new A:: Array Packed Set< T>:: Array Packed Set object
+ * Use only once while extracting the domain values from the function.
+ * 
+ * 
+ * @tparam T 
+ * @param F 
+ */
 template<typename T>
 A::ArrayPackedSet<T>::ArrayPackedSet(llvm::Function* F){
     auto universe = A::ValueUniverse<T>(F);
-
-    auto mapper = A::ObjectIntMapper<T>(&universe);
+    auto mapper = A::ObjectIntMapper<T>(universe);
     map = mapper;
-    bits = llvm::BitVector(mapper.Size());
+    bits = llvm::BitVector(mapper.Size(),true);
 }
 
 
@@ -138,6 +145,7 @@ void A::ArrayPackedSet<T>::Clear(){
 
 /**
  * @brief 
+ * Destination is 'this'
  * 
  * @tparam T 
  * @param other 
@@ -177,6 +185,7 @@ void A::ArrayPackedSet<T>::Union(A::FlowSet<T>* otherFlow, A::FlowSet<T>* destFl
 
 /**
  * @brief 
+ * Destination is 'this'
  * 
  * @tparam T 
  * @param other 
@@ -216,6 +225,7 @@ void A::ArrayPackedSet<T>::Intersection(A::FlowSet<T>* otherFlow, A::FlowSet<T>*
 
 /**
  * @brief 
+ * Destination is 'this'
  * 
  * @tparam T 
  * @param other 
@@ -461,6 +471,4 @@ llvm::BitVector A::ArrayPackedSet<T>::CopyBitSet(A::ArrayPackedSet<T>* o){
     return o->bits;
 }
 
-// template class A::ArrayPackedSet<int>;
-template class A::ArrayPackedSet<char*>;
-template class A::ArrayPackedSet<A::Variable*>;
+template class A::ArrayPackedSet<A::Variable>;

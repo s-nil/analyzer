@@ -87,7 +87,5 @@ llvm::SmallVector<llvm::BasicBlock*,0> tmp;
     return tmp;
 }
 
-template class A::NodeData<A::ArrayPackedSet<char*>>;
-template class A::NodeData<A::ArraySparseSet<char*>>;
-template class A::NodeData<A::ArrayPackedSet<A::Variable*>>;
-template class A::NodeData<A::ArraySparseSet<A::Variable*>>;
+template class A::NodeData<A::ArrayPackedSet<A::Variable>>;
+template class A::NodeData<A::ArraySparseSet<A::Variable>>;

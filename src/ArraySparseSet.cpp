@@ -319,7 +319,7 @@ void A::ArraySparseSet<T>::Remove(int idx){
 template<typename T>
 bool A::ArraySparseSet<T>::Contains(T obj){
     for (int i = 0; i < elements.size(); ++i){
-        if(*elements[i] == *obj)  return true;
+        if(elements[i] == obj)  return true;
     }
     return false;    
 }
@@ -409,5 +409,4 @@ bool A::ArraySparseSet<T>::SameType(A::FlowSet<T>* o){
 //   tmp->Remove(obj);
 //   tmp->Copy(dest);
 // }
-template class A::ArraySparseSet<char*>;
-template class A::ArraySparseSet<A::Variable*>;
+template class A::ArraySparseSet<A::Variable>;
