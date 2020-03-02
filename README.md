@@ -46,56 +46,61 @@ make
 The library has been built now. But to use this library you need to write a pass for a perticular data flow analysis. 
 
 ### Usage
-Example is to check whether or not local variables are initialized or not.
+Example is showing how to do liveness analysis. Find in passes/liveness_analysis.
 
-- Create a class inheriting BackwardFlowAnalysis or ForwardFlowAnalysis
+- Create a class inheriting FunctionPass and BackwardFlowAnalysis or ForwardFlowAnalysis. As data member define a string for function name and pointer to FlowSet\<Variable\>;
 	example:
 ```cpp
-class InitAnalysis : public ForwardFlowAnalysis<N,A>
+class LA : public FunctionPass, public BackwardFlowAnalysis<A>
+
+	static char ID;
+	string funcName;
+	FlowSet<Variable> *domain;
 ```
 where,
-N is Node type and A is Abstratct Type.
-- Create a parameterized constructor with cfg of the method. Call constructor of parent class with the cfg. Specify what are the data flow values while creating an object of ArrayPackedSet or ArraySparseSet and after that call DoAnalysis().
+A is Abstratct Type.
+A can be same as  : ArrayPackedSet\<Variable\>
+
+- Create a constructor with a method name on which you want to do the analysis. Override runOnFunction() method. Create a ArrayPackedSet or ArraySparseSet with function and after that call DoAnalysis().
 	example:
 ```cpp
-InitAnalysis(CFG g){
-	ForwardFlowAnalysis(g);
-	FlowSet<local> *fs= new ArrayPackedSet<local>;
-	allLocals = fs;
-	DoAnalysis();
+LA(string f): funcName(f),FunctionPass(ID){};
+
+runOnFunction(Function &F){
+    ArrayPackedSet<Variable> fs(&F);
+    domain = &fs;
+    DoAnalysis();
 }
 ```
-- Override ```EntryInitialFlow()``` and ```NewInitialFlow()``` and return the appropriate object.
+- Override ```EntryInitialFlowSet()``` and ```NewInitialFlowSet()``` and return the appropriate object.
 	example:
 ```cpp
-FlowSet<local> EntryInitialFlow(){
-	return new ArrayPackedSet<local>();
+ArrayPackedSet<Variable>* EntryInitialFlowSet() override{
+    return dynamic_cast<ArrayPackedSet<Variable>*>(domain->EmptySet());
 }
 
-FlowSet<local> NewInitialFlow(){
-	FlowSet<local> *ret = new ArrayPackedSet<local>();
-	ret->Copy(allLocals);
-	return ret;
+ArrayPackedSet<Variable>* NewInitialFlowSet() override{
+    return dynamic_cast<ArrayPackedSet<Variable>*>(domain->EmptySet());
 }
 
 ```
 - Override ```Merge()```,```Copy()``` and ```FlowThrough()```.
 	example:
 ```cpp
-void Merge(FlowSet<local> in1, FlowSet<local> in2, FlowSet<local> out){
-	out.Intersection(in1,in2);
+void Merge(ArrayPackedSet<Variable>* in1, ArrayPackedSet<Variable>* in2, ArrayPackedSet<Variable>* out) override{
+    in1->Union(in2,out);
 }
 
-void Copy(FlowSet<local> src, FlowSet<local> dest){
-	dest.Copy(src);
+void Copy(ArrayPackedSet<Variable>* in1, ArrayPackedSet<Variable>* in2) override{
+    in1->Copy(in2);
 }
 
-void Flowthrough(FlowSet<local> in, BasicBlock bb, FlowSet<local> out){
-	for(Instruction i : bb){
-		// 'i.typeof' and 'i.pointer' are not syntactically acurate for now
-		if(i.typeof == store & i.pointer is in allLocals){
-			out.add(i.pointer);
-		}
-	}
+void FlowThrough(BasicBlock* node, ArrayPackedSet<Variable>* in, ArrayPackedSet<Variable>* out){	
+    // define kill
+    // define gen
+
+    ArrayPackedSet<Variable>* tmp = dynamic_cast<ArrayPackedSet<Variable>*>(domain->EmptySet());
+    in->Difference(kill,tmp);
+    tmp->Union(gen,out);
 }
 ```
