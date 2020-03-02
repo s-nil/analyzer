@@ -1,6 +1,7 @@
 #ifndef _A_ARRAY_SPARSE_SET_H_
 #define _A_ARRAY_SPARSE_SET_H_
 #include "AbstractFlowSet.h"
+#include "ValueUniverse.h"
 #include "Variable.h"
 #include <vector>
 #include <list>
@@ -12,6 +13,7 @@ namespace A{
         ArraySparseSet(){
             elements = std::vector<T>();
         }
+        ArraySparseSet(llvm::Function* F);
         ~ArraySparseSet(){}
 
         FlowSet<T>* Clone();

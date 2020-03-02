@@ -1,4 +1,4 @@
-#include "ArraySparseSet.h"
+    #include "ArraySparseSet.h"
 // #include <type_traits>
 
 /**
@@ -9,6 +9,12 @@
 template<typename T>
 A::ArraySparseSet<T>::ArraySparseSet(const A::ArraySparseSet<T>* ref){
     this->elements = ref->elements;
+}
+
+template<typename T>
+A::ArraySparseSet<T>::ArraySparseSet(llvm::Function* F){
+    auto universe = A::ValueUniverse<T>(F);
+    this->elements = universe.ToArray();
 }
 
 /**
