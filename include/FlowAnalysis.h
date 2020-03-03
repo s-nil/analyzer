@@ -3,7 +3,7 @@
  * @author your name (you@domain.com)
  * @brief 
  * @version 0.1
- * @date 2020-02-20
+ * @date
  * 
  * @copyright Copyright (c) 2020
  * 
@@ -11,17 +11,16 @@
 #ifndef _A_FLOW_ANALYSIS_H_
 #define _A_FLOW_ANALYSIS_H_
 
+#include "llvm/ADT/SmallVector.h"
 #include "AbstractFlowAnalysis.h"
 #include "NodeData.h"
-#include <list>
 #include <stack>
-#include "llvm/ADT/SmallVector.h"
+#include <list>
 #include <queue>
 
 namespace A{
     /**
      * @brief 
-     * 
      * @tparam T 
      */
     template<typename T>
@@ -32,10 +31,13 @@ namespace A{
 
         T* GetFlowBefore(llvm::BasicBlock*);
         T* GetFlowAfter(llvm::BasicBlock*);
-        void SetFlowBefore(llvm::BasicBlock* node, T*);
-        void SetFlowAfter(llvm::BasicBlock* node, T*);
+        llvm::DenseMap<llvm::BasicBlock*,T*> GetIn();
+        llvm::DenseMap<llvm::BasicBlock*,T*> GetOut();
+        
         void Compute();
     private:
+        void SetFlowBefore(llvm::BasicBlock* node, T*);
+        void SetFlowAfter(llvm::BasicBlock* node, T*);
         std::vector<A::NodeData<T>*> NodesDataList();
         void AddOutData(llvm::DenseMap<llvm::BasicBlock*,A::NodeData<T>*>&, 
                                                         std::vector<llvm::BasicBlock*>&, A::NodeData<T>*);
@@ -43,8 +45,8 @@ namespace A{
                                                         llvm::BasicBlock*, A::NodeData<T>*);
         void InitializeFlows(std::vector<A::NodeData<T>*>&);
 
-        llvm::DenseMap<llvm::BasicBlock*,T*> finalInSet;
-        llvm::DenseMap<llvm::BasicBlock*,T*> finalOutSet;
+        llvm::DenseMap<llvm::BasicBlock*,T*> inSet;
+        llvm::DenseMap<llvm::BasicBlock*,T*> outSet;
     };
 }
 
