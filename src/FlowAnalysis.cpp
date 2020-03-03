@@ -3,53 +3,23 @@
 #include "ArrayPackedSet.h"
 #include "ArraySparseSet.h"
 
-/**
- * @brief 
- * 
- * @tparam T 
- * @param node 
- * @return T* 
- */
 template<typename T>
-inline T* A::FlowAnalysis<T>::GetFlowBefore(llvm::BasicBlock* node){
-    return finalInSet[node];
-}
+inline T* A::FlowAnalysis<T>::GetFlowBefore(llvm::BasicBlock* node){    return inSet[node];}
 
-/**
- * @brief 
- * 
- * @tparam T 
- * @param node 
- * @return T* 
- */
 template<typename T>
-inline T* A::FlowAnalysis<T>::GetFlowAfter(llvm::BasicBlock* node){
-    return finalOutSet[node];
-}
+inline T* A::FlowAnalysis<T>::GetFlowAfter(llvm::BasicBlock* node){ return outSet[node];}
 
-/**
- * @brief 
- * 
- * @tparam T 
- * @param node 
- * @param d 
- */
 template<typename T>
-inline void A::FlowAnalysis<T>::SetFlowBefore(llvm::BasicBlock* node, T* d){
-    finalInSet[node] = d;
-}
+inline llvm::DenseMap<llvm::BasicBlock*,T*> A::FlowAnalysis<T>::GetIn(){    return inSet;}
 
-/**
- * @brief 
- * 
- * @tparam T 
- * @param node 
- * @param d 
- */
 template<typename T>
-inline void A::FlowAnalysis<T>::SetFlowAfter(llvm::BasicBlock* node, T* d){
-    finalOutSet[node] = d;
-}
+inline llvm::DenseMap<llvm::BasicBlock*,T*> A::FlowAnalysis<T>::GetOut(){   return outSet;}
+
+template<typename T>
+inline void A::FlowAnalysis<T>::SetFlowBefore(llvm::BasicBlock* node, T* d){    inSet[node] = d;}
+
+template<typename T>
+inline void A::FlowAnalysis<T>::SetFlowAfter(llvm::BasicBlock* node, T* d){ outSet[node] = d;}
 
 /**
  * @brief 
@@ -69,7 +39,6 @@ void A::FlowAnalysis<T>::Compute(){
     }
     
     // fixed point analysis
-    // Not complete yet
     while (!queueNodes.empty()){
         A::NodeData<T>* node = queueNodes.front();
         queueNodes.pop();
@@ -80,6 +49,7 @@ void A::FlowAnalysis<T>::Compute(){
         if(node->GetINcomingN().size() < 0)
             continue;
 
+        /// Merge
         if(node->GetINcomingN().size() > 1){
             bool copy = false;
             for (unsigned i = 0; i < node->GetINcomingN().size(); ++i){
@@ -88,6 +58,7 @@ void A::FlowAnalysis<T>::Compute(){
                     this->Copy(outFlow,node->GetInFlow()), copy = true;
                 else{
                     auto tmp = this->NewInitialFlowSet();
+                    /// using overriden Merge and Copy
                     this->Merge(outFlow,node->GetInFlow(),tmp);
                     this->Copy(tmp,node->GetInFlow());
                 }
@@ -103,6 +74,23 @@ void A::FlowAnalysis<T>::Compute(){
             queueNodes.push(node);
     }
 
+        llvm::errs() <<"==================final result==============="<<'\n';
+
+    for(A::NodeData<T>* u : lstNodes){
+        llvm::errs() <<":"<< u->GetNodeName() << '\n';
+
+        llvm::errs()<<"::In  " << '\n';
+        for(auto x : *u->GetInFlow()){
+            llvm::errs() << x << " ";
+        }
+        llvm::errs()<<'\n';
+
+        llvm::errs()<<"::Out   " << '\n';
+        for(auto x : *u->GetOutFlow()){
+            llvm::errs() << x << " ";
+        }
+        llvm::errs()<<'\n';
+    }
 }
 
 /**
@@ -204,6 +192,12 @@ A::NodeData<T>* A::FlowAnalysis<T>::CreateAndReturnNodeData(llvm::DenseMap<llvm:
     }
 }
 
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ * @param lstNodes 
+ */
 template<typename T>
 void A::FlowAnalysis<T>::InitializeFlows(std::vector<A::NodeData<T>*>& lstNodes){
     for (auto I = lstNodes.begin(), IE = lstNodes.end(); I != IE; ++I){
