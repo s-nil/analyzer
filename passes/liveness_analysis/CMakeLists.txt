@@ -1,11 +1,11 @@
 include_directories("${PROJECT_SOURCE_DIR}/include"
                     "${LLVM_INCLUDE_DIRS}")
 
-execute_process(COMMAND llvm-config  --cxxflags
+execute_process(COMMAND llvm-config-9  --cxxflags
                 OUTPUT_VARIABLE CXX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-execute_process(COMMAND llvm-config  --ldflags
+execute_process(COMMAND llvm-config-9  --ldflags
                 OUTPUT_VARIABLE LD_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-execute_process(COMMAND llvm-config  --libs
+execute_process(COMMAND llvm-config-9  --libs
                 OUTPUT_VARIABLE LD_FLAGS1 OUTPUT_STRIP_TRAILING_WHITESPACE)
 string(APPEND LD_FLAGS " ${LD_FLAGS1}")
 

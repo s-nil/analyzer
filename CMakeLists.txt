@@ -20,7 +20,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # http://llvm.org/docs/CMake.html#id15 // embedding LLVM
-find_package(LLVM REQUIRED CONFIG)
+find_package(LLVM 9.0.0 REQUIRED CONFIG)
 
 message(STATUS "Found LLVM : ${LLVM_PACKAGE_VERSION}")
 message(STATUS "LLVMConfig.cmake found at : ${LLVM_DIR}")
