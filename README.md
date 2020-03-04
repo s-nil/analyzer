@@ -13,7 +13,7 @@ The following components are required to be installed on your system already:
 - clang (>=9.0.0)
 - doxygen (>=1.8.16) ( to generate documents )
 
-Install cmake, GNU Make and doxygen using APT package handling utility.
+You can install llvm-9, clang-9, cmake, GNU Make and doxygen using APT package handling utility.
 ### Getting the source code the building analyser
 
 checkout analyser:  
@@ -21,20 +21,12 @@ checkout analyser:
 git clone https://github.com/s-nil/analyzer.git
 cd analyzer
 ```
-As analyzer requires llvm and clang, use ```install.sh``` to build llvm and clang:  
+
+To build LLVM and Clang from source, use ```install.sh``` :  
 ```shell
 bash install.sh
 ```
 This installer downloads llvm and clang source codes in the home directory of the user and builds them at the same place. After the completion of the building process add ```$HOME/llvm-9.0.0/build/bin``` in your PATH environment variable.  
-
-Alternatively, pre-built binaries are also available for llvm and clang:
-```shell
-wget http://releases.llvm.org/9.0.0/clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz
-tar xvf clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz 
-cd clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04/
-mv clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04/ llvm-9.0.0/
-```
-Don't forget to add ```$HOME/llvm-9.0.0/build/bin``` in your PATH environment variable.  
 
 Now, build analyzer:
 ```shell
@@ -103,4 +95,11 @@ void FlowThrough(BasicBlock* node, ArrayPackedSet<Variable>* in, ArrayPackedSet<
     in->Difference(kill,tmp);
     tmp->Union(gen,out);
 }
+```
+
+### Documentation
+
+In docs directory, run following command to create documentation. Open html/index.html in a browser.
+```shell
+doxygen Doxyfile
 ```
