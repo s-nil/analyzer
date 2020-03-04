@@ -5,7 +5,6 @@
 
 template<typename T>
 void A::ForwardFlowAnalysis<T>::DoAnalysis(){
-    llvm::errs() << "in ffa\n";
     this->Compute();
 }
 

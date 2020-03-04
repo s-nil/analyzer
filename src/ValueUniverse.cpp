@@ -8,7 +8,6 @@ A::ValueUniverse<A::Variable>::ValueUniverse(llvm::Function* f){
     bool noCallSite = 1;
     ele = std::vector<A::Variable>();
     for (auto I = f->arg_begin(); I != f->arg_end(); ++I){
-        // llvm::errs() << I->getName()<< '\n';
         A::Variable var = A::Variable(I);
         ele.push_back(var);
     }
@@ -24,7 +23,6 @@ A::ValueUniverse<A::Variable>::ValueUniverse(llvm::Function* f){
         }
         if((*I).hasName()){
             llvm::Value* v = &*I;
-            // llvm::errs() << (*I).getName()<<'\n';
             A::Variable var = A::Variable(v);
             ele.push_back(var);
         }
@@ -35,10 +33,11 @@ A::ValueUniverse<A::Variable>::ValueUniverse(llvm::Function* f){
     }
 }
 
-template<>
-A::ValueUniverse<char*>::ValueUniverse(llvm::Function* f){
+// implement for other latice element
+// template<>
+// A::ValueUniverse<char*>::ValueUniverse(llvm::Function* f){
 
-}
+// }
 
 /**
  * @brief Construct a new A:: Value Universe< T>:: Array Value Universe object
