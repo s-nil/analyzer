@@ -45,6 +45,7 @@ namespace A{
                                                         llvm::BasicBlock*, A::NodeData<T>*);
         void InitializeFlows(std::vector<A::NodeData<T>*>&);
 
+        void PrintResult(std::vector<A::NodeData<T>*>&);
         llvm::DenseMap<llvm::BasicBlock*,T*> inSet;
         llvm::DenseMap<llvm::BasicBlock*,T*> outSet;
     };

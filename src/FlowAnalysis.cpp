@@ -74,21 +74,25 @@ void A::FlowAnalysis<T>::Compute(){
             queueNodes.push(node);
     }
 
-        llvm::errs() <<"==================final result==============="<<'\n';
+    PrintResult(lstNodes);
+}
 
+template<typename T>
+void A::FlowAnalysis<T>::PrintResult(std::vector<A::NodeData<T>*>& lstNodes){
     for(A::NodeData<T>* u : lstNodes){
-        llvm::errs() <<":"<< u->GetNodeName() << '\n';
+        llvm::errs() <<"Basic Block : "<< u->GetNodeName() << '\n';
 
-        llvm::errs()<<"::In  " << '\n';
+        llvm::errs()<<" In   :: ";
         for(auto x : *u->GetInFlow()){
-            llvm::errs() << x << " ";
+            llvm::errs() << x << ", ";
         }
         llvm::errs()<<'\n';
 
-        llvm::errs()<<"::Out   " << '\n';
+        llvm::errs()<<" Out  :: ";
         for(auto x : *u->GetOutFlow()){
-            llvm::errs() << x << " ";
+            llvm::errs() << x << ", ";
         }
+        llvm::errs()<<'\n';
         llvm::errs()<<'\n';
     }
 }
