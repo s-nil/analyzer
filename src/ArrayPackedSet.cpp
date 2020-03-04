@@ -88,8 +88,10 @@ void A::ArrayPackedSet<T>::Complement(A::FlowSet<T>* destFlow){
  */
 template<typename T>
 A::FlowSet<T>* A::ArrayPackedSet<T>::TopSet(){
-    auto tmp = bits;
-    bits |= tmp.flip();
+    auto tmp = new ArrayPackedSet(this->map,this->bits);
+    auto b = tmp->bits;
+    tmp->bits |= b.flip();
+    return tmp;
 }
 
 /**
