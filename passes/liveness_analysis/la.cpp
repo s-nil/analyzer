@@ -3,76 +3,43 @@
  * @author Sunil Singh (sunilp896@gmail.com)
  * @brief 
  * @version 0.1
- * @date 2020-01-21
+ * @date 
  * 
  * @copyright Copyright (c) 2020
  * 
  */
-#include "llvm/Pass.h"
 #include "llvm/Support/SourceMgr.h"
 #include "llvm/IRReader/IRReader.h"
-#include "llvm/IR/Function.h"
-#include "llvm/IR/BasicBlock.h"
-#include "llvm/Support/raw_ostream.h"
 #include "llvm/Analysis/LoopPass.h"
 #include "llvm/IR/LegacyPassManager.h"
-#include "llvm/ADT/Statistic.h"
-#include "llvm/ADT/BitVector.h"
-#include "AbstractFlowSet.h"
-#include "AbstractBoundedFlowSet.h"
-#include "ObjectIntMapper.h"
-#include "ArraySparseSet.h"
+#include "llvm/Demangle/Demangle.h"
 #include "ArrayPackedSet.h"
-#include "ForwardFlowAnalysis.h"
 #include "BackwardFlowAnalysis.h"
-#include <vector>
+
+#define RESET   "\033[0m"
+#define RED     "\033[31m"      /* Red */
+#define YELLOW  "\033[33m"      /* Yellow */
 
 using namespace llvm;
 using namespace std;
 using namespace A;
 
 namespace {
-    struct LA: public FunctionPass, public A::ForwardFlowAnalysis<A::ArrayPackedSet<char*>> {
+    struct LA: public FunctionPass, public BackwardFlowAnalysis<ArrayPackedSet<Variable>> {
         static char ID;
-        LA(): FunctionPass(ID){};
+        string funcName;
+        A::FlowSet<A::Variable> *domain;
+ 
+        LA(string f): funcName(f), FunctionPass(ID){};
         
         virtual bool runOnFunction(Function &F)
         {
-            errs() << "function name: " << F.getName().str() << '\n';
+            if(demangle(F.getName().str()).substr(0,funcName.size()).compare(funcName) != 0)
+                return false;
+            errs() << "function name: " << demangle(F.getName().str()) << '\n';
 
-            A::ObjectIntMapper<int> oim;
-            errs() << oim.Size()<<'\n';
-            oim.Add(21);
-            oim.Add(213);
-            oim.Add(521);
-            errs() << oim.Size()<<'\n';
-
-            // A::ArrayPackedSet<int> aps(oim);
-            // errs() << aps.Size() << '\n';
-            // errs() << aps.IsEmpty() << '\n';
-
-            // A::ArrayPackedSet<int> aps1(oim);
-            // errs() << aps1.Size() << '\n';
-            // errs() << aps1.IsEmpty() << '\n';
-
-            // aps.Copy(&aps1);
-            // errs() << aps1.Size() << '\n';
-            // errs() << aps1.IsEmpty() << '\n';
-
-            // auto ls = aps.ToList();
-            // llvm::errs() << ls.size()<<'\n';
-            // for (auto i = ls.begin(); i != ls.end(); ++i)
-            // {
-            //     llvm::errs() << *i <<'\n';
-            // }
-
-            // llvm::BitVector bits(10);
-            // bits.set(0);
-            // bits.set(5);
-            
-            // errs() << bits.empty() <<'\n';
-            // errs() << bits.count() <<'\n';
-                
+            ArrayPackedSet<Variable> fs(&F);
+            domain = &fs;
 
             SetFunction(&F);
             DoAnalysis();
@@ -80,22 +47,70 @@ namespace {
             return false;
         }
 
-        A::ArrayPackedSet<char*> NewInitialFlowSet() override{
+        ArrayPackedSet<Variable>* NewInitialFlowSet() override{
+            return dynamic_cast<ArrayPackedSet<Variable>*>(domain->EmptySet());
 
         }
 
-        A::ArrayPackedSet<char*> EntryInitialFlowSet() override{
-
+        ArrayPackedSet<Variable>* EntryInitialFlowSet() override{
+            return dynamic_cast<ArrayPackedSet<Variable>*>(domain->EmptySet());
         }
 
-        void Merge(A::ArrayPackedSet<char*> in1, A::ArrayPackedSet<char*> in2, A::ArrayPackedSet<char*> out) override{
-
+        void Merge(ArrayPackedSet<Variable>* in1, ArrayPackedSet<Variable>* in2, ArrayPackedSet<Variable>* out) override{
+            in1->Union(in2,out);
         }
 
-        void Copy(A::ArrayPackedSet<char*> in1, A::ArrayPackedSet<char*> in2) override{
-
+        void Copy(ArrayPackedSet<Variable>* in1, ArrayPackedSet<Variable>* in2) override{
+            in1->Copy(in2);
         }
+        
+        void FlowThrough(BasicBlock* node, ArrayPackedSet<Variable>* in, ArrayPackedSet<Variable>* out) override{
+            ArrayPackedSet<Variable>* def = dynamic_cast<ArrayPackedSet<Variable>*>(domain->EmptySet());
+            ArrayPackedSet<Variable>* use = dynamic_cast<ArrayPackedSet<Variable>*>(domain->EmptySet());
+            
+            if(&func->getEntryBlock() == node && func->arg_size()>0){
+                for(auto arg_it=func->arg_begin(); arg_it != func->arg_end(); ++arg_it){
+                    def->Add(arg_it);
+                }
+            }
 
+            for(auto I=node->begin(),IE=node->end(); I!=IE; ++I){
+                if((*I).isLifetimeStartOrEnd()){
+                    continue;
+                }
+                
+                for (auto J = 0; J < (*I).getNumOperands(); ++J){
+                    if((*I).getOperand(J)->hasName()){
+                        Variable var = Variable((*I).getOperand(J));
+                        if(domain->Contains(var) && !def->Contains(var))  use->Add(var);
+                    }
+                }
+                if((*I).hasName()){
+                    def->Add(Variable(&*I));
+                }                
+            }
+
+            // Handling PHI node 
+            {
+                auto gNode = graph->GetNode(node);
+                for(auto bb : graph->GetIn(gNode,Direction::BACKWARD)){
+                    if(bb->getInstList().front().getOpcode() == Instruction::PHI){
+                        for (int opr=0; opr<bb->getInstList().front().getNumOperands(); ++opr){
+                            if(bb->getInstList().front().getOperand(opr)->hasName()){
+                                auto phi = dyn_cast<PHINode>(&bb->getInstList().front());
+                                if(node->getName().compare(phi->getIncomingBlock(opr)->getName())){
+                                    in->Remove(Variable(bb->getInstList().front().getOperand(opr)));
+                                }
+                            }
+                        }                        
+                    }
+                }
+            }   //
+
+            ArrayPackedSet<Variable>* tmp = dynamic_cast<ArrayPackedSet<Variable>*>(domain->EmptySet());
+            in->Difference(def,tmp);
+            tmp->Union(use,out);
+        }
     };
     
 }
@@ -103,6 +118,12 @@ namespace {
 char LA::ID = 0;
 
 int main(int argc, char **argv){
+    if(argc < 3){
+        llvm::errs() << RED <<"Usage: " <<RESET
+                        << YELLOW <<argv[0] << " <IR file> <function name>" << RESET<<'\n';
+        exit(1);
+    }
+
     SMDiagnostic Err;
     LLVMContext Context;
     std::unique_ptr<Module> Mod(parseIRFile(argv[1],Err,Context));
@@ -113,7 +134,7 @@ int main(int argc, char **argv){
     }
 
     legacy::PassManager PM;
-    PM.add(new LA());
+    PM.add(new LA(argv[2]));
     PM.run(*Mod);
 
     return 0;
