@@ -74,7 +74,8 @@ void A::ArrayPackedSet<T>::Complement(A::FlowSet<T>* destFlow){
         assert(this->map == dest->map);
         // CopyBitSet(dest);
         dest->bits.clear();
-        dest->bits = bits.flip();
+        dest->bits = bits;
+        dest->bits.flip();
     }else{
         A::AbstractBoundedFlowSet<T>::Complement(destFlow);
     }    
