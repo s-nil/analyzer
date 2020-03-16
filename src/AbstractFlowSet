@@ -11,7 +11,7 @@
 #ifndef _A_ABSTRACT_FLOW_SET_H_
 #define _A_ABSTRACT_FLOW_SET_H_
 
-#include "FlowSet.h"
+#include "FlowSet"
 #include "llvm/Support/raw_ostream.h"
 
 namespace A{
@@ -62,8 +62,109 @@ public:
     bool Equals(FlowSet<T>* other);
     /// returns true if other is a subset of current object, type of this and other are different
     bool IsSubSet(FlowSet<T>* other);
+    /// returns a list of DF values that current object contains
+    std::list<T> ToList();
 };
 
+template<class T>
+FlowSet<T>* AbstractFlowSet<T>::Clone(){
+
+}
+
+template<class T>
+FlowSet<T>* AbstractFlowSet<T>::EmptySet(){
+    
+}
+
+template<class T>
+void AbstractFlowSet<T>::Copy(FlowSet<T>* dest){
+    
+}
+
+template<class T>
+void AbstractFlowSet<T>::Clear(){
+    
+}
+
+template<class T>
+void AbstractFlowSet<T>::Union(FlowSet<T>* other){
+    
+}
+
+template<class T>
+void AbstractFlowSet<T>::Union(FlowSet<T>* other, FlowSet<T>* dest){
+    
+}
+
+template<class T>
+void AbstractFlowSet<T>::Intersection(FlowSet<T>* other){
+    
+}
+
+template<class T>
+void AbstractFlowSet<T>::Intersection(FlowSet<T>* other, FlowSet<T>* dest){
+    
+}
+
+template<class T>
+void AbstractFlowSet<T>::Difference(FlowSet<T>* other){
+    
+}
+
+template<class T>
+void AbstractFlowSet<T>::Difference(FlowSet<T>* other, FlowSet<T>* dest){
+    
+}
+
+template<class T>
+bool AbstractFlowSet<T>::IsEmpty(){
+    
+}
+
+template<class T>
+int AbstractFlowSet<T>::Size(){
+    
+}
+
+template<class T>
+void AbstractFlowSet<T>::Add(T obj){
+    
+}
+
+template<class T>
+void AbstractFlowSet<T>::Add(T obj, FlowSet<T>* dest){
+    
+}
+
+template<class T>
+void AbstractFlowSet<T>::Remove(T obj){
+    
+}
+
+template<class T>
+void AbstractFlowSet<T>::Remove(T obj, FlowSet<T>* dest){
+    
+}
+
+template<class T>
+bool AbstractFlowSet<T>::Contains(T obj){
+    
+}
+
+template<class T>
+bool AbstractFlowSet<T>::Equals(FlowSet<T>* other){
+    
+}
+
+template<class T>
+bool AbstractFlowSet<T>::IsSubSet(FlowSet<T>* other){
+    
+}
+
+template<class T>
+std::list<T> AbstractFlowSet<T>::ToList(){
+    
+}
 }   // end namespace
 
 #endif  // end _A_ABSTRACT_FLOW_SET_H_

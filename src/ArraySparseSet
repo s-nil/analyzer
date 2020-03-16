@@ -1,0 +1,370 @@
+#ifndef _A_ARRAY_SPARSE_SET_H_
+#define _A_ARRAY_SPARSE_SET_H_
+#include "AbstractFlowSet"
+#include "ValueUniverse"
+#include <vector>
+#include <list>
+
+namespace A{
+    template<typename T>
+    class ArraySparseSet : public AbstractFlowSet<T>{
+    public:
+        ArraySparseSet(){
+            elements = std::vector<T>();
+        }
+        ArraySparseSet(llvm::Function* F);
+        ~ArraySparseSet(){}
+
+        FlowSet<T>* Clone();
+        FlowSet<T>* EmptySet();
+        void Copy(FlowSet<T>* dest);
+        void Clear();
+        void Union(FlowSet<T>* other);
+        void Union(FlowSet<T>* other, FlowSet<T>* dest);
+        void Intersection(FlowSet<T>* other);
+        void Intersection(FlowSet<T>* other, FlowSet<T>* dest);
+        void Difference(FlowSet<T>* other);
+        void Difference(FlowSet<T>* other, FlowSet<T>* dest);
+        bool IsEmpty();
+        int Size();
+        void Add(T obj);
+        // void Add(T obj, FlowSet<T>* dest);      // TODO
+        void Remove(T obj);
+        void Remove(int idx);
+        // void Remove(T obj, FlowSet<T>* dest);    // TODO
+        bool Contains(T obj);
+        bool Equals(FlowSet<T>* other);
+        bool IsSubSet(FlowSet<T>* other);        //  TODO
+        std::list<T> ToList();
+
+        class Iterator{
+        public:
+            typedef Iterator self_type;
+            typedef T value_type;
+            typedef T& reference;
+            typedef T* pointer;
+            typedef std::input_iterator_tag iterator_category;
+            Iterator(){_ptr = nullptr;}
+            Iterator(ArraySparseSet<T>* b){
+                if(!b->elements.empty()){
+                    setObject = b;
+                    _ptr = &b->elements[0];
+                    idx =  0;
+                }else{
+                    _ptr = nullptr;
+		}
+	    }
+            Iterator(const Iterator& cit){
+                _ptr = cit._ptr;
+                idx = cit.idx;
+                setObject = cit.setObject;
+            }
+            Iterator& operator++(){
+                if(idx == setObject->elements.size()-1){
+                    _ptr = nullptr;
+                }else{
+                    ++_ptr;
+                    ++idx;
+                }
+                return *this;
+            }
+            Iterator operator++(int){
+                self_type tmp(*this);
+                operator++();
+                return tmp;
+            }
+            bool operator==(const Iterator& rhs) const{
+                return _ptr == rhs._ptr;
+            }
+            bool operator!=(const Iterator& rhs) const{
+                return _ptr != rhs._ptr;
+            }
+            value_type operator*(){
+                return *_ptr;
+            }
+        private:
+            pointer _ptr;
+            ArraySparseSet<T>* setObject;
+            int idx;
+        };
+
+        Iterator begin(){
+            return Iterator(this);
+        }
+        Iterator end(){
+            return Iterator();
+        }
+
+
+    private:
+        std::vector<T> elements;
+        ArraySparseSet(const ArraySparseSet<T>* ref);
+        bool SameType(A::FlowSet<T>* o);
+    };    
+
+template<typename T>
+ArraySparseSet<T>::ArraySparseSet(const ArraySparseSet<T>* ref){
+    this->elements = ref->elements;
+}
+
+template<typename T>
+ArraySparseSet<T>::ArraySparseSet(llvm::Function* F){
+    auto universe = ValueUniverse<T>(F);
+    this->elements = universe.ToArray();
+}
+
+template<typename T>
+FlowSet<T>* ArraySparseSet<T>::Clone(){
+    return new ArraySparseSet<T>(this);
+}
+
+template<typename T>
+FlowSet<T>* ArraySparseSet<T>::EmptySet(){
+    return new ArraySparseSet<T>();
+}
+
+template<typename T>
+void ArraySparseSet<T>::Copy(FlowSet<T>* dest){
+    if(dest == this){
+        return;
+    }else{
+        if(SameType(dest)){
+            ArraySparseSet<T> *tmp = dynamic_cast<ArraySparseSet<T>*>(dest);
+            tmp->elements = this->elements;
+        }else
+        {
+            AbstractFlowSet<T>::Copy(dest);
+        }
+    }
+}
+
+template<typename T>
+void ArraySparseSet<T>::Clear(){
+    // if(is_pointer<T>::v){
+    //     for (int i = 0; i < elements.size(); ++i){
+    //         delete elements[i];
+    //     }
+    // }
+    this->elements.clear();
+}
+
+template<typename T>
+void ArraySparseSet<T>::Union(FlowSet<T>* other){
+    if(this == other){
+        return;
+    }else{
+        if(SameType(other))
+            Union(other,this);
+        else
+            AbstractFlowSet<T>::Union(other);
+    }
+}
+
+template<typename T>
+void ArraySparseSet<T>::Union(FlowSet<T>* otherFlow, FlowSet<T>* destFlow){
+    if(SameType(otherFlow) && SameType(destFlow)){
+        ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
+        ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
+
+        if(this == other || Equals(other)){
+            Copy(dest);
+            return;
+        }
+
+        if(other != dest){
+            dest->elements = elements;
+            for (int i = 0; i < other->elements.size(); ++i){
+                dest->Add(other->elements[i]);
+            }
+        }else{
+            for (int i = 0; i < elements.size(); ++i){
+                dest->Add(elements[i]);
+            }
+        }
+    }else{
+        this->AbstractFlowSet<T>::Union(otherFlow,destFlow);
+    }
+}
+
+template<typename T>
+void ArraySparseSet<T>::Intersection(FlowSet<T>* other){
+    if(this == other){
+        return;
+    }else{
+        if(SameType(other))
+            Intersection(other,this);
+        else
+            AbstractFlowSet<T>::Intersection(other);
+    }
+}
+
+template<typename T>
+void ArraySparseSet<T>::Intersection(FlowSet<T>* otherFlow, FlowSet<T>* destFlow){
+    if(SameType(otherFlow) && SameType(destFlow)){
+        ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
+        ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
+
+        if(this == other || Equals(other)){
+            dest->Clear();
+            return;
+        }
+
+        if(other != dest){
+            dest->elements = elements;
+            for (int i = 0; i < dest->elements.size(); ){
+                if(!other->Contains(dest->elements[i])){
+                    dest->Remove(i);
+                }else{
+                    ++i;
+                }
+            }
+        }else{
+            for (int i = 0; i < dest->elements.size(); ){
+                if(!Contains(dest->elements[i])){
+                    dest->Remove(i);
+                }else{
+                    ++i;
+                }
+            }
+        }
+    }else{
+        AbstractFlowSet<T>::Intersection(otherFlow,destFlow);
+    }
+}
+
+template<typename T>
+void ArraySparseSet<T>::Difference(FlowSet<T>* other){
+    if(this == other){
+        return;
+    }else{
+        if(SameType(other))
+            Difference(other,this);
+        else
+            AbstractFlowSet<T>::Difference(other);
+    }
+}
+
+template<typename T>
+void ArraySparseSet<T>::Difference(FlowSet<T>* otherFlow, FlowSet<T>* destFlow){
+    if(SameType(otherFlow) && SameType(destFlow)){
+        ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
+        ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
+
+        if(this == other || Equals(other)){
+            dest->Clear();
+            return;
+        }
+
+        if(other != dest){
+            dest->elements = elements;
+            for (int i = 0; i < dest->elements.size();){
+                if(other->Contains(dest->elements[i])){
+                    dest->Remove(i);
+                }else{
+                    ++i;
+                }
+            }
+        }else{
+            ArraySparseSet<T> tmp;
+            Copy(&tmp);
+            // tmp.elements = dest->elements;
+            for (int i = 0; i < dest->elements.size();){
+                if(tmp.Contains(dest->elements[i])){
+                    tmp.Remove(i);
+                }else{
+                    ++i;
+                }
+            }
+            tmp.Copy(dest);
+        }
+    }else{
+        AbstractFlowSet<T>::Difference(otherFlow,destFlow);
+    }
+}
+
+template<typename T>
+bool ArraySparseSet<T>::IsEmpty(){
+    return elements.empty();
+}
+
+template<typename T>
+int ArraySparseSet<T>::Size(){
+    return elements.size();
+}
+
+template<typename T>
+void ArraySparseSet<T>::Add(T obj){
+    if(!Contains(obj)){
+        elements.push_back(obj);
+    }
+}
+
+template<typename T>
+void ArraySparseSet<T>::Remove(T obj){
+    for (int i = 0; i < elements.size(); ++i){
+        if(elements[i] == obj){
+            Remove(i);
+            break;
+        }
+    }
+}
+
+template<typename T>
+void ArraySparseSet<T>::Remove(int idx){
+    if(idx < elements.size()-1)
+        elements[idx] = elements[elements.size()-1];
+    elements.pop_back();
+}
+
+template<typename T>
+bool A::ArraySparseSet<T>::Contains(T obj){
+    for (int i = 0; i < elements.size(); ++i){
+        if(elements[i] == obj)  return true;
+    }
+    return false;
+}
+
+template<typename T>
+bool ArraySparseSet<T>::Equals(FlowSet<T>* otherFlow){
+    if(SameType(otherFlow)){
+        ArraySparseSet<T> *flow = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
+        return elements == flow->elements;
+    }else{
+        return AbstractFlowSet<T>::Equals(otherFlow);
+    }
+}
+
+template<typename T>
+bool ArraySparseSet<T>::IsSubSet(FlowSet<T>* otherFlow){
+    if(SameType(otherFlow)){
+        ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
+        for(auto i : other->elements){
+            if(!this->Contains(i)){
+                return false;
+            }
+        }
+        return true;
+    }else{
+        return AbstractFlowSet<T>::IsSubSet(otherFlow);
+    }
+
+}
+
+template<typename T>
+std::list<T> ArraySparseSet<T>::ToList(){
+    std::list<T> objects;
+    for (int i = 0; i < elements.size(); ++i){
+        objects.push_back(elements[i]);
+    }
+    return objects;
+}
+
+template<typename T>
+bool ArraySparseSet<T>::SameType(FlowSet<T>* o){
+    if(dynamic_cast<ArraySparseSet<T>*>(o) != nullptr)
+        return true;
+    return false;
+}
+}
+
+#endif

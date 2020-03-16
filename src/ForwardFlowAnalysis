@@ -10,7 +10,7 @@
  */
 #ifndef _A_FORWARD_FLOW_ANALYSIS_H_
 #define _A_FORWARD_FLOW_ANALYSIS_H_
-#include "FlowAnalysis.h"
+#include "FlowAnalysis"
 
 namespace A{
     /**
@@ -28,6 +28,16 @@ namespace A{
         bool IsForward() override;
     private:
     };    
+
+template<typename T>
+void A::ForwardFlowAnalysis<T>::DoAnalysis(){
+    this->Compute();
+}
+
+template<typename T>
+inline bool A::ForwardFlowAnalysis<T>::IsForward(){
+    return true;
+}
 }
 
 #endif

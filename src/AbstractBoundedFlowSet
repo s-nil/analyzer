@@ -10,8 +10,8 @@
  */
 #ifndef _A_ABSTRACT_BOUNDED_FLOW_SET_H_
 #define _A_ABSTRACT_BOUNDED_FLOW_SET_H_
-#include "BoundedFlowSet.h"
-#include "AbstractFlowSet.h"
+#include "BoundedFlowSet"
+#include "AbstractFlowSet"
 
 namespace A
 {
@@ -28,6 +28,11 @@ namespace A
 
 	    void Complement(FlowSet<T>* dest);
     };
+
+    template<class T>
+    void AbstractBoundedFlowSet<T>::Complement(FlowSet<T>* dest){
+	
+    }
 }
 
 #endif
