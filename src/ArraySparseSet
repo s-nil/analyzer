@@ -7,7 +7,8 @@
 
 namespace A{
     template<typename T>
-    class ArraySparseSet : public AbstractFlowSet<T>{
+    class ArraySparseSet : public AbstractFlowSet<T>
+    {
     public:
         ArraySparseSet(){
             elements = std::vector<T>();
@@ -28,10 +29,10 @@ namespace A{
         bool IsEmpty();
         int Size();
         void Add(T obj);
-        // void Add(T obj, FlowSet<T>* dest);      // TODO
+        void Add(T obj, FlowSet<T>* dest);      // TODO
         void Remove(T obj);
         void Remove(int idx);
-        // void Remove(T obj, FlowSet<T>* dest);    // TODO
+        void Remove(T obj, FlowSet<T>* dest);    // TODO
         bool Contains(T obj);
         bool Equals(FlowSet<T>* other);
         bool IsSubSet(FlowSet<T>* other);        //  TODO
@@ -300,6 +301,14 @@ void ArraySparseSet<T>::Add(T obj){
 }
 
 template<typename T>
+void ArraySparseSet<T>::Add(T obj, FlowSet<T>* dest){
+    auto tmp = this->Clone();
+    tmp->Add(obj);
+    /// copy tmp to dest
+    tmp->Copy(dest);
+}
+
+template<typename T>
 void ArraySparseSet<T>::Remove(T obj){
     for (int i = 0; i < elements.size(); ++i){
         if(elements[i] == obj){
@@ -307,6 +316,14 @@ void ArraySparseSet<T>::Remove(T obj){
             break;
         }
     }
+}
+
+template<typename T>
+void ArraySparseSet<T>::Remove(T obj, FlowSet<T>* dest){
+    auto tmp = this->Clone();
+    tmp->Remove(obj);
+    /// copy tmp to dest
+    tmp->Copy(dest);
 }
 
 template<typename T>

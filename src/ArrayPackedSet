@@ -45,9 +45,9 @@ public:
     bool IsEmpty();
     int Size();
     void Add(T obj);
-    // void Add(T obj, FlowSet<T>* dest);      // TODO
+    void Add(T obj, FlowSet<T>* dest);      // TODO
     void Remove(T obj);
-    // void Remove(T obj, FlowSet<T>* dest);    // TODO
+    void Remove(T obj, FlowSet<T>* dest);    // TODO
     bool Contains(T obj);
     bool Equals(FlowSet<T>* other);
     bool IsSubSet(FlowSet<T>* other);
@@ -279,9 +279,25 @@ void ArrayPackedSet<T>::Add(T obj){
 }
 
 template<typename T>
+void ArrayPackedSet<T>::Add(T obj, FlowSet<T>* dest){
+    auto tmp = this->Clone();
+    tmp->Add(obj);
+    /// copy tmp to dest
+    tmp->Copy(dest);
+}
+
+template<typename T>
 void ArrayPackedSet<T>::Remove(T obj){
     if(map.Contains(obj))
         bits.reset(map.GetInt(obj));
+}
+
+template<typename T>
+void ArrayPackedSet<T>::Remove(T obj, FlowSet<T>* dest){
+    auto tmp = this->Clone();
+    tmp->Remove(obj);
+    /// copy tmp to dest
+    tmp->Copy(dest);    
 }
 
 template<typename T>
