@@ -14,6 +14,7 @@
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Demangle/Demangle.h"
 #include "ArrayPackedSet"
+#include "ArraySparseSet"
 #include "BackwardFlowAnalysis"
 
 #define RESET   "\033[0m"

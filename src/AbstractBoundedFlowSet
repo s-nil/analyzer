@@ -30,8 +30,15 @@ namespace A
     };
 
     template<class T>
-    void AbstractBoundedFlowSet<T>::Complement(FlowSet<T>* dest){
-	
+    void AbstractBoundedFlowSet<T>::Complement(FlowSet<T>* destFlow){
+	    ArrayPackedSet<T>* tmp = dynamic_cast<ArrayPackedSet<T>*>(this->Clone());
+        ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
+        dest->Clear();
+        tmp->Complement();
+
+        for(auto i : *tmp){
+            dest->Add(i);
+        }
     }
 }
 
