@@ -67,6 +67,54 @@ namespace A{
         int number;
     };
     
+template<typename T>
+inline std::string NodeData<T>::GetNodeName(){
+    if(node)
+        return node->getName().str();
+    return "";
+}
+
+template<typename T>
+inline void NodeData<T>::AddIn(NodeData<T>* n){
+    incoming.push_back(n);
+}
+
+template<typename T>
+void NodeData<T>::AddIn(llvm::SmallVector<NodeData<T>*,0> list){
+    for(auto I=list.begin(),E=list.end(); I!=E; ++I){
+        AddIn(*I);
+    }
+}
+
+template<typename T>
+inline void NodeData<T>::AddOut(A::NodeData<T>* n){
+    outgoing.push_back(n);
+}
+
+template<typename T>
+void NodeData<T>::AddOut(llvm::SmallVector<NodeData<T>*,0> list){
+    for(auto I=list.begin(),E=list.end(); I!=E; ++I){
+        AddOut(*I);
+    }
+}
+
+template<typename T>
+llvm::SmallVector<llvm::BasicBlock*,0> NodeData<T>::GetINcoming(){
+    llvm::SmallVector<llvm::BasicBlock*,0> tmp;
+    for(auto I = incoming.begin(), IE = incoming.end(); I!=IE; ++I ){
+        tmp.push_back((*I)->node);
+    }
+    return tmp;
+}
+
+template<typename T>
+llvm::SmallVector<llvm::BasicBlock*,0> NodeData<T>::GetOutgoing(){
+    llvm::SmallVector<llvm::BasicBlock*,0> tmp;
+    for(auto I = outgoing.begin(), IE = outgoing.end(); I!=IE; ++I ){
+        tmp.push_back((*I)->node);
+    }
+    return tmp;
+}
 }
 
 #endif

@@ -8,7 +8,6 @@
 #include "llvm/IR/InstIterator.h"
 #include "llvm/IR/CallSite.h"
 #include "llvm/Support/raw_ostream.h"
-#include "Variable.h"
 
 namespace A{
     /**
@@ -86,6 +85,31 @@ namespace A{
     private:
         std::vector<T> ele;
     };
+ 
+template<typename T>
+ValueUniverse<T>::ValueUniverse(std::vector<T> e){
+    this->ele = e;
+}
+
+template<typename T>
+inline int ValueUniverse<T>::Size(){
+    return ele.size();
+}
+
+template<typename T>
+inline std::vector<T> ValueUniverse<T>::ToArray(){
+    return ele;
+}
+
+template<class T>
+inline auto ValueUniverse<T>::begin() -> ValueUniverse<T>::Iterator{
+    return ValueUniverse<T>::Iterator(this);
+}
+
+template<class T>
+inline auto ValueUniverse<T>::end() -> ValueUniverse<T>::Iterator{
+    return ValueUniverse<T>::Iterator();
+}
 }
 
 #endif

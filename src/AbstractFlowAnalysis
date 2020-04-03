@@ -14,7 +14,7 @@
 #include "llvm/IR/Function.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/Support/raw_ostream.h"
-#include "FunctionCFG.h"
+#include "FunctionCFG"
 
 namespace A{
     /**
@@ -40,6 +40,12 @@ namespace A{
         llvm::Function* func;
         A::FunctionCFG* graph;
     };
+
+template<typename T>
+void AbstractFlowAnalysis<T>::SetFunction(llvm::Function* f){
+    func = f;
+    graph = new FunctionCFG(f);
+}
 }
 
 #endif

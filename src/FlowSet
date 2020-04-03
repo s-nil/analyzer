@@ -61,7 +61,9 @@ public:
     /// returns true if obj is present in current object
     virtual bool Contains(T obj) = 0;
     /// compares current object with other, returns 0 if both are same
-    virtual bool Equals(FlowSet<T>* other) = 0;
+    virtual bool operator==(FlowSet<T>* other) = 0;
+    virtual bool operator!=(FlowSet<T>* other) = 0;
+
     /// returns true if other is a subset of current object
     virtual bool IsSubSet(FlowSet<T>* other) = 0;
     /// returns a list of DF values that current object contains

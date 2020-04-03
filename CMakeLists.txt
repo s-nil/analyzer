@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.5)
 
 # set project name
 project(analyzer VERSION 0.1 LANGUAGES CXX)
@@ -34,14 +34,12 @@ message(STATUS "Using Compiler : ${CMAKE_CXX_COMPILER}")
 # copy analyzer.h.in modifying its contents
 configure_file(config.h.in ${PROJECT_BINARY_DIR}/config.h)
 
-add_subdirectory(src)
 add_subdirectory(passes)
 add_subdirectory(examples)
 
 # include directories for analyzer
-target_include_directories(analyzer PUBLIC
-                            "${PROJECT_SOURCE_DIR}/include"
-                            "${PROJECT_BINARY_DIR}/include"
+include_directories("${PROJECT_SOURCE_DIR}/src"
+                        "${PROJECT_BINARY_DIR}/src"
 		            "${PROJECT_BINARY_DIR}"
 			    "${LLVM_INCLUDE_DIRS}"
                             )

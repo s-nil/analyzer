@@ -1,4 +1,4 @@
-include_directories("${PROJECT_SOURCE_DIR}/include"
+include_directories("${PROJECT_SOURCE_DIR}/src"
                     "${LLVM_INCLUDE_DIRS}")
 
 execute_process(COMMAND llvm-config-9  --cxxflags
@@ -18,4 +18,3 @@ set_property(TARGET LA
             PROPERTY RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/liveness_analysis")
 target_link_libraries(LA ${LD_FLAGS})
 set_target_properties(LA PROPERTIES COMPILE_FLAGS ${CXX_FLAGS})
-target_link_libraries(LA analyzer)

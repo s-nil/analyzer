@@ -12,7 +12,7 @@
 #ifndef _A_BOUNDED_FLOW_SET_H_
 #define _A_BOUNDED_FLOW_SET_H_
 
-#include "FlowSet.h"
+#include "FlowSet"
 
 namespace A{
     /**

@@ -13,8 +13,9 @@
 #include "llvm/Analysis/LoopPass.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Demangle/Demangle.h"
-#include "ArrayPackedSet.h"
-#include "BackwardFlowAnalysis.h"
+#include "ArrayPackedSet"
+#include "ArraySparseSet"
+#include "BackwardFlowAnalysis"
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"      /* Red */
@@ -24,11 +25,73 @@ using namespace llvm;
 using namespace std;
 using namespace A;
 
+class Variable{
+public:
+    Variable(llvm::Value* v){
+        id = (long)v;
+        value = v;
+    }
+    llvm::Value* GetValue(){return value;}
+    void SetValue(llvm::Value* v){value = v;}
+    ~Variable(){}
+
+    bool operator==(const Variable& rhs) const{
+        return value == rhs.value;
+    }
+    bool operator!=(const Variable& rhs) const{
+        return value != rhs.value;
+    }
+
+    bool operator<(const Variable& rhs) const{
+        return rhs.id < this->id; 
+    }
+
+    friend llvm::raw_ostream& operator<<(llvm::raw_ostream& out, Variable& v){
+        out << (v.value)->getName();
+        return out;
+    }
+private:
+    long id;
+    llvm::Value* value;
+};
+
+template<>
+A::ValueUniverse<Variable>::ValueUniverse(Function* f){
+    //errs() << f->getName()<<'\n';
+    bool noCallSite = 1;
+    ele = std::vector<Variable>();
+    for (auto I = f->arg_begin(); I != f->arg_end(); ++I){
+        Variable var = Variable(I);
+        ele.push_back(var);
+    }
+    for (llvm::inst_iterator I = llvm::inst_begin(*f); I != llvm::inst_end(*f); ++I){
+        llvm::CallSite cs(&*I);
+        if(cs.getInstruction() && !(*I).isLifetimeStartOrEnd()){
+            noCallSite = 0;
+            llvm::errs() << *I << '\n';
+            break;
+        }
+        if((*I).isLifetimeStartOrEnd()){
+            continue;
+        }
+        if((*I).hasName()){
+            llvm::Value* v = &*I;
+            Variable var = Variable(v);
+            ele.push_back(var);
+        }
+    }
+    if(!(noCallSite == 1)){
+        llvm::errs() << RED <<"Assertion : a function call is found.\n" << RESET <<'\n';
+        exit(1);
+    }
+}
+
+
 namespace {
     struct LA: public FunctionPass, public BackwardFlowAnalysis<ArrayPackedSet<Variable>> {
         static char ID;
         string funcName;
-        A::FlowSet<A::Variable> *domain;
+        FlowSet<Variable> *domain;
  
         LA(string f): funcName(f), FunctionPass(ID){};
         

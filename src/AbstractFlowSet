@@ -1,0 +1,338 @@
+/**
+ * @file AbstractFlowSet.h
+ * @author Sunil Singh (sunilp896@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2020-01-21
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
+#ifndef _A_ABSTRACT_FLOW_SET_H_
+#define _A_ABSTRACT_FLOW_SET_H_
+
+#include "FlowSet"
+#include "llvm/Support/raw_ostream.h"
+
+namespace A{
+template<class T>
+class ArrayPackedSet;
+template<class T>
+class ArraySparseSet;
+
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ */
+template <class T>
+class AbstractFlowSet : public FlowSet<T>{
+public:
+    /// Used when called by a FlowSet pointer
+    FlowSet<T>* Clone();
+    /// Used when called by a FlowSet pointer
+    FlowSet<T>* EmptySet();
+    /// copy current object in dest, type of this and dest are different
+    void Copy(FlowSet<T>* dest);
+    /// Used when called by a FlowSet pointer
+    void Clear();
+    /// unions current and other, puts result in the current, type of this and other are different
+    void Union(FlowSet<T>* other);
+    /// unions current and other, puts result in the dest, types are different
+    void Union(FlowSet<T>* other, FlowSet<T>* dest);
+    /// intersection of current and other, puts result in the current, type of this and other are different
+    void Intersection(FlowSet<T>* other);
+    /// intersection of current and other, puts result in the dest, types are different
+    void Intersection(FlowSet<T>* other, FlowSet<T>* dest);
+    /// difference of current and other, puts result in the current, type of this and other are different
+    void Difference(FlowSet<T>* other);
+    /// difference of current and other, puts result in the dest, types are different
+    void Difference(FlowSet<T>* other, FlowSet<T>* dest);
+    /// Used when called by a FlowSet pointer
+    bool IsEmpty();
+    /// Used when called by a FlowSet pointer
+    int Size();
+    /// Used when called by a FlowSet pointer
+    void Add(T obj);
+    /// Used when called by a FlowSet pointer
+    void Remove(T obj);
+    /// Used when called by a FlowSet pointer
+    bool Contains(T obj);
+    /// compares current object with other, returns 0 if both are same, type of this and other are different
+    bool operator==(FlowSet<T>* other);
+    bool operator!=(FlowSet<T>* other){return !(*this == other);}
+    /// returns true if other is a subset of current object, type of this and other are different
+    bool IsSubSet(FlowSet<T>* other);
+};
+
+template<class T>
+FlowSet<T>* AbstractFlowSet<T>::Clone(){
+    /// According to the type of the current object, calls the corresponding Clone()
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+        dynamic_cast<A::ArrayPackedSet<T>*>(this)->Clone();
+    }
+    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+        dynamic_cast<A::ArraySparseSet<T>*>(this)->Clone();
+    }
+}
+
+template<class T>
+FlowSet<T>* AbstractFlowSet<T>::EmptySet(){
+    A::FlowSet<T>* tmp = this->Clone();
+    tmp->Clear();
+    return tmp;
+}
+
+template<class T>
+void AbstractFlowSet<T>::Copy(FlowSet<T>* dest){
+    if(this == dest){
+        return;
+    }else{
+            /// clear the destination and add each element of this to dest one by one
+        dest->Clear();
+        if(dynamic_cast<ArrayPackedSet<T>*>(this)){
+            for(auto d : *dynamic_cast<ArrayPackedSet<T>*>(this)){
+                dest->Add(d);
+            }
+	    }
+        if(dynamic_cast<ArraySparseSet<T>*>(this)){
+            for(auto d : *dynamic_cast<ArraySparseSet<T>*>(this)){
+                dest->Add(d);
+            }
+	    }
+    }
+}
+
+template<class T>
+void AbstractFlowSet<T>::Clear(){
+    /// According to the type of the current object, calls the corresponding Clear()
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+        dynamic_cast<A::ArrayPackedSet<T>*>(this)->Clear();
+    }
+    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+        dynamic_cast<A::ArraySparseSet<T>*>(this)->Clear();
+    }
+}
+
+template<class T>
+void AbstractFlowSet<T>::Union(FlowSet<T>* other){
+    if(this == other){
+        return;
+    }
+    /// add each element of other to this one by one
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::ArrayPackedSet<T>*>(other)){
+            this->Add(d);
+        }
+    }
+    if(dynamic_cast<A::ArraySparseSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::ArraySparseSet<T>*>(other)){
+            this->Add(d);
+        }
+    }
+}
+
+template<class T>
+void AbstractFlowSet<T>::Union(FlowSet<T>* other, FlowSet<T>* dest){
+    /// using Union(FlowSet) with a temporary
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+        auto tmp = this->Clone();
+        tmp->Union(other);
+        tmp->Copy(dest);
+    }
+    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+        auto tmp = this->Clone();
+        tmp->Union(other);
+        tmp->Copy(dest);
+    }
+}
+
+template<class T>
+void AbstractFlowSet<T>::Intersection(FlowSet<T>* other){
+    if(this == other){
+        return;
+    }
+    /// get an empty object of this
+    /// put every element of other which is in this also in tmp
+    auto tmp = this->EmptySet();
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::ArrayPackedSet<T>*>(other)){
+            if(dynamic_cast<A::ArraySparseSet<T>*>(this)->Contains(d)){
+                tmp->Add(d);
+            }
+        }
+    }
+    if(dynamic_cast<A::ArraySparseSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::ArraySparseSet<T>*>(other)){
+            if(dynamic_cast<A::ArrayPackedSet<T>*>(this)->Contains(d)){
+                tmp->Add(d);
+            }
+        }
+    }
+    /// copy tmp in this
+    tmp->Copy(this);
+}
+
+template<class T>
+void AbstractFlowSet<T>::Intersection(FlowSet<T>* other, FlowSet<T>* dest){
+    /// using Intersection(FlowSet) with a temporary
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+        auto tmp = this->Clone();
+        tmp->Intersection(other);
+        tmp->Copy(dest);
+    }
+    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+        auto tmp = this->Clone();
+        tmp->Intersection(other);
+        tmp->Copy(dest);
+    }
+}
+
+template<class T>
+void AbstractFlowSet<T>::Difference(FlowSet<T>* other){
+    if(this == other){
+        return;
+    }
+    /// get an clone object of this
+    /// remove every element of other from tmp
+    auto tmp = this->Clone();
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::ArrayPackedSet<T>*>(other)){
+            tmp->Remove(d);
+        }
+    }
+    if(dynamic_cast<A::ArraySparseSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::ArraySparseSet<T>*>(other)){
+            tmp->Remove(d);
+        }
+    }
+    /// copy tmp to this
+    tmp->Copy(this);
+}
+
+template<class T>
+void AbstractFlowSet<T>::Difference(FlowSet<T>* other, FlowSet<T>* dest){
+    /// using Difference(FlowSet) with a temporary
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+        auto tmp = this->Clone();
+        tmp->Difference(other);
+        tmp->Copy(dest);
+    }
+    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+        auto tmp = this->Clone();
+        tmp->Difference(other);
+        tmp->Copy(dest);
+    }
+}
+
+template<class T>
+bool AbstractFlowSet<T>::IsEmpty(){
+    /// According to the type of the current object, calls the corresponding IsEmpty()
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+        dynamic_cast<A::ArrayPackedSet<T>*>(this)->IsEmpty();
+    }
+    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+        dynamic_cast<A::ArraySparseSet<T>*>(this)->IsEmpty();
+    }
+}
+
+template<class T>
+int AbstractFlowSet<T>::Size(){
+    /// According to the type of the current object, calls the corresponding Size()
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+        dynamic_cast<A::ArrayPackedSet<T>*>(this)->Size();
+    }
+    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+        dynamic_cast<A::ArraySparseSet<T>*>(this)->Size();
+    }
+}
+
+template<class T>
+void AbstractFlowSet<T>::Add(T obj){
+    /// According to the type of the current object, calls the corresponding Add()
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+        dynamic_cast<A::ArrayPackedSet<T>*>(this)->Add(obj);
+    }
+    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+        dynamic_cast<A::ArraySparseSet<T>*>(this)->Add(obj);
+    }
+}
+
+template<class T>
+void AbstractFlowSet<T>::Remove(T obj){
+    /// According to the type of the current object, calls the corresponding Remove()
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+        dynamic_cast<A::ArrayPackedSet<T>*>(this)->Remove(obj);
+    }
+    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+        dynamic_cast<A::ArraySparseSet<T>*>(this)->Remove(obj);
+    }
+}
+
+template<class T>
+bool AbstractFlowSet<T>::Contains(T obj){
+    /// According to the type of the current object, calls the corresponding Contains()
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+        dynamic_cast<A::ArrayPackedSet<T>*>(this)->Contains(obj);
+    } 
+    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+        dynamic_cast<A::ArraySparseSet<T>*>(this)->Contains(obj);
+    }
+}
+
+template<class T>
+bool AbstractFlowSet<T>::operator==(FlowSet<T>* other){
+    if(this->Size() != other->Size())
+        return  false;
+  
+    if(this->Size() == 0 && other->Size() == 0)
+        return  true;
+
+    /// when size is same
+
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+        /// if any element of this is not in other, return false
+        for(auto d : *dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+            if(!other->Contains(d)) return false;
+        }
+        return true;
+    }
+
+    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+        /// if any element of this is not in other, return false
+        for(auto d : *dynamic_cast<A::ArraySparseSet<T>*>(this)){
+            if(!other->Contains(d)) return false;
+        }
+        return true;
+    }
+}
+
+template<class T>
+bool AbstractFlowSet<T>::IsSubSet(FlowSet<T>* other){
+    if(this->Size() == 0 && other->Size() == 0)
+        return  true;
+
+    if(dynamic_cast<A::ArrayPackedSet<T>*>(other)){
+        /// if any element of other is not in this, return false
+        for(auto d : *dynamic_cast<A::ArrayPackedSet<T>*>(other)){
+            if(!this->Contains(d)) return false;
+        }
+        return true;
+    }
+
+    if(dynamic_cast<A::ArraySparseSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::ArraySparseSet<T>*>(other)){
+        /// if any element of other is not in this, return false
+            if(!this->Contains(d)) return false;
+        }
+        return true;
+    }
+}
+
+// template<class T>
+// std::list<T> AbstractFlowSet<T>::ToList(){
+    
+// }
+}   // end namespace
+
+#endif  // end _A_ABSTRACT_FLOW_SET_H_

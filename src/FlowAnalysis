@@ -1,0 +1,241 @@
+/**
+ * @file FlowAnalysis.h
+ * @author your name (you@domain.com)
+ * @brief 
+ * @version 0.1
+ * @date
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
+#ifndef _A_FLOW_ANALYSIS_H_
+#define _A_FLOW_ANALYSIS_H_
+
+#include "llvm/ADT/SmallVector.h"
+#include "AbstractFlowAnalysis"
+#include "NodeData"
+#include <stack>
+#include <list>
+#include <queue>
+
+namespace A{
+    /**
+     * @brief 
+     * @tparam T 
+     */
+    template<typename T>
+    class FlowAnalysis : public AbstractFlowAnalysis<T>{
+    public:
+        FlowAnalysis(){}
+        ~FlowAnalysis(){}
+
+        T* GetFlowBefore(llvm::BasicBlock*);
+        T* GetFlowAfter(llvm::BasicBlock*);
+        llvm::DenseMap<llvm::BasicBlock*,T*> GetIn();
+        llvm::DenseMap<llvm::BasicBlock*,T*> GetOut();
+        
+        void Compute();
+    private:
+        void SetFlowBefore(llvm::BasicBlock* node, T*);
+        void SetFlowAfter(llvm::BasicBlock* node, T*);
+        std::vector<NodeData<T>*> NodesDataList();
+        void AddOutData(llvm::DenseMap<llvm::BasicBlock*,NodeData<T>*>&, 
+                                                        std::vector<llvm::BasicBlock*>&, NodeData<T>*);
+        NodeData<T>* CreateAndReturnNodeData(llvm::DenseMap<llvm::BasicBlock*,NodeData<T>*>&, 
+                                                        llvm::BasicBlock*, NodeData<T>*);
+        void InitializeFlows(std::vector<NodeData<T>*>&);
+
+        void PrintResult(std::vector<NodeData<T>*>&);
+        llvm::DenseMap<llvm::BasicBlock*,T*> inSet;
+        llvm::DenseMap<llvm::BasicBlock*,T*> outSet;
+    };
+
+template<typename T>
+inline T* FlowAnalysis<T>::GetFlowBefore(llvm::BasicBlock* node){    return inSet[node];}
+
+template<typename T>
+inline T* FlowAnalysis<T>::GetFlowAfter(llvm::BasicBlock* node){ return outSet[node];}
+
+template<typename T>
+inline llvm::DenseMap<llvm::BasicBlock*,T*> FlowAnalysis<T>::GetIn(){    return inSet;}
+
+template<typename T>
+inline llvm::DenseMap<llvm::BasicBlock*,T*> FlowAnalysis<T>::GetOut(){   return outSet;}
+
+template<typename T>
+inline void FlowAnalysis<T>::SetFlowBefore(llvm::BasicBlock* node, T* d){    inSet[node] = d;}
+
+template<typename T>
+inline void FlowAnalysis<T>::SetFlowAfter(llvm::BasicBlock* node, T* d){ outSet[node] = d;}
+
+template<typename T>
+void FlowAnalysis<T>::Compute(){
+    llvm::Function* func = this->func;
+    std::vector<NodeData<T>*> lstNodes = NodesDataList();
+
+    InitializeFlows(lstNodes);
+
+    std::queue<NodeData<T>*> queueNodes;
+    for (auto& e : lstNodes){
+        queueNodes.push(e);
+    }
+
+    // fixed point analysis
+    while (!queueNodes.empty()){
+        NodeData<T>* node = queueNodes.front();
+        queueNodes.pop();
+
+        auto tmpOut(node->GetOutFlow());
+        auto tmpIn(node->GetInFlow());
+
+        if(node->GetINcomingN().size() < 0)
+            continue;
+
+        /// Merge
+        if(node->GetINcomingN().size() > 1){
+            bool copy = false;
+            for (unsigned i = 0; i < node->GetINcomingN().size(); ++i){
+                auto outFlow = node->GetINcomingN()[i]->GetOutFlow();
+                if(!copy)
+                    this->Copy(outFlow,node->GetInFlow()), copy = true;
+                else{
+                    auto tmp = this->NewInitialFlowSet();
+                    /// using overriden Merge and Copy
+                    this->Merge(outFlow,node->GetInFlow(),tmp);
+                    this->Copy(tmp,node->GetInFlow());
+                }
+            }
+        }
+
+        this->FlowThrough(node->GetNode(),node->GetInFlow(),node->GetOutFlow());
+
+        if(!(node->GetOutFlow() == tmpOut))
+            queueNodes.push(node);
+
+        if(!(node->GetInFlow() == tmpIn))
+            queueNodes.push(node);
+    }
+
+    // PrintResult(lstNodes);
+}
+
+template<typename T>
+void FlowAnalysis<T>::PrintResult(std::vector<NodeData<T>*>& lstNodes){
+    for(NodeData<T>* u : lstNodes){
+        llvm::errs() <<"Basic Block : "<< u->GetNodeName() << '\n';
+
+        llvm::errs()<<" In   :: ";
+        for(auto x : *u->GetInFlow()){
+            llvm::errs() << x << ", ";
+        }
+        llvm::errs()<<'\n';
+
+        llvm::errs()<<" Out  :: ";
+        for(auto x : *u->GetOutFlow()){
+            llvm::errs() << x << ", ";
+        }
+        llvm::errs()<<'\n';
+        llvm::errs()<<'\n';
+    }
+}
+
+template<typename T>
+std::vector<NodeData<T>*> FlowAnalysis<T>::NodesDataList(){
+    std::vector<NodeData<T>*> l;
+
+    std::vector<llvm::BasicBlock*> entries;
+    FunctionCFG* g = this->graph;
+    if(this->IsForward()){
+        entries = g->GetHeads();
+    }else{
+        entries = g->GetTails();
+    }
+
+    llvm::DenseMap<llvm::BasicBlock*,NodeData<T>*> visited;
+    int n = -1;
+    NodeData<T> *dummyEntry = new NodeData<T>();
+
+    AddOutData(visited,entries,dummyEntry);
+    dummyEntry->MarkVisit(++n);
+    auto tmp = this->EntryInitialFlowSet();
+    dummyEntry->SetInFlow(tmp);
+    dummyEntry->SetOutFlow(tmp);
+
+    std::stack<NodeData<T>*> visitStack;
+    unsigned i = 0;
+    NodeData<T> *v = dummyEntry;
+    visitStack.push(dummyEntry);
+
+    while(!visitStack.empty()){
+        NodeData<T>* s = visitStack.top();
+        visitStack.pop();
+
+        if(!s->IsVisited()){
+            s->MarkVisit(++n);
+            std::vector<llvm::BasicBlock*> outs = g->GetOut(g->GetNode(s->GetNode()),Direction::BACKWARD);
+            AddOutData(visited,outs,s);
+        }
+
+        llvm::SmallVector<NodeData<T>*,0> tmp = s->GetOutgoingN();
+        for(auto i=0; i<tmp.size(); ++i){
+            NodeData<T>* w  = tmp[i];
+            if(!w->IsVisited())
+                visitStack.push(w);
+        }
+        if(s->GetNode())
+            l.push_back(s);
+    }
+
+    return l;
+}
+
+template<typename T>
+void FlowAnalysis<T>::AddOutData(llvm::DenseMap<llvm::BasicBlock*,NodeData<T>*>& visited,
+                                                std::vector<llvm::BasicBlock*>& blocks, NodeData<T>* nd){
+    llvm::SmallVector<NodeData<T>*,0> out;
+
+    for(unsigned i=0; i<blocks.size(); ++i){
+        out.push_back(CreateAndReturnNodeData(visited,blocks[i],nd));
+    }
+    nd->AddOut(out);
+}
+
+template<typename T>
+NodeData<T>* FlowAnalysis<T>::CreateAndReturnNodeData(llvm::DenseMap<llvm::BasicBlock*,NodeData<T>*>& visited,
+                                                        llvm::BasicBlock* entry, NodeData<T> *node){
+    if(!visited[entry]){
+        NodeData<T> *nd = new NodeData<T>(entry,node);
+        visited[entry] = nd;
+        return nd;
+    }else{
+        NodeData<T> *oldNodeData = visited[entry];
+        if(oldNodeData != node)
+            oldNodeData->AddIn(node);
+        return oldNodeData;
+    }
+}
+
+template<typename T>
+void FlowAnalysis<T>::InitializeFlows(std::vector<NodeData<T>*>& lstNodes){
+    for (auto I = lstNodes.begin(), IE = lstNodes.end(); I != IE; ++I){
+        if((*I)->GetINcomingN().size() > 1){
+            auto tmp = this->NewInitialFlowSet();
+            (*I)->SetInFlow(tmp);
+        }else if((*I)->GetINcomingN().size() == 1){
+            // if node has only one predeccesor then same node
+            auto tmp = this->NewInitialFlowSet();
+            if(!(*I)->GetINcomingN()[0]->GetOutFlow())
+                (*I)->GetINcomingN()[0]->SetOutFlow(tmp);
+            (*I)->SetInFlow((*I)->GetINcomingN()[0]->GetOutFlow());
+        }
+        auto tmp = this->NewInitialFlowSet();
+        (*I)->SetOutFlow(tmp);
+
+        SetFlowBefore((*I)->GetNode(),(*I)->GetInFlow());
+        SetFlowAfter((*I)->GetNode(),(*I)->GetOutFlow());
+    }
+}
+
+}
+
+#endif
