@@ -85,8 +85,8 @@ void FlowAnalysis<T>::Compute(){
         NodeData<T>* node = queueNodes.front();
         queueNodes.pop();
 
-        auto tmpOut = node->GetOutFlow()->Clone();
-        auto tmpIn = node->GetInFlow()->Clone();
+        auto tmpOut(node->GetOutFlow());
+        auto tmpIn(node->GetInFlow());
 
         if(node->GetINcomingN().size() < 0)
             continue;
@@ -109,14 +109,14 @@ void FlowAnalysis<T>::Compute(){
 
         this->FlowThrough(node->GetNode(),node->GetInFlow(),node->GetOutFlow());
 
-        if(!node->GetOutFlow()->Equals(tmpOut))
+        if(!(node->GetOutFlow() == tmpOut))
             queueNodes.push(node);
 
-        if(!node->GetInFlow()->Equals(tmpIn))
+        if(!(node->GetInFlow() == tmpIn))
             queueNodes.push(node);
     }
 
-    PrintResult(lstNodes);
+    // PrintResult(lstNodes);
 }
 
 template<typename T>

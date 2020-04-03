@@ -59,7 +59,8 @@ public:
     /// Used when called by a FlowSet pointer
     bool Contains(T obj);
     /// compares current object with other, returns 0 if both are same, type of this and other are different
-    bool Equals(FlowSet<T>* other);
+    bool operator==(FlowSet<T>* other);
+    bool operator!=(FlowSet<T>* other){return !(*this == other);}
     /// returns true if other is a subset of current object, type of this and other are different
     bool IsSubSet(FlowSet<T>* other);
 };
@@ -280,7 +281,7 @@ bool AbstractFlowSet<T>::Contains(T obj){
 }
 
 template<class T>
-bool AbstractFlowSet<T>::Equals(FlowSet<T>* other){
+bool AbstractFlowSet<T>::operator==(FlowSet<T>* other){
     if(this->Size() != other->Size())
         return  false;
   

@@ -21,10 +21,14 @@ public:
 
     ArrayPackedSet(ObjectIntMapper<T> mapper):ArrayPackedSet<T>::ArrayPackedSet(mapper,llvm::BitVector(mapper.Size())){}
     ArrayPackedSet(ObjectIntMapper<T> mapper, llvm::BitVector bits){this->map = mapper,this->bits = bits;}
+    ArrayPackedSet(const ArrayPackedSet& obj){
+        this->map = obj.map;
+        this->bits = obj.bits;
+    }
     ArrayPackedSet(llvm::Function* F){
         auto universe = A::ValueUniverse<T>(F);
     	auto mapper = A::ObjectIntMapper<T>(universe);
-	map = mapper;
+	    map = mapper;
         bits = llvm::BitVector(mapper.Size(),true);
     }
 
@@ -49,7 +53,8 @@ public:
     void Remove(T obj);
     void Remove(T obj, FlowSet<T>* dest);    // TODO
     bool Contains(T obj);
-    bool Equals(FlowSet<T>* other);
+    bool operator==(FlowSet<T>* other);
+    bool operator!=(FlowSet<T>* other){return !(*this == other);}
     bool IsSubSet(FlowSet<T>* other);
     std::list<T> ToList();
 
@@ -306,12 +311,12 @@ bool ArrayPackedSet<T>::Contains(T obj){
 }
 
 template<typename T>
-bool ArrayPackedSet<T>::Equals(FlowSet<T>* otherFlow){
+bool ArrayPackedSet<T>::operator==(FlowSet<T>* otherFlow){
     if(SameType(otherFlow)){
         ArrayPackedSet<T>* other = dynamic_cast<ArrayPackedSet<T>*>(otherFlow);
         return bits == other->bits;
     }else{
-        return AbstractBoundedFlowSet<T>::Equals(otherFlow);
+        return AbstractBoundedFlowSet<T>::operator==(otherFlow);
     }
 }
 

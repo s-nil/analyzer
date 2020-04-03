@@ -13,6 +13,9 @@ namespace A{
         ArraySparseSet(){
             elements = std::vector<T>();
         }
+        ArraySparseSet(const ArraySparseSet& obj){
+            elements = obj.elements;
+        }
         ArraySparseSet(llvm::Function* F);
         ~ArraySparseSet(){}
 
@@ -34,7 +37,8 @@ namespace A{
         void Remove(int idx);
         void Remove(T obj, FlowSet<T>* dest);    // TODO
         bool Contains(T obj);
-        bool Equals(FlowSet<T>* other);
+        bool operator==(FlowSet<T>* other);
+        bool operator!=(FlowSet<T>* other){return !(*this == other);}
         bool IsSubSet(FlowSet<T>* other);        //  TODO
         std::list<T> ToList();
 
@@ -167,7 +171,7 @@ void ArraySparseSet<T>::Union(FlowSet<T>* otherFlow, FlowSet<T>* destFlow){
         ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
         ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
 
-        if(this == other || Equals(other)){
+        if(this == other || *this == other){
             Copy(dest);
             return;
         }
@@ -205,7 +209,7 @@ void ArraySparseSet<T>::Intersection(FlowSet<T>* otherFlow, FlowSet<T>* destFlow
         ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
         ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
 
-        if(this == other || Equals(other)){
+        if(this == other || *this == other){
             dest->Clear();
             return;
         }
@@ -251,7 +255,7 @@ void ArraySparseSet<T>::Difference(FlowSet<T>* otherFlow, FlowSet<T>* destFlow){
         ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
         ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
 
-        if(this == other || Equals(other)){
+        if(this == other || *this == other){
             dest->Clear();
             return;
         }
@@ -342,12 +346,12 @@ bool A::ArraySparseSet<T>::Contains(T obj){
 }
 
 template<typename T>
-bool ArraySparseSet<T>::Equals(FlowSet<T>* otherFlow){
+bool ArraySparseSet<T>::operator==(FlowSet<T>* otherFlow){
     if(SameType(otherFlow)){
         ArraySparseSet<T> *flow = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
         return elements == flow->elements;
     }else{
-        return AbstractFlowSet<T>::Equals(otherFlow);
+        return AbstractFlowSet<T>::operator==(otherFlow);
     }
 }
 
