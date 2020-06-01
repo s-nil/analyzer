@@ -19,27 +19,27 @@ namespace A{
         ArraySparseSet(llvm::Function* F);
         ~ArraySparseSet(){}
 
-        FlowSet<T>* Clone();
-        FlowSet<T>* EmptySet();
-        void Copy(FlowSet<T>* dest);
+        ISet<T>* Clone();
+        ISet<T>* EmptySet();
+        void Copy(ISet<T>* dest);
         void Clear();
-        void Union(FlowSet<T>* other);
-        void Union(FlowSet<T>* other, FlowSet<T>* dest);
-        void Intersection(FlowSet<T>* other);
-        void Intersection(FlowSet<T>* other, FlowSet<T>* dest);
-        void Difference(FlowSet<T>* other);
-        void Difference(FlowSet<T>* other, FlowSet<T>* dest);
+        void Union(ISet<T>* other);
+        void Union(ISet<T>* other, ISet<T>* dest);
+        void Intersection(ISet<T>* other);
+        void Intersection(ISet<T>* other, ISet<T>* dest);
+        void Difference(ISet<T>* other);
+        void Difference(ISet<T>* other, ISet<T>* dest);
         bool IsEmpty();
         int Size();
         void Add(T obj);
-        void Add(T obj, FlowSet<T>* dest);      // TODO
+        void Add(T obj, ISet<T>* dest);      // TODO
         void Remove(T obj);
         void Remove(int idx);
-        void Remove(T obj, FlowSet<T>* dest);    // TODO
+        void Remove(T obj, ISet<T>* dest);    // TODO
         bool Contains(T obj);
-        bool operator==(FlowSet<T>* other);
-        bool operator!=(FlowSet<T>* other){return !(*this == other);}
-        bool IsSubSet(FlowSet<T>* other);        //  TODO
+        bool operator==(ISet<T>* other);
+        bool operator!=(ISet<T>* other){return !(*this == other);}
+        bool IsSubSet(ISet<T>* other);        //  TODO
         std::list<T> ToList();
 
         class Iterator{
@@ -104,7 +104,7 @@ namespace A{
     private:
         std::vector<T> elements;
         ArraySparseSet(const ArraySparseSet<T>* ref);
-        bool SameType(A::FlowSet<T>* o);
+        bool SameType(A::ISet<T>* o);
     };    
 
 template<typename T>
@@ -119,17 +119,17 @@ ArraySparseSet<T>::ArraySparseSet(llvm::Function* F){
 }
 
 template<typename T>
-FlowSet<T>* ArraySparseSet<T>::Clone(){
+ISet<T>* ArraySparseSet<T>::Clone(){
     return new ArraySparseSet<T>(this);
 }
 
 template<typename T>
-FlowSet<T>* ArraySparseSet<T>::EmptySet(){
+ISet<T>* ArraySparseSet<T>::EmptySet(){
     return new ArraySparseSet<T>();
 }
 
 template<typename T>
-void ArraySparseSet<T>::Copy(FlowSet<T>* dest){
+void ArraySparseSet<T>::Copy(ISet<T>* dest){
     if(dest == this){
         return;
     }else{
@@ -154,7 +154,7 @@ void ArraySparseSet<T>::Clear(){
 }
 
 template<typename T>
-void ArraySparseSet<T>::Union(FlowSet<T>* other){
+void ArraySparseSet<T>::Union(ISet<T>* other){
     if(this == other){
         return;
     }else{
@@ -166,7 +166,7 @@ void ArraySparseSet<T>::Union(FlowSet<T>* other){
 }
 
 template<typename T>
-void ArraySparseSet<T>::Union(FlowSet<T>* otherFlow, FlowSet<T>* destFlow){
+void ArraySparseSet<T>::Union(ISet<T>* otherFlow, ISet<T>* destFlow){
     if(SameType(otherFlow) && SameType(destFlow)){
         ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
         ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
@@ -192,7 +192,7 @@ void ArraySparseSet<T>::Union(FlowSet<T>* otherFlow, FlowSet<T>* destFlow){
 }
 
 template<typename T>
-void ArraySparseSet<T>::Intersection(FlowSet<T>* other){
+void ArraySparseSet<T>::Intersection(ISet<T>* other){
     if(this == other){
         return;
     }else{
@@ -204,7 +204,7 @@ void ArraySparseSet<T>::Intersection(FlowSet<T>* other){
 }
 
 template<typename T>
-void ArraySparseSet<T>::Intersection(FlowSet<T>* otherFlow, FlowSet<T>* destFlow){
+void ArraySparseSet<T>::Intersection(ISet<T>* otherFlow, ISet<T>* destFlow){
     if(SameType(otherFlow) && SameType(destFlow)){
         ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
         ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
@@ -238,7 +238,7 @@ void ArraySparseSet<T>::Intersection(FlowSet<T>* otherFlow, FlowSet<T>* destFlow
 }
 
 template<typename T>
-void ArraySparseSet<T>::Difference(FlowSet<T>* other){
+void ArraySparseSet<T>::Difference(ISet<T>* other){
     if(this == other){
         return;
     }else{
@@ -250,7 +250,7 @@ void ArraySparseSet<T>::Difference(FlowSet<T>* other){
 }
 
 template<typename T>
-void ArraySparseSet<T>::Difference(FlowSet<T>* otherFlow, FlowSet<T>* destFlow){
+void ArraySparseSet<T>::Difference(ISet<T>* otherFlow, ISet<T>* destFlow){
     if(SameType(otherFlow) && SameType(destFlow)){
         ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
         ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
@@ -305,7 +305,7 @@ void ArraySparseSet<T>::Add(T obj){
 }
 
 template<typename T>
-void ArraySparseSet<T>::Add(T obj, FlowSet<T>* dest){
+void ArraySparseSet<T>::Add(T obj, ISet<T>* dest){
     auto tmp = this->Clone();
     tmp->Add(obj);
     /// copy tmp to dest
@@ -323,7 +323,7 @@ void ArraySparseSet<T>::Remove(T obj){
 }
 
 template<typename T>
-void ArraySparseSet<T>::Remove(T obj, FlowSet<T>* dest){
+void ArraySparseSet<T>::Remove(T obj, ISet<T>* dest){
     auto tmp = this->Clone();
     tmp->Remove(obj);
     /// copy tmp to dest
@@ -346,7 +346,7 @@ bool A::ArraySparseSet<T>::Contains(T obj){
 }
 
 template<typename T>
-bool ArraySparseSet<T>::operator==(FlowSet<T>* otherFlow){
+bool ArraySparseSet<T>::operator==(ISet<T>* otherFlow){
     if(SameType(otherFlow)){
         ArraySparseSet<T> *flow = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
         return elements == flow->elements;
@@ -356,7 +356,7 @@ bool ArraySparseSet<T>::operator==(FlowSet<T>* otherFlow){
 }
 
 template<typename T>
-bool ArraySparseSet<T>::IsSubSet(FlowSet<T>* otherFlow){
+bool ArraySparseSet<T>::IsSubSet(ISet<T>* otherFlow){
     if(SameType(otherFlow)){
         ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
         for(auto i : other->elements){
@@ -381,7 +381,7 @@ std::list<T> ArraySparseSet<T>::ToList(){
 }
 
 template<typename T>
-bool ArraySparseSet<T>::SameType(FlowSet<T>* o){
+bool ArraySparseSet<T>::SameType(ISet<T>* o){
     if(dynamic_cast<ArraySparseSet<T>*>(o) != nullptr)
         return true;
     return false;

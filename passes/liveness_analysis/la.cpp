@@ -91,7 +91,7 @@ namespace {
     struct LA: public FunctionPass, public BackwardFlowAnalysis<ArrayPackedSet<Variable>> {
         static char ID;
         string funcName;
-        FlowSet<Variable> *domain;
+        ISet<Variable> *domain;
  
         LA(string f): funcName(f), FunctionPass(ID){};
         

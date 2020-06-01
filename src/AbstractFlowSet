@@ -1,5 +1,5 @@
 /**
- * @file AbstractFlowSet.h
+ * @file AbstractFlowSet
  * @author Sunil Singh (sunilp896@gmail.com)
  * @brief 
  * @version 0.1
@@ -11,7 +11,7 @@
 #ifndef _A_ABSTRACT_FLOW_SET_H_
 #define _A_ABSTRACT_FLOW_SET_H_
 
-#include "FlowSet"
+#include "ISet"
 #include "llvm/Support/raw_ostream.h"
 
 namespace A{
@@ -22,51 +22,51 @@ class ArraySparseSet;
 
 /**
  * @brief 
- * 
+ *  This class inherits FlowSet. 
  * @tparam T 
  */
 template <class T>
-class AbstractFlowSet : public FlowSet<T>{
+class AbstractFlowSet : public ISet<T>{
 public:
-    /// Used when called by a FlowSet pointer
-    FlowSet<T>* Clone();
-    /// Used when called by a FlowSet pointer
-    FlowSet<T>* EmptySet();
+    /// Used when called by a ISet pointer
+    ISet<T>* Clone();
+    /// Used when called by a ISet pointer
+    ISet<T>* EmptySet();
     /// copy current object in dest, type of this and dest are different
-    void Copy(FlowSet<T>* dest);
-    /// Used when called by a FlowSet pointer
+    void Copy(ISet<T>* dest);
+    /// Used when called by a ISet pointer
     void Clear();
     /// unions current and other, puts result in the current, type of this and other are different
-    void Union(FlowSet<T>* other);
+    void Union(ISet<T>* other);
     /// unions current and other, puts result in the dest, types are different
-    void Union(FlowSet<T>* other, FlowSet<T>* dest);
+    void Union(ISet<T>* other, ISet<T>* dest);
     /// intersection of current and other, puts result in the current, type of this and other are different
-    void Intersection(FlowSet<T>* other);
+    void Intersection(ISet<T>* other);
     /// intersection of current and other, puts result in the dest, types are different
-    void Intersection(FlowSet<T>* other, FlowSet<T>* dest);
+    void Intersection(ISet<T>* other, ISet<T>* dest);
     /// difference of current and other, puts result in the current, type of this and other are different
-    void Difference(FlowSet<T>* other);
+    void Difference(ISet<T>* other);
     /// difference of current and other, puts result in the dest, types are different
-    void Difference(FlowSet<T>* other, FlowSet<T>* dest);
-    /// Used when called by a FlowSet pointer
+    void Difference(ISet<T>* other, ISet<T>* dest);
+    /// Used when called by a ISet pointer
     bool IsEmpty();
-    /// Used when called by a FlowSet pointer
+    /// Used when called by a ISet pointer
     int Size();
-    /// Used when called by a FlowSet pointer
+    /// Used when called by a ISet pointer
     void Add(T obj);
-    /// Used when called by a FlowSet pointer
+    /// Used when called by a ISet pointer
     void Remove(T obj);
-    /// Used when called by a FlowSet pointer
+    /// Used when called by a ISet pointer
     bool Contains(T obj);
     /// compares current object with other, returns 0 if both are same, type of this and other are different
-    bool operator==(FlowSet<T>* other);
-    bool operator!=(FlowSet<T>* other){return !(*this == other);}
+    bool operator==(ISet<T>* other);
+    bool operator!=(ISet<T>* other){return !(*this == other);}
     /// returns true if other is a subset of current object, type of this and other are different
-    bool IsSubSet(FlowSet<T>* other);
+    bool IsSubSet(ISet<T>* other);
 };
 
 template<class T>
-FlowSet<T>* AbstractFlowSet<T>::Clone(){
+ISet<T>* AbstractFlowSet<T>::Clone(){
     /// According to the type of the current object, calls the corresponding Clone()
     if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
         dynamic_cast<A::ArrayPackedSet<T>*>(this)->Clone();
@@ -77,14 +77,14 @@ FlowSet<T>* AbstractFlowSet<T>::Clone(){
 }
 
 template<class T>
-FlowSet<T>* AbstractFlowSet<T>::EmptySet(){
-    A::FlowSet<T>* tmp = this->Clone();
+ISet<T>* AbstractFlowSet<T>::EmptySet(){
+    A::ISet<T>* tmp = this->Clone();
     tmp->Clear();
     return tmp;
 }
 
 template<class T>
-void AbstractFlowSet<T>::Copy(FlowSet<T>* dest){
+void AbstractFlowSet<T>::Copy(ISet<T>* dest){
     if(this == dest){
         return;
     }else{
@@ -115,7 +115,7 @@ void AbstractFlowSet<T>::Clear(){
 }
 
 template<class T>
-void AbstractFlowSet<T>::Union(FlowSet<T>* other){
+void AbstractFlowSet<T>::Union(ISet<T>* other){
     if(this == other){
         return;
     }
@@ -133,8 +133,8 @@ void AbstractFlowSet<T>::Union(FlowSet<T>* other){
 }
 
 template<class T>
-void AbstractFlowSet<T>::Union(FlowSet<T>* other, FlowSet<T>* dest){
-    /// using Union(FlowSet) with a temporary
+void AbstractFlowSet<T>::Union(ISet<T>* other, ISet<T>* dest){
+    /// using Union(ISet) with a temporary
     if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
         auto tmp = this->Clone();
         tmp->Union(other);
@@ -148,7 +148,7 @@ void AbstractFlowSet<T>::Union(FlowSet<T>* other, FlowSet<T>* dest){
 }
 
 template<class T>
-void AbstractFlowSet<T>::Intersection(FlowSet<T>* other){
+void AbstractFlowSet<T>::Intersection(ISet<T>* other){
     if(this == other){
         return;
     }
@@ -174,8 +174,8 @@ void AbstractFlowSet<T>::Intersection(FlowSet<T>* other){
 }
 
 template<class T>
-void AbstractFlowSet<T>::Intersection(FlowSet<T>* other, FlowSet<T>* dest){
-    /// using Intersection(FlowSet) with a temporary
+void AbstractFlowSet<T>::Intersection(ISet<T>* other, ISet<T>* dest){
+    /// using Intersection(ISet) with a temporary
     if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
         auto tmp = this->Clone();
         tmp->Intersection(other);
@@ -189,7 +189,7 @@ void AbstractFlowSet<T>::Intersection(FlowSet<T>* other, FlowSet<T>* dest){
 }
 
 template<class T>
-void AbstractFlowSet<T>::Difference(FlowSet<T>* other){
+void AbstractFlowSet<T>::Difference(ISet<T>* other){
     if(this == other){
         return;
     }
@@ -211,8 +211,8 @@ void AbstractFlowSet<T>::Difference(FlowSet<T>* other){
 }
 
 template<class T>
-void AbstractFlowSet<T>::Difference(FlowSet<T>* other, FlowSet<T>* dest){
-    /// using Difference(FlowSet) with a temporary
+void AbstractFlowSet<T>::Difference(ISet<T>* other, ISet<T>* dest){
+    /// using Difference(ISet) with a temporary
     if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
         auto tmp = this->Clone();
         tmp->Difference(other);
@@ -281,7 +281,7 @@ bool AbstractFlowSet<T>::Contains(T obj){
 }
 
 template<class T>
-bool AbstractFlowSet<T>::operator==(FlowSet<T>* other){
+bool AbstractFlowSet<T>::operator==(ISet<T>* other){
     if(this->Size() != other->Size())
         return  false;
   
@@ -308,7 +308,7 @@ bool AbstractFlowSet<T>::operator==(FlowSet<T>* other){
 }
 
 template<class T>
-bool AbstractFlowSet<T>::IsSubSet(FlowSet<T>* other){
+bool AbstractFlowSet<T>::IsSubSet(ISet<T>* other){
     if(this->Size() == 0 && other->Size() == 0)
         return  true;
 

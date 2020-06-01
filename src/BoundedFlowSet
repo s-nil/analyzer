@@ -12,7 +12,7 @@
 #ifndef _A_BOUNDED_FLOW_SET_H_
 #define _A_BOUNDED_FLOW_SET_H_
 
-#include "FlowSet"
+#include "ISet"
 
 namespace A{
     /**
@@ -28,9 +28,9 @@ namespace A{
         /// complements current object 
 	    virtual void Complement() = 0;
         /// complements current object, puts result in dest
-	    virtual void Complement(FlowSet<T>* dest) = 0;
+	    virtual void Complement(ISet<T>* dest) = 0;
         /// returns the Top element of the latice
-	    virtual FlowSet<T>* TopSet() = 0;
+	    virtual ISet<T>* TopSet() = 0;
         ~BoundedFlowSet(){}
     };
 }

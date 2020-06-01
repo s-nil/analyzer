@@ -1,5 +1,5 @@
 /**
- * @file AbstractBoundedFlowSet.h
+ * @file AbstractBoundedFlowSet
  * @author Sunil Singh (sunilp896@gmail.com)
  * @brief 
  * @version 0.1
@@ -26,11 +26,11 @@ namespace A
     public:
         // AbstractBoundedFlowSet(){}
 
-	    void Complement(FlowSet<T>* dest);
+	    void Complement(ISet<T>* dest);
     };
 
     template<class T>
-    void AbstractBoundedFlowSet<T>::Complement(FlowSet<T>* destFlow){
+    void AbstractBoundedFlowSet<T>::Complement(ISet<T>* destFlow){
 	    ArrayPackedSet<T>* tmp = dynamic_cast<ArrayPackedSet<T>*>(this->Clone());
         ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
         dest->Clear();

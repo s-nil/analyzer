@@ -32,30 +32,32 @@ public:
         bits = llvm::BitVector(mapper.Size(),true);
     }
 
+    //   
     void Complement();
-    void Complement(FlowSet<T>* dest);
-	FlowSet<T>* TopSet();
+    void Complement(ISet<T>* dest);
+	ISet<T>* TopSet();
+    //
 
-    FlowSet<T>* Clone();
-    FlowSet<T>* EmptySet();
-    void Copy(FlowSet<T>* dest);
+    ISet<T>* Clone();
+    ISet<T>* EmptySet();
+    void Copy(ISet<T>* dest);
     void Clear();
-    void Union(FlowSet<T>* other);
-    void Union(FlowSet<T>* other, FlowSet<T>* dest);
-    void Intersection(FlowSet<T>* other);
-    void Intersection(FlowSet<T>* other, FlowSet<T>* dest);
-    void Difference(FlowSet<T>* other);
-    void Difference(FlowSet<T>* other, FlowSet<T>* dest);
+    void Union(ISet<T>* other);
+    void Union(ISet<T>* other, ISet<T>* dest);
+    void Intersection(ISet<T>* other);
+    void Intersection(ISet<T>* other, ISet<T>* dest);
+    void Difference(ISet<T>* other);
+    void Difference(ISet<T>* other, ISet<T>* dest);
     bool IsEmpty();
     int Size();
     void Add(T obj);
-    void Add(T obj, FlowSet<T>* dest);      // TODO
+    void Add(T obj, ISet<T>* dest);      // TODO
     void Remove(T obj);
-    void Remove(T obj, FlowSet<T>* dest);    // TODO
+    void Remove(T obj, ISet<T>* dest);    // TODO
     bool Contains(T obj);
-    bool operator==(FlowSet<T>* other);
-    bool operator!=(FlowSet<T>* other){return !(*this == other);}
-    bool IsSubSet(FlowSet<T>* other);
+    bool operator==(ISet<T>* other);
+    bool operator!=(ISet<T>* other){return !(*this == other);}
+    bool IsSubSet(ISet<T>* other);
     std::list<T> ToList();
 
     class Iterator{
@@ -116,7 +118,7 @@ private:
     ObjectIntMapper<T> map;
     llvm::BitVector bits;
 
-    bool SameType(FlowSet<T>* o);
+    bool SameType(ISet<T>* o);
     llvm::BitVector CopyBitSet(ArrayPackedSet<T>* o);
     std::list<T> ToList(llvm::BitVector bits, int base);
     std::list<T> ToList(int low, int high); //  TODO
@@ -130,7 +132,7 @@ void ArrayPackedSet<T>::Complement(){
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Complement(FlowSet<T>* destFlow){
+void ArrayPackedSet<T>::Complement(ISet<T>* destFlow){
     if(this == destFlow){
         this->Complement();
         return;
@@ -149,7 +151,7 @@ void ArrayPackedSet<T>::Complement(FlowSet<T>* destFlow){
 }
 
 template<typename T>
-FlowSet<T>* ArrayPackedSet<T>::TopSet(){
+ISet<T>* ArrayPackedSet<T>::TopSet(){
     auto tmp = new ArrayPackedSet(this->map,this->bits);
     auto b = tmp->bits;
     tmp->bits |= b.flip();
@@ -157,17 +159,17 @@ FlowSet<T>* ArrayPackedSet<T>::TopSet(){
 }
 
 template<typename T>
-FlowSet<T>* ArrayPackedSet<T>::Clone(){
+ISet<T>* ArrayPackedSet<T>::Clone(){
     return new ArrayPackedSet<T>(this->map,this->bits);
 }
 
 template<typename T>
-FlowSet<T>* ArrayPackedSet<T>::EmptySet(){
+ISet<T>* ArrayPackedSet<T>::EmptySet(){
     return new ArrayPackedSet<T>(this->map);
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Copy(FlowSet<T>* dest){
+void ArrayPackedSet<T>::Copy(ISet<T>* dest){
     if(dest == this){
         return;
     }
@@ -185,7 +187,7 @@ void ArrayPackedSet<T>::Clear(){
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Union(FlowSet<T>* other){
+void ArrayPackedSet<T>::Union(ISet<T>* other){
     if(this == other){
         return;
     }else{
@@ -197,7 +199,7 @@ void ArrayPackedSet<T>::Union(FlowSet<T>* other){
 }
 
 template<typename T>
-void A::ArrayPackedSet<T>::Union(A::FlowSet<T>* otherFlow, A::FlowSet<T>* destFlow){
+void A::ArrayPackedSet<T>::Union(A::ISet<T>* otherFlow, A::ISet<T>* destFlow){
     if(SameType(otherFlow) && SameType(destFlow)){
         A::ArrayPackedSet<T>* other = dynamic_cast<A::ArrayPackedSet<T>*>(otherFlow);
         A::ArrayPackedSet<T>* dest = dynamic_cast<A::ArrayPackedSet<T>*>(destFlow);
@@ -211,7 +213,7 @@ void A::ArrayPackedSet<T>::Union(A::FlowSet<T>* otherFlow, A::FlowSet<T>* destFl
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Intersection(FlowSet<T>* other){
+void ArrayPackedSet<T>::Intersection(ISet<T>* other){
     if(other == this){
         return;
     }else{
@@ -223,7 +225,7 @@ void ArrayPackedSet<T>::Intersection(FlowSet<T>* other){
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Intersection(FlowSet<T>* otherFlow, FlowSet<T>* destFlow){
+void ArrayPackedSet<T>::Intersection(ISet<T>* otherFlow, ISet<T>* destFlow){
     if(SameType(otherFlow) && SameType(destFlow)){
         ArrayPackedSet<T>* other = dynamic_cast<ArrayPackedSet<T>*>(otherFlow);
         ArrayPackedSet<T>* dest  = dynamic_cast<ArrayPackedSet<T>*>(destFlow);
@@ -237,7 +239,7 @@ void ArrayPackedSet<T>::Intersection(FlowSet<T>* otherFlow, FlowSet<T>* destFlow
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Difference(FlowSet<T>* other){
+void ArrayPackedSet<T>::Difference(ISet<T>* other){
     if(other == this){
         bits.reset(dynamic_cast<ArrayPackedSet<T>*>(other)->bits);
     }else{
@@ -249,7 +251,7 @@ void ArrayPackedSet<T>::Difference(FlowSet<T>* other){
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Difference(FlowSet<T>* otherFlow, FlowSet<T>* destFlow){
+void ArrayPackedSet<T>::Difference(ISet<T>* otherFlow, ISet<T>* destFlow){
     if(SameType(otherFlow) && SameType(destFlow)){
         ArrayPackedSet<T>* other = dynamic_cast<ArrayPackedSet<T>*>(otherFlow);
         ArrayPackedSet<T>* dest  = dynamic_cast<ArrayPackedSet<T>*>(destFlow);
@@ -284,7 +286,7 @@ void ArrayPackedSet<T>::Add(T obj){
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Add(T obj, FlowSet<T>* dest){
+void ArrayPackedSet<T>::Add(T obj, ISet<T>* dest){
     auto tmp = this->Clone();
     tmp->Add(obj);
     /// copy tmp to dest
@@ -298,7 +300,7 @@ void ArrayPackedSet<T>::Remove(T obj){
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Remove(T obj, FlowSet<T>* dest){
+void ArrayPackedSet<T>::Remove(T obj, ISet<T>* dest){
     auto tmp = this->Clone();
     tmp->Remove(obj);
     /// copy tmp to dest
@@ -311,7 +313,7 @@ bool ArrayPackedSet<T>::Contains(T obj){
 }
 
 template<typename T>
-bool ArrayPackedSet<T>::operator==(FlowSet<T>* otherFlow){
+bool ArrayPackedSet<T>::operator==(ISet<T>* otherFlow){
     if(SameType(otherFlow)){
         ArrayPackedSet<T>* other = dynamic_cast<ArrayPackedSet<T>*>(otherFlow);
         return bits == other->bits;
@@ -321,7 +323,7 @@ bool ArrayPackedSet<T>::operator==(FlowSet<T>* otherFlow){
 }
 
 template<typename T>
-bool ArrayPackedSet<T>::IsSubSet(FlowSet<T>* other){
+bool ArrayPackedSet<T>::IsSubSet(ISet<T>* other){
     if(SameType(other)){
         llvm::BitVector tmp(this->bits);
         tmp |= dynamic_cast<ArrayPackedSet<T>*>(other)->bits;
@@ -360,7 +362,7 @@ std::list<T> ArrayPackedSet<T>::ToList(int low, int high){
 }
 
 template<typename T>
-bool ArrayPackedSet<T>::SameType(FlowSet<T>* o){
+bool ArrayPackedSet<T>::SameType(ISet<T>* o){
     if(dynamic_cast<ArrayPackedSet<T>*>(o) != nullptr)
         return true;
     return false;
