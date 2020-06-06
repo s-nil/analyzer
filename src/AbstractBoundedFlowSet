@@ -10,7 +10,7 @@
  */
 #ifndef _A_ABSTRACT_BOUNDED_FLOW_SET_H_
 #define _A_ABSTRACT_BOUNDED_FLOW_SET_H_
-#include "BoundedFlowSet"
+#include "IBoundedSet"
 #include "AbstractFlowSet"
 
 namespace A
@@ -21,7 +21,7 @@ namespace A
      * @tparam T 
      */
     template<class T>
-    class AbstractBoundedFlowSet : public BoundedFlowSet<T> , public AbstractFlowSet<T>
+    class AbstractBoundedFlowSet : public IBoundedSet<T> , public AbstractFlowSet<T>
     {
     public:
         // AbstractBoundedFlowSet(){}

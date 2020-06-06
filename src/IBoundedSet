@@ -1,5 +1,5 @@
 /**
- * @file BoundedFlowSet.h
+ * @file IBoundedSet
  * @author Sunil Singh (sunilp896@gmail.com)
  * @brief 
  * @version 0.1
@@ -23,7 +23,7 @@ namespace A{
      *  Type of the dataflow value
      */
     template<typename T>
-    class BoundedFlowSet{
+    class IBoundedSet{
 	public:
         /// complements current object 
 	    virtual void Complement() = 0;
@@ -31,7 +31,7 @@ namespace A{
 	    virtual void Complement(ISet<T>* dest) = 0;
         /// returns the Top element of the latice
 	    virtual ISet<T>* TopSet() = 0;
-        ~BoundedFlowSet(){}
+        ~IBoundedSet(){}
     };
 }
 #endif
