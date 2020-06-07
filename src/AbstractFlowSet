@@ -27,6 +27,8 @@ class ArraySparseSet;
  */
 template <class T>
 class AbstractFlowSet : public ISet<T>{
+protected:
+    AbstractFlowSet(){};
 public:
     /// Used when called by a ISet pointer
     ISet<T>* Clone();
@@ -54,8 +56,12 @@ public:
     int Size();
     /// Used when called by a ISet pointer
     void Add(T obj);
+    /// puts the union the obj and this in the dest
+    void Add(T obj, ISet<T>* dest);
     /// Used when called by a ISet pointer
     void Remove(T obj);
+    /// puts the this minus obj in the dest
+    void Remove(T obj, ISet<T>* dest);
     /// Used when called by a ISet pointer
     bool Contains(T obj);
     /// compares current object with other, returns 0 if both are same, type of this and other are different
@@ -229,10 +235,10 @@ template<class T>
 bool AbstractFlowSet<T>::IsEmpty(){
     /// According to the type of the current object, calls the corresponding IsEmpty()
     if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
-        dynamic_cast<A::ArrayPackedSet<T>*>(this)->IsEmpty();
+        return dynamic_cast<A::ArrayPackedSet<T>*>(this)->IsEmpty();
     }
     if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
-        dynamic_cast<A::ArraySparseSet<T>*>(this)->IsEmpty();
+        return dynamic_cast<A::ArraySparseSet<T>*>(this)->IsEmpty();
     }
 }
 
@@ -240,10 +246,10 @@ template<class T>
 int AbstractFlowSet<T>::Size(){
     /// According to the type of the current object, calls the corresponding Size()
     if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
-        dynamic_cast<A::ArrayPackedSet<T>*>(this)->Size();
+        return dynamic_cast<A::ArrayPackedSet<T>*>(this)->Size();
     }
     if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
-        dynamic_cast<A::ArraySparseSet<T>*>(this)->Size();
+        return dynamic_cast<A::ArraySparseSet<T>*>(this)->Size();
     }
 }
 
@@ -256,6 +262,18 @@ void AbstractFlowSet<T>::Add(T obj){
     if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
         dynamic_cast<A::ArraySparseSet<T>*>(this)->Add(obj);
     }
+}
+
+/// may not be used ever
+template<class T>
+void AbstractFlowSet<T>::Add(T obj, ISet<T>* dest){
+    dest->Add(obj);
+}
+
+/// may not be used ever
+template<class T>
+void AbstractFlowSet<T>::Remove(T obj, ISet<T>* dest){
+    dest->Add(obj);
 }
 
 template<class T>
@@ -273,10 +291,10 @@ template<class T>
 bool AbstractFlowSet<T>::Contains(T obj){
     /// According to the type of the current object, calls the corresponding Contains()
     if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
-        dynamic_cast<A::ArrayPackedSet<T>*>(this)->Contains(obj);
+        return dynamic_cast<A::ArrayPackedSet<T>*>(this)->Contains(obj);
     } 
     if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
-        dynamic_cast<A::ArraySparseSet<T>*>(this)->Contains(obj);
+        return dynamic_cast<A::ArraySparseSet<T>*>(this)->Contains(obj);
     }
 }
 
@@ -328,11 +346,6 @@ bool AbstractFlowSet<T>::IsSubSet(ISet<T>* other){
         return true;
     }
 }
-
-// template<class T>
-// std::list<T> AbstractFlowSet<T>::ToList(){
-    
-// }
 }   // end namespace
 
 #endif  // end _A_ABSTRACT_FLOW_SET_H_
