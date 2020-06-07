@@ -11,7 +11,7 @@
 #ifndef _A_I_SET_H_
 #define _A_I_SET_H_
 
-#include <list>
+#include <vector>
 
 namespace A{
 
@@ -67,7 +67,7 @@ public:
     /// returns true if other is a subset of current object
     virtual bool IsSubSet(ISet<T>* other) = 0;
     /// returns a list of DF values that current object contains
-    virtual std::list<T> ToList() = 0;
+    virtual std::vector<T> ToList() = 0;
     virtual ~ISet(){}    // virtual destructor
 private:
 
