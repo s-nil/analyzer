@@ -35,11 +35,11 @@ public:
     //   
     void Complement();
     void Complement(ISet<T>* dest);
-	ISet<T>* TopSet();
+	ArrayPackedSet<T>* TopSet();
     //
 
-    ISet<T>* Clone();
-    ISet<T>* EmptySet();
+    ArrayPackedSet<T>* Clone();
+    ArrayPackedSet<T>* EmptySet();
     void Copy(ISet<T>* dest);
     void Clear();
     void Union(ISet<T>* other);
@@ -58,7 +58,7 @@ public:
     bool operator==(ISet<T>* other);
     bool operator!=(ISet<T>* other){return !(*this == other);}
     bool IsSubSet(ISet<T>* other);
-    std::list<T> ToList();
+    std::vector<T> ToList();
 
     class Iterator{
     public:
@@ -120,8 +120,8 @@ private:
 
     bool SameType(ISet<T>* o);
     llvm::BitVector CopyBitSet(ArrayPackedSet<T>* o);
-    std::list<T> ToList(llvm::BitVector bits, int base);
-    std::list<T> ToList(int low, int high); //  TODO
+    std::vector<T> ToList(llvm::BitVector bits, int base);
+    std::vector<T> ToList(int low, int high); //  TODO
 };
 
 template<typename T>
@@ -151,7 +151,7 @@ void ArrayPackedSet<T>::Complement(ISet<T>* destFlow){
 }
 
 template<typename T>
-ISet<T>* ArrayPackedSet<T>::TopSet(){
+ArrayPackedSet<T>* ArrayPackedSet<T>::TopSet(){
     auto tmp = new ArrayPackedSet(this->map,this->bits);
     auto b = tmp->bits;
     tmp->bits |= b.flip();
@@ -159,12 +159,12 @@ ISet<T>* ArrayPackedSet<T>::TopSet(){
 }
 
 template<typename T>
-ISet<T>* ArrayPackedSet<T>::Clone(){
+ArrayPackedSet<T>* ArrayPackedSet<T>::Clone(){
     return new ArrayPackedSet<T>(this->map,this->bits);
 }
 
 template<typename T>
-ISet<T>* ArrayPackedSet<T>::EmptySet(){
+ArrayPackedSet<T>* ArrayPackedSet<T>::EmptySet(){
     return new ArrayPackedSet<T>(this->map);
 }
 
@@ -337,16 +337,16 @@ bool ArrayPackedSet<T>::IsSubSet(ISet<T>* other){
 }
 
 template<typename T>
-std::list<T> ArrayPackedSet<T>::ToList(){
+std::vector<T> ArrayPackedSet<T>::ToList(){
     return ToList(bits,0);
 }
 
 template<typename T>
-std::list<T> ArrayPackedSet<T>::ToList(llvm::BitVector bits, int base){
+std::vector<T> ArrayPackedSet<T>::ToList(llvm::BitVector bits, int base){
     if(bits.size() == 0){
-        return std::list<T>();
+        return std::vector<T>();
     }else{
-        std::list<T> objects;
+        std::vector<T> objects;
         for (int i = base; i < bits.size(); ++i){
             if(bits.test(i)){
                 objects.push_back(map.GetObject(i));
@@ -357,7 +357,7 @@ std::list<T> ArrayPackedSet<T>::ToList(llvm::BitVector bits, int base){
 }
 
 template<typename T>
-std::list<T> ArrayPackedSet<T>::ToList(int low, int high){
+std::vector<T> ArrayPackedSet<T>::ToList(int low, int high){
     //TODO
 }
 

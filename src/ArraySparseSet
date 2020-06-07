@@ -2,16 +2,16 @@
 #define _A_ARRAY_SPARSE_SET_H_
 #include "AbstractFlowSet"
 #include "ValueUniverse"
+#include <algorithm>
+#include <set>
 #include <vector>
-#include <list>
 
 namespace A{
     template<typename T>
-    class ArraySparseSet : public AbstractFlowSet<T>
-    {
+    class ArraySparseSet : public AbstractFlowSet<T>{
     public:
         ArraySparseSet(){
-            elements = std::vector<T>();
+            elements = std::set<T>();
         }
         ArraySparseSet(const ArraySparseSet& obj){
             elements = obj.elements;
@@ -19,91 +19,39 @@ namespace A{
         ArraySparseSet(llvm::Function* F);
         ~ArraySparseSet(){}
 
-        ISet<T>* Clone();
-        ISet<T>* EmptySet();
-        void Copy(ISet<T>* dest);
-        void Clear();
-        void Union(ISet<T>* other);
-        void Union(ISet<T>* other, ISet<T>* dest);
-        void Intersection(ISet<T>* other);
-        void Intersection(ISet<T>* other, ISet<T>* dest);
-        void Difference(ISet<T>* other);
-        void Difference(ISet<T>* other, ISet<T>* dest);
-        bool IsEmpty();
-        int Size();
-        void Add(T obj);
-        void Add(T obj, ISet<T>* dest);      // TODO
-        void Remove(T obj);
-        void Remove(int idx);
-        void Remove(T obj, ISet<T>* dest);    // TODO
-        bool Contains(T obj);
-        bool operator==(ISet<T>* other);
-        bool operator!=(ISet<T>* other){return !(*this == other);}
-        bool IsSubSet(ISet<T>* other);        //  TODO
-        std::list<T> ToList();
+        ArraySparseSet<T>* Clone() override;
+        ArraySparseSet<T>* EmptySet() override;
+        void Copy(ISet<T>* dest) override;
+        void Clear() override;
+        void Union(ISet<T>* other) override;
+        void Union(ISet<T>* other, ISet<T>* dest) override;
+        void Intersection(ISet<T>* other) override;
+        void Intersection(ISet<T>* other, ISet<T>* dest) override;
+        void Difference(ISet<T>* other) override;
+        void Difference(ISet<T>* other, ISet<T>* dest) override;
+        bool IsEmpty() override;
+        int Size() override;
+        void Add(T obj) override;
+        void Add(T obj, ISet<T>* dest) override;
+        void Remove(T obj) override;
+        void Remove(T obj, ISet<T>* dest) override;
+        bool Contains(T obj) override;
+        bool operator==(ISet<T>* other) override;
+        bool operator!=(ISet<T>* other) override {return !(*this == other);}
+        bool IsSubSet(ISet<T>* other) override;
+        std::vector<T> ToList();
 
-        class Iterator{
-        public:
-            typedef Iterator self_type;
-            typedef T value_type;
-            typedef T& reference;
-            typedef T* pointer;
-            typedef std::input_iterator_tag iterator_category;
-            Iterator(){_ptr = nullptr;}
-            Iterator(ArraySparseSet<T>* b){
-                if(!b->elements.empty()){
-                    setObject = b;
-                    _ptr = &b->elements[0];
-                    idx =  0;
-                }else{
-                    _ptr = nullptr;
-		}
-	    }
-            Iterator(const Iterator& cit){
-                _ptr = cit._ptr;
-                idx = cit.idx;
-                setObject = cit.setObject;
-            }
-            Iterator& operator++(){
-                if(idx == setObject->elements.size()-1){
-                    _ptr = nullptr;
-                }else{
-                    ++_ptr;
-                    ++idx;
-                }
-                return *this;
-            }
-            Iterator operator++(int){
-                self_type tmp(*this);
-                operator++();
-                return tmp;
-            }
-            bool operator==(const Iterator& rhs) const{
-                return _ptr == rhs._ptr;
-            }
-            bool operator!=(const Iterator& rhs) const{
-                return _ptr != rhs._ptr;
-            }
-            value_type operator*(){
-                return *_ptr;
-            }
-        private:
-            pointer _ptr;
-            ArraySparseSet<T>* setObject;
-            int idx;
-        };
-
-        Iterator begin(){
-            return Iterator(this);
+        typename std::set<T>::iterator begin(){
+            return elements.begin();
         }
-        Iterator end(){
-            return Iterator();
+        typename std::set<T>::iterator end(){
+            return elements.end();
         }
 
 
     private:
-        std::vector<T> elements;
-        ArraySparseSet(const ArraySparseSet<T>* ref);
+        std::set<T> elements;
+        inline ArraySparseSet(const ArraySparseSet<T>* ref);
         bool SameType(A::ISet<T>* o);
     };    
 
@@ -115,16 +63,17 @@ ArraySparseSet<T>::ArraySparseSet(const ArraySparseSet<T>* ref){
 template<typename T>
 ArraySparseSet<T>::ArraySparseSet(llvm::Function* F){
     auto universe = ValueUniverse<T>(F);
-    this->elements = universe.ToArray();
+    auto ele = universe.ToArray();
+    this->elements = std::set<T>(ele.begin(),ele.end());
 }
 
 template<typename T>
-ISet<T>* ArraySparseSet<T>::Clone(){
+ArraySparseSet<T>* ArraySparseSet<T>::Clone(){
     return new ArraySparseSet<T>(this);
 }
 
 template<typename T>
-ISet<T>* ArraySparseSet<T>::EmptySet(){
+ArraySparseSet<T>* ArraySparseSet<T>::EmptySet(){
     return new ArraySparseSet<T>();
 }
 
@@ -136,8 +85,7 @@ void ArraySparseSet<T>::Copy(ISet<T>* dest){
         if(SameType(dest)){
             ArraySparseSet<T> *tmp = dynamic_cast<ArraySparseSet<T>*>(dest);
             tmp->elements = this->elements;
-        }else
-        {
+        }else{
             AbstractFlowSet<T>::Copy(dest);
         }
     }
@@ -145,11 +93,6 @@ void ArraySparseSet<T>::Copy(ISet<T>* dest){
 
 template<typename T>
 void ArraySparseSet<T>::Clear(){
-    // if(is_pointer<T>::v){
-    //     for (int i = 0; i < elements.size(); ++i){
-    //         delete elements[i];
-    //     }
-    // }
     this->elements.clear();
 }
 
@@ -176,16 +119,11 @@ void ArraySparseSet<T>::Union(ISet<T>* otherFlow, ISet<T>* destFlow){
             return;
         }
 
-        if(other != dest){
-            dest->elements = elements;
-            for (int i = 0; i < other->elements.size(); ++i){
-                dest->Add(other->elements[i]);
-            }
-        }else{
-            for (int i = 0; i < elements.size(); ++i){
-                dest->Add(elements[i]);
-            }
-        }
+        ArraySparseSet<T> tmp;
+        std::set_union(elements.begin(),elements.end(),
+                        other->elements.begin(),other->elements.end(),
+                        std::inserter(tmp.elements,tmp.elements.begin()));
+        tmp.Copy(dest);
     }else{
         this->AbstractFlowSet<T>::Union(otherFlow,destFlow);
     }
@@ -210,28 +148,15 @@ void ArraySparseSet<T>::Intersection(ISet<T>* otherFlow, ISet<T>* destFlow){
         ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
 
         if(this == other || *this == other){
-            dest->Clear();
+            Copy(dest);
             return;
         }
 
-        if(other != dest){
-            dest->elements = elements;
-            for (int i = 0; i < dest->elements.size(); ){
-                if(!other->Contains(dest->elements[i])){
-                    dest->Remove(i);
-                }else{
-                    ++i;
-                }
-            }
-        }else{
-            for (int i = 0; i < dest->elements.size(); ){
-                if(!Contains(dest->elements[i])){
-                    dest->Remove(i);
-                }else{
-                    ++i;
-                }
-            }
-        }
+        ArraySparseSet<T> tmp;
+        std::set_intersection(elements.begin(),elements.end(),
+                        other->elements.begin(),other->elements.end(),
+                        std::inserter(tmp.elements,tmp.elements.begin()));
+        tmp.Copy(dest);
     }else{
         AbstractFlowSet<T>::Intersection(otherFlow,destFlow);
     }
@@ -260,28 +185,11 @@ void ArraySparseSet<T>::Difference(ISet<T>* otherFlow, ISet<T>* destFlow){
             return;
         }
 
-        if(other != dest){
-            dest->elements = elements;
-            for (int i = 0; i < dest->elements.size();){
-                if(other->Contains(dest->elements[i])){
-                    dest->Remove(i);
-                }else{
-                    ++i;
-                }
-            }
-        }else{
-            ArraySparseSet<T> tmp;
-            Copy(&tmp);
-            // tmp.elements = dest->elements;
-            for (int i = 0; i < dest->elements.size();){
-                if(tmp.Contains(dest->elements[i])){
-                    tmp.Remove(i);
-                }else{
-                    ++i;
-                }
-            }
-            tmp.Copy(dest);
-        }
+        ArraySparseSet<T> tmp;
+        std::set_difference(elements.begin(),elements.end(),
+                        other->elements.begin(),other->elements.end(),
+                        std::inserter(tmp.elements,tmp.elements.begin()));
+        tmp.Copy(dest);
     }else{
         AbstractFlowSet<T>::Difference(otherFlow,destFlow);
     }
@@ -300,7 +208,7 @@ int ArraySparseSet<T>::Size(){
 template<typename T>
 void ArraySparseSet<T>::Add(T obj){
     if(!Contains(obj)){
-        elements.push_back(obj);
+        elements.insert(obj);
     }
 }
 
@@ -314,12 +222,7 @@ void ArraySparseSet<T>::Add(T obj, ISet<T>* dest){
 
 template<typename T>
 void ArraySparseSet<T>::Remove(T obj){
-    for (int i = 0; i < elements.size(); ++i){
-        if(elements[i] == obj){
-            Remove(i);
-            break;
-        }
-    }
+    elements.erase(obj);
 }
 
 template<typename T>
@@ -331,17 +234,9 @@ void ArraySparseSet<T>::Remove(T obj, ISet<T>* dest){
 }
 
 template<typename T>
-void ArraySparseSet<T>::Remove(int idx){
-    if(idx < elements.size()-1)
-        elements[idx] = elements[elements.size()-1];
-    elements.pop_back();
-}
-
-template<typename T>
 bool A::ArraySparseSet<T>::Contains(T obj){
-    for (int i = 0; i < elements.size(); ++i){
-        if(elements[i] == obj)  return true;
-    }
+    if(elements.find(obj) != elements.end())
+        return true;
     return false;
 }
 
@@ -359,24 +254,15 @@ template<typename T>
 bool ArraySparseSet<T>::IsSubSet(ISet<T>* otherFlow){
     if(SameType(otherFlow)){
         ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
-        for(auto i : other->elements){
-            if(!this->Contains(i)){
-                return false;
-            }
-        }
-        return true;
+        return std::includes(elements.begin(),elements.end(),other->elements.begin(),other->elements.end());
     }else{
         return AbstractFlowSet<T>::IsSubSet(otherFlow);
     }
-
 }
 
 template<typename T>
-std::list<T> ArraySparseSet<T>::ToList(){
-    std::list<T> objects;
-    for (int i = 0; i < elements.size(); ++i){
-        objects.push_back(elements[i]);
-    }
+std::vector<T> ArraySparseSet<T>::ToList(){
+    std::vector<T> objects(elements.begin(),elements.end());
     return objects;
 }
 
@@ -386,6 +272,6 @@ bool ArraySparseSet<T>::SameType(ISet<T>* o){
         return true;
     return false;
 }
-}
+}   //  namespace
 
 #endif
