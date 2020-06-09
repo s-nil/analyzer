@@ -1,4 +1,5 @@
 include_directories("${PROJECT_SOURCE_DIR}/src"
+                    "${PROJECT_SOURCE_DIR}/include"
                     "${LLVM_INCLUDE_DIRS}")
 
 execute_process(COMMAND llvm-config-9  --cxxflags

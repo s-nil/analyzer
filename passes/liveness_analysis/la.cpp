@@ -13,17 +13,8 @@
 #include "llvm/Analysis/LoopPass.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Demangle/Demangle.h"
-#include "ArrayPackedSet"
-#include "ArraySparseSet"
-#include "BackwardFlowAnalysis"
 
-#define RESET   "\033[0m"
-#define RED     "\033[31m"      /* Red */
-#define YELLOW  "\033[33m"      /* Yellow */
-
-using namespace llvm;
-using namespace std;
-using namespace A;
+#include "framework.h"
 
 class Variable{
 public:
@@ -95,8 +86,7 @@ namespace {
  
         LA(string f): funcName(f), FunctionPass(ID){};
         
-        virtual bool runOnFunction(Function &F)
-        {
+        virtual bool runOnFunction(Function &F) override{
             if(demangle(F.getName().str()).substr(0,funcName.size()).compare(funcName) != 0)
                 return false;
             errs() << "function name: " << demangle(F.getName().str()) << '\n';
