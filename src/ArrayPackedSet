@@ -58,7 +58,7 @@ public:
     bool operator==(ISet<T>* other);
     bool operator!=(ISet<T>* other){return !(*this == other);}
     bool IsSubSet(ISet<T>* other);
-    std::vector<T> ToList();
+    std::vector<T> ToList() override;
 
     class Iterator{
     public:

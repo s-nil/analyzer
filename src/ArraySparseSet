@@ -39,7 +39,7 @@ namespace A{
         bool operator==(ISet<T>* other) override;
         bool operator!=(ISet<T>* other) override {return !(*this == other);}
         bool IsSubSet(ISet<T>* other) override;
-        std::vector<T> ToList();
+        std::vector<T> ToList() override;
 
         typename std::set<T>::iterator begin(){
             return elements.begin();
