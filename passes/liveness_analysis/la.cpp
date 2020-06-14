@@ -165,30 +165,6 @@ namespace {
             tmp->Union(use,out);
         }
     };
-    
 }
 
-char LA::ID = 0;
-
-int main(int argc, char **argv){
-    if(argc < 3){
-        llvm::errs() << RED <<"Usage: " <<RESET
-                        << YELLOW <<argv[0] << " <IR file> <function name>" << RESET<<'\n';
-        exit(1);
-    }
-
-    SMDiagnostic Err;
-    LLVMContext Context;
-    std::unique_ptr<Module> Mod(parseIRFile(argv[1],Err,Context));
-
-    if(!Mod){
-        Err.print(argv[0],errs());
-        return 1;
-    }
-
-    legacy::PassManager PM;
-    PM.add(new LA(argv[2]));
-    PM.run(*Mod);
-
-    return 0;
-}
+SETUP(LA);
