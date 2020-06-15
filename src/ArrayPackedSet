@@ -33,31 +33,31 @@ public:
     }
 
     //   
-    void Complement();
-    void Complement(ISet<T>* dest);
-	ArrayPackedSet<T>* TopSet();
+    void Complement() override;
+    void Complement(ISet<T>* dest) override;
+	ArrayPackedSet<T>* TopSet() override;
     //
 
-    ArrayPackedSet<T>* Clone();
-    ArrayPackedSet<T>* EmptySet();
-    void Copy(ISet<T>* dest);
-    void Clear();
-    void Union(ISet<T>* other);
-    void Union(ISet<T>* other, ISet<T>* dest);
-    void Intersection(ISet<T>* other);
-    void Intersection(ISet<T>* other, ISet<T>* dest);
-    void Difference(ISet<T>* other);
-    void Difference(ISet<T>* other, ISet<T>* dest);
-    bool IsEmpty();
-    int Size();
-    void Add(T obj);
-    void Add(T obj, ISet<T>* dest);      // TODO
-    void Remove(T obj);
-    void Remove(T obj, ISet<T>* dest);    // TODO
-    bool Contains(T obj);
-    bool operator==(ISet<T>* other);
-    bool operator!=(ISet<T>* other){return !(*this == other);}
-    bool IsSubSet(ISet<T>* other);
+    ArrayPackedSet<T>* Clone() override;
+    ArrayPackedSet<T>* EmptySet() override;
+    void Copy(ISet<T>* dest) override;
+    void Clear() override;
+    void Union(ISet<T>* other) override;
+    void Union(ISet<T>* other, ISet<T>* dest) override;
+    void Intersection(ISet<T>* other) override;
+    void Intersection(ISet<T>* other, ISet<T>* dest) override;
+    void Difference(ISet<T>* other) override;
+    void Difference(ISet<T>* other, ISet<T>* dest) override;
+    bool IsEmpty() override;
+    int Size() override;
+    void Add(T obj) override;
+    void Add(T obj, ISet<T>* dest) override;      // TODO
+    void Remove(T obj) override;
+    void Remove(T obj, ISet<T>* dest) override;    // TODO
+    bool Contains(T obj) override;
+    bool operator==(ISet<T>* other) override;
+    bool operator!=(ISet<T>* other) override{return !(*this == other);}
+    bool IsSubSet(ISet<T>* other) override;
     std::vector<T> ToList() override;
 
     class Iterator{
