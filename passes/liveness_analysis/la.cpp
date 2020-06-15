@@ -18,28 +18,18 @@
 
 class Variable{
 public:
-    Variable(llvm::Value* v){
-        id = (long)v;
-        value = v;
-    }
+    Variable(llvm::Value* v):id((long)v),value(v){	}
     llvm::Value* GetValue(){return value;}
     void SetValue(llvm::Value* v){value = v;}
     ~Variable(){}
 
-    bool operator==(const Variable& rhs) const{
-        return value == rhs.value;
-    }
-    bool operator!=(const Variable& rhs) const{
-        return value != rhs.value;
-    }
+    bool operator==(const Variable& rhs) const{	return value == rhs.value;}
+    bool operator!=(const Variable& rhs) const{	return value != rhs.value;}
 
-    bool operator<(const Variable& rhs) const{
-        return rhs.id < this->id; 
-    }
+    bool operator<(const Variable& rhs) const{	return rhs.id < this->id; }
 
     friend llvm::raw_ostream& operator<<(llvm::raw_ostream& out, Variable& v){
-        out << (v.value)->getName();
-        return out;
+        out << (v.value)->getName();return out;
     }
 private:
     long id;
@@ -77,16 +67,15 @@ A::ValueUniverse<Variable>::ValueUniverse(Function* f){
     }
 }
 
-
 namespace {
-    struct LA: public FunctionPass, public BackwardFlowAnalysis<ArrayPackedSet<Variable>> {
+    BACKWARDANALYSIS(LA,ArrayPackedSet,Variable){
         static char ID;
         string funcName;
-        ISet<Variable> *domain;
+        ArrayPackedSet<Variable> *domain;
  
         LA(string f): funcName(f), FunctionPass(ID){};
         
-        virtual bool runOnFunction(Function &F) override{
+        RUN(){
             if(demangle(F.getName().str()).substr(0,funcName.size()).compare(funcName) != 0)
                 return false;
             errs() << "function name: " << demangle(F.getName().str()) << '\n';
@@ -100,26 +89,17 @@ namespace {
             return false;
         }
 
-        ArrayPackedSet<Variable>* NewInitialFlowSet() override{
-            return dynamic_cast<ArrayPackedSet<Variable>*>(domain->EmptySet());
+        AP_INITIALVALUE(){	return domain->EmptySet();}
 
-        }
+        AP_ENTRYVALUE(){	return domain->EmptySet();}
 
-        ArrayPackedSet<Variable>* EntryInitialFlowSet() override{
-            return dynamic_cast<ArrayPackedSet<Variable>*>(domain->EmptySet());
-        }
+		AP_MERGE(Variable){	in1->Union(in2,out);}
 
-        void Merge(ArrayPackedSet<Variable>* in1, ArrayPackedSet<Variable>* in2, ArrayPackedSet<Variable>* out) override{
-            in1->Union(in2,out);
-        }
-
-        void Copy(ArrayPackedSet<Variable>* in1, ArrayPackedSet<Variable>* in2) override{
-            in1->Copy(in2);
-        }
+		AP_COPY(Variable){	in1->Copy(in2);}
         
-        void FlowThrough(BasicBlock* node, ArrayPackedSet<Variable>* in, ArrayPackedSet<Variable>* out) override{
-            ArrayPackedSet<Variable>* def = dynamic_cast<ArrayPackedSet<Variable>*>(domain->EmptySet());
-            ArrayPackedSet<Variable>* use = dynamic_cast<ArrayPackedSet<Variable>*>(domain->EmptySet());
+		AP_FLOWTH(Variable){
+            ArrayPackedSet<Variable>* def = domain->EmptySet();
+            ArrayPackedSet<Variable>* use = domain->EmptySet();
             
             if(&func->getEntryBlock() == node && func->arg_size()>0){
                 for(auto arg_it=func->arg_begin(); arg_it != func->arg_end(); ++arg_it){
@@ -160,7 +140,7 @@ namespace {
                 }
             }   //
 
-            ArrayPackedSet<Variable>* tmp = dynamic_cast<ArrayPackedSet<Variable>*>(domain->EmptySet());
+            ArrayPackedSet<Variable>* tmp = domain->EmptySet();
             in->Difference(def,tmp);
             tmp->Union(use,out);
         }
