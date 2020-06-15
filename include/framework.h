@@ -45,6 +45,45 @@
         char m_pass_name::ID = 0; \
         MAIN_F(m_pass_name)
 
+#define BACKWARDANALYSIS(m_pass_name,m_storetype,m_property)    \
+        struct m_pass_name: public FunctionPass, public BackwardFlowAnalysis<m_storetype<m_property>>
+
+#define FORWARDANALYSIS(m_pass_name,m_storetype,m_property)    \
+        struct m_pass_name: public FunctionPass, public ForwardFlowAnalysis<m_storetype<m_property>>
+
+#define AP_INITIALVALUE()       \
+        ArrayPackedSet<Variable>* NewInitialFlowSet() override
+
+#define AP_ENTRYVALUE()       \
+        ArrayPackedSet<Variable>* EntryInitialFlowSet() override
+
+#define AP_MERGE(m_property)      \
+        void Merge(ArrayPackedSet<m_property>* in1, ArrayPackedSet<m_property>* in2, ArrayPackedSet<m_property>* out) override
+
+#define AP_COPY(m_property)       \
+        void Copy(ArrayPackedSet<m_property>* in1, ArrayPackedSet<m_property>* in2) override
+
+#define AP_FLOWTH(m_property)   \
+        void FlowThrough(llvm::BasicBlock* node, ArrayPackedSet<m_property>* in, ArrayPackedSet<m_property>* out) override
+
+#define AS_INITIALVALUE()       \
+        ArraySparseSet<Variable>* NewInitialFlowSet() override
+
+#define AS_ENTRYVALUE()       \
+        ArraySparseSet<Variable>* EntryInitialFlowSet() override
+
+#define AS_MERGE(m_property)      \
+        void Merge(ArraySparseSet<m_property>* in1, ArraySparseSet<m_property>* in2, ArraySparseSet<m_property>* out) override
+
+#define AS_COPY(m_property)       \
+        void Copy(ArraySparseSet<m_property>* in1, ArraySparseSet<m_property>* in2) override
+
+#define AS_FLOWTH(m_property)   \
+        void FlowThrough(llvm::BasicBlock* node, ArraySparseSet<m_property>* in, ArraySparseSet<m_property>* out) override
+
+#define RUN()   \
+        virtual bool runOnFunction(Function &F) override
+
 using namespace llvm;
 using namespace std;
 using namespace A;
