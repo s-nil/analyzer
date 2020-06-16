@@ -1,3 +1,13 @@
+/**
+ * @file ValueUniverse
+ * @author your name (you@domain.com)
+ * @brief 
+ * @version 0.1
+ * @date 2020-06-15
+ * 
+ * @copyright Copyright (c) 2020
+ * 
+ */
 #ifndef _A_VALUSE_UNIVERSE_H_
 #define _A_VALUSE_UNIVERSE_H_
 #include <iterator>
@@ -29,7 +39,7 @@ namespace A{
          *  Input Iterator for ValueUniverse
          *  check http://www.cplusplus.com/reference/iterator/ to know what functionalities input iterator provides
          */
-        class Iterator{
+/*        class Iterator{
             public:
                 typedef Iterator self_type;
                 typedef T value_type;
@@ -78,37 +88,28 @@ namespace A{
                 ValueUniverse<T>* avu;
                 int idx;
         };
+*/
 
-        Iterator begin();
-        Iterator end();
+        typename std::vector<T>::iterator begin(){	return elements.begin();}
+        typename std::vector<T>::iterator end(){	return elements.end();}
 
     private:
-        std::vector<T> ele;
+        std::vector<T> elements;
     };
  
 template<typename T>
 ValueUniverse<T>::ValueUniverse(std::vector<T> e){
-    this->ele = e;
+    this->elements = e;
 }
 
 template<typename T>
 inline int ValueUniverse<T>::Size(){
-    return ele.size();
+    return elements.size();
 }
 
 template<typename T>
 inline std::vector<T> ValueUniverse<T>::ToArray(){
-    return ele;
-}
-
-template<class T>
-inline auto ValueUniverse<T>::begin() -> ValueUniverse<T>::Iterator{
-    return ValueUniverse<T>::Iterator(this);
-}
-
-template<class T>
-inline auto ValueUniverse<T>::end() -> ValueUniverse<T>::Iterator{
-    return ValueUniverse<T>::Iterator();
+    return elements;
 }
 }
 

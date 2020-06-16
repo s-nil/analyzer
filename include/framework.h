@@ -6,10 +6,10 @@
 #define RESET   "\033[0m"
 #define RED     "\033[31m"      /* Red */
 #define YELLOW  "\033[33m"      /* Yellow */
-#define GREEN  "\033[32m"      /* Green */
-#define BLUE  "\033[34m"      /* Blue */
-#define MAGENTA  "\033[35m"      /* Magenta */
-#define CYAN  "\033[36m"      /* Cyan */
+#define GREEN  	"\033[32m"      /* Green */
+#define BLUE  	"\033[34m"      /* Blue */
+#define MAGENTA "\033[35m"      /* Magenta */
+#define CYAN  	"\033[36m"      /* Cyan */
 
 #define REGISTER_PASS(m_pass_name)  \
         legacy::PassManager PM; \
@@ -84,8 +84,22 @@
 #define RUN()   \
         virtual bool runOnFunction(Function &F) override
 
+#define EXTRACT(m_property)	\
+	template<>	\
+	A::ValueUniverse<m_property>::ValueUniverse(Function* f)
+
+#define SETUP_FUNCTION()	\
+	do {	\
+		if(demangleName(F).substr(0,funcName.size()).compare(funcName) != 0)		\
+    		return false;	\
+		SetFunction(&F);	\
+	}while(0)
+
+
 using namespace llvm;
 using namespace std;
 using namespace A;
 
-
+string demangleName(Function& F){
+	return demangle(F.getName().str());
+}

@@ -1,1 +1,3 @@
+add_subdirectory(test_pass)
 add_subdirectory(liveness_analysis)
+add_subdirectory(OddEvenwithSignAnalysis)

@@ -36,14 +36,15 @@ private:
     llvm::Value* value;
 };
 
-template<>
-A::ValueUniverse<Variable>::ValueUniverse(Function* f){
+EXTRACT(Variable){
+//template<>
+//A::ValueUniverse<Variable>::ValueUniverse(Function* f){
     //errs() << f->getName()<<'\n';
     bool noCallSite = 1;
-    ele = std::vector<Variable>();
+    elements = std::vector<Variable>();
     for (auto I = f->arg_begin(); I != f->arg_end(); ++I){
         Variable var = Variable(I);
-        ele.push_back(var);
+        elements.push_back(var);
     }
     for (llvm::inst_iterator I = llvm::inst_begin(*f); I != llvm::inst_end(*f); ++I){
         llvm::CallSite cs(&*I);
@@ -58,7 +59,7 @@ A::ValueUniverse<Variable>::ValueUniverse(Function* f){
         if((*I).hasName()){
             llvm::Value* v = &*I;
             Variable var = Variable(v);
-            ele.push_back(var);
+            elements.push_back(var);
         }
     }
     if(!(noCallSite == 1)){
@@ -73,19 +74,16 @@ namespace {
         string funcName;
         ArrayPackedSet<Variable> *domain;
  
-        LA(string f): funcName(f), FunctionPass(ID){};
+        LA(string f): funcName(f), FunctionPass(ID){}
         
         RUN(){
-            if(demangle(F.getName().str()).substr(0,funcName.size()).compare(funcName) != 0)
-                return false;
-            errs() << "function name: " << demangle(F.getName().str()) << '\n';
+			SETUP_FUNCTION();
+            //if(demangleName(F).substr(0,funcName.size()).compare(funcName) != 0)
+            //    return false;
+			errs() << "function name: " << demangleName(F) << '\n';
 
-            ArrayPackedSet<Variable> fs(&F);
-            domain = &fs;
-
-            SetFunction(&F);
+            domain = new ArrayPackedSet<Variable>(&F);
             DoAnalysis();
-
             return false;
         }
 
