@@ -1,0 +1,120 @@
+/**
+*	a singleton class for writing tha results in a
+*	html file. As soon as the analysis finishes
+*	results are opened in a browser.
+*/
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
+class G{
+private:
+	static G* i;
+	llvm::Function* f;
+	G(){}
+public:
+	G(const G&) = delete;
+	G& operator=(const G&) = delete;
+	static G* getI();
+
+/*
+	void print(){
+		std::cout << f->getName().str()<<'\n';
+	}
+*/
+
+	void SetF(llvm::Function* func){
+		if(f == nullptr)
+			f = func;
+	}
+
+	//	write initial dot file
+	void WriteCFG(){
+		std::string Filename = "/tmp/cfg."+f->getName().str()+".dot";
+        std::error_code ErrorInfo;
+        llvm::raw_fd_ostream File(Filename.c_str(),ErrorInfo);
+
+        if(!ErrorInfo)
+            WriteGraph(File,(const llvm::Function *)f);
+	}
+
+	//	dump the final result as a html file
+	template<class T>
+	void Dump(std::vector<A::NodeData<T>*>& lstNodes){
+		//	put node (address,index in vector) in map
+		std::map<std::string,int> nti; // node to index
+		for(int i = 0; i<lstNodes.size(); ++i){
+			std::stringstream ss;
+			ss << lstNodes[i]->GetNode();
+			std::string bbadd = "Node"+ss.str();
+			nti[bbadd] = i;
+		}
+
+		std::string path = "/tmp/";
+		std::string fname = path+"cfg.tmp"+f->getName().str();
+		char ch;
+		bool flag = 0;
+		std::fstream fin("/tmp/cfg."+f->getName().str()+".dot",std::fstream::in);
+		std::ofstream fout(fname+".dot");
+		while(fin >> std::noskipws >> ch){
+			fout << ch;
+			if(ch == '{' && !flag){
+				flag=1;
+				fout << "node [URL=\"\\N\"];";
+			}
+		}
+		fout.close();
+		fin.close();
+
+		//	save imap, svg, and gif of the cfg-dot
+		std::string command = "dot -Timap -o"+fname+".map -Tgif -o"+fname+".gif -Tsvg -o"+fname+".svg "+fname+".dot";
+		system(command.c_str());
+
+		// write in html
+		fout.open("/tmp/index.html");
+		fout << "<!DOCTYPE html><html><head><title>"<<"results"<<"</title></head><body>";
+		fout << "<IMG SRC=\""<<fname<<".gif\" usemap=\"#main\"/>";	
+		fout << "<map name=\"main\">";
+
+		fin.open(fname+".map");
+		std::string line;
+		while(getline(fin,line)){
+			std::istringstream iss(line);
+			std::string s,name,c1,c2;
+			iss >> s >> name >> c1 >> c2;
+			if(!c1.empty() && !c2.empty()){
+				std::stringstream ss;
+				ss << "In   :: ";
+        		for(auto x : *lstNodes[nti[name]]->GetInFlow()){
+		            ss << x << ", ";
+        		}
+		        ss <<'\n';
+
+        		ss << "Out  :: ";
+		        for(auto x : *lstNodes[nti[name]]->GetOutFlow()){
+        		    ss << x << ", ";
+		        }
+				ss << '\n';
+				std::string result = ss.str();
+				fout << "<area shape=\""<<s<<"\" coords=\""<<c1<<" "<<c2<<"\" href=\"\" title=\""<<result<<"\">";
+			}
+		}
+		fout << "</map>";
+	    fout << "</body></html>";
+    	fout.close();
+	}
+	
+	~G(){delete i;}
+};
+
+G* G::i = nullptr;
+
+G* G::getI(){
+	if(i == nullptr){
+		i = new G();
+		i->f = nullptr;
+	}
+	return i;
+}
+
+
