@@ -1,10 +1,11 @@
+
 # analyzer
 ---
 This is **analyzer**. An easy to implement intraprocedural data flow framework with an LLVM backend.
 This README describes how to build the project. For the documentation you need to generate the docs by yourselves. Instructions for generating the docs are also given below.  
 
 ###  Dependencies  
-
+---
 The following components are required to be installed on your system already:
 (versions written in the brackets are being used in development)  
 
@@ -19,7 +20,7 @@ You can install cmake, GNU Make and doxygen using APT package handling utility.
 For llvm and clang use automatic installation script at [here](https://apt.llvm.org/).
 
 ### Getting the source code
-
+---
 checkout analyser:  
 ```shell
 git clone https://github.com/s-nil/analyzer.git
@@ -32,16 +33,10 @@ bash install.sh
 ```
 This installer downloads llvm and clang source codes in the home directory of the user and builds them at the same place. After the completion of the building process add ```$HOME/llvm-9.0.0/build/bin``` in your PATH environment variable.  
 
-Now, build analyzer:
-```shell
-mkdir build
-cd build
-cmake ..
-make
-```
-The library has been built now. But to use this library you need to write an analysis: 
+The library has only template files so there is no need to build the library. But to use this library you need to write an analysis and build that analysis. Follow the below example for creating an analysis and after that create a directory build ```mkdir build``` and do ```cmake ..; make``` for building the analysis. Add a option -DT=OFF if you want to see the result in an html file with a CFG: 
 
 ### Usage
+---
 Example is showing how to do liveness analysis. It can be found in passes/liveness_analysis.
 
 - Create a directory for your analysis in passes. Copy ```CMakeLists.txt``` from any other example analysis provided and change it as described. 
