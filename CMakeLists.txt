@@ -18,6 +18,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 # required to create a shared object
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+OPTION(T "Result on terminal" ON)
+
+if(${T})
+else()
+	add_definitions(-DM_G)
+endif()
+unset(T CACHE)
 
 # http://llvm.org/docs/CMake.html#id15 // embedding LLVM
 find_package(LLVM 9.0.0 REQUIRED CONFIG)
