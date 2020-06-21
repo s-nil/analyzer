@@ -15,6 +15,7 @@
 #include "llvm/Demangle/Demangle.h"
 
 #include "framework.h"
+#include <sstream>
 
 class Variable{
 public:
@@ -30,6 +31,9 @@ public:
 
     friend llvm::raw_ostream& operator<<(llvm::raw_ostream& out, Variable& v){
         out << (v.value)->getName();return out;
+    }
+	friend std::stringstream& operator<<(std::stringstream& out, const Variable& v){
+          out << (v.value)->getName().str(); return out;
     }
 private:
     long id;

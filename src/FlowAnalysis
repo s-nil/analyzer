@@ -1,6 +1,6 @@
 /**
  * @file FlowAnalysis.h
- * @author your name (you@domain.com)
+ * @author your Sunil Pratap Singh (sunilp896@gmail.com)
  * @brief 
  * @version 0.1
  * @date
@@ -12,8 +12,10 @@
 #define _A_FLOW_ANALYSIS_H_
 
 #include "llvm/ADT/SmallVector.h"
+#include "llvm/Analysis/CFGPrinter.h"
 #include "AbstractFlowAnalysis"
 #include "NodeData"
+#include "G"
 #include <stack>
 #include <list>
 #include <queue>
@@ -116,7 +118,17 @@ void FlowAnalysis<T>::Compute(){
             queueNodes.push(node);
     }
 
-    // PrintResult(lstNodes);
+#ifdef M_G 		//	if you want to see the result as a html page
+	//	G is a singleton class
+	G::getI()->SetF(func);
+	G::getI()->WriteCFG();
+	G::getI()->Dump(lstNodes);
+	
+	std::string cmnd = "google-chrome /tmp/index.html";
+	system(cmnd.c_str());
+	if(0)
+#endif
+	   	PrintResult(lstNodes);
 }
 
 template<typename T>
@@ -145,12 +157,15 @@ std::vector<NodeData<T>*> FlowAnalysis<T>::NodesDataList(){
 
     std::vector<llvm::BasicBlock*> entries;
     FunctionCFG* g = this->graph;
+	
+	// based on the direction of the analysis the entry in different
     if(this->IsForward()){
         entries = g->GetHeads();
     }else{
         entries = g->GetTails();
     }
 
+	//  
     llvm::DenseMap<llvm::BasicBlock*,NodeData<T>*> visited;
     int n = -1;
     NodeData<T> *dummyEntry = new NodeData<T>();

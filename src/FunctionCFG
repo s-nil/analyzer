@@ -23,7 +23,10 @@ namespace A{
     enum Direction{FORWARD,BACKWARD};
     /**
      * @brief 
-     * 
+     * node of the cfg
+	 * bb -	pointer to LLVM BasicBlock class's object
+	 * preds - vector of pointers to predecessor BB of bb
+	 * succs - vector of pointers to successor BB of bb 
      */
     class Node{
         unsigned id;
