@@ -1,6 +1,6 @@
 /**
- * @file AbstractFlowAnalysis.h
- * @author your name (you@domain.com)
+ * @file IAnalysis
+ * @author Sunil Singh (sunilp896@gmail.com)
  * @brief 
  * @version 0.1
  * @date 2020-02-20
@@ -23,10 +23,10 @@ namespace A{
      * @tparam T 
      */
     template<typename T>
-    class AbstractFlowAnalysis{
+    class IAnalysis{
     public:
-        AbstractFlowAnalysis():func(nullptr),graph(nullptr){}
-        virtual ~AbstractFlowAnalysis(){}
+        IAnalysis():func(nullptr),graph(nullptr){}
+        virtual ~IAnalysis(){}
         
         virtual T* NewInitialFlowSet() = 0;
         virtual T* EntryInitialFlowSet() = 0;
@@ -42,7 +42,7 @@ namespace A{
     };
 
 template<typename T>
-void AbstractFlowAnalysis<T>::SetFunction(llvm::Function* f){
+void IAnalysis<T>::SetFunction(llvm::Function* f){
     func = f;
     graph = new FunctionCFG(f);
 }

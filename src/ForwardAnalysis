@@ -1,6 +1,6 @@
 /**
- * @file ForwardFlowAnalysis.h
- * @author Sunil Pratap Singh (sunilp896@gmail.com)
+ * @file ForwardAnalysis
+ * @author Sunil Singh (sunilp896@gmail.com)
  * @brief 
  * @version 0.1
  * @date 2020-02-20
@@ -19,10 +19,10 @@ namespace A{
      * @tparam T 
      */
     template<typename T>
-    class ForwardFlowAnalysis : public FlowAnalysis<T>{
+    class ForwardAnalysis : public FlowAnalysis<T>{
     public:
-        ForwardFlowAnalysis(){}
-        ~ForwardFlowAnalysis(){}
+        ForwardAnalysis(){}
+        ~ForwardAnalysis(){}
 
         void DoAnalysis() override;
         bool IsForward() override;
@@ -30,12 +30,12 @@ namespace A{
     };    
 
 template<typename T>
-void A::ForwardFlowAnalysis<T>::DoAnalysis(){
+void A::ForwardAnalysis<T>::DoAnalysis(){
     this->Compute();
 }
 
 template<typename T>
-inline bool A::ForwardFlowAnalysis<T>::IsForward(){
+inline bool A::ForwardAnalysis<T>::IsForward(){
     return true;
 }
 }

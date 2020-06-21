@@ -1,6 +1,6 @@
 /**
- * @file ArrayPackedSet
- * @author your name (you@domain.com)
+ * @file BoundedSet
+ * @author Sunil Singh (sunilp896@gmail.com)
  * @brief 
  * @version 0.1
  * @date 2020-06-15
@@ -10,8 +10,8 @@
  */
 #ifndef _A_ARRAY_PACKED_SET_H_
 #define _A_ARRAY_PACKED_SET_H_
-#include "AbstractBoundedFlowSet"
-#include "ObjectIntMapper"
+#include "ABoundedSet"
+#include "BiMap"
 #include "llvm/ADT/BitVector.h"
 
 namespace A
@@ -23,21 +23,21 @@ namespace A
  *  Type of the object to stored
  */
 template<typename T>
-class ArrayPackedSet : public AbstractBoundedFlowSet<T>
+class BoundedSet : public ABoundedSet<T>
 {
 public:
-    ArrayPackedSet(){}
-    ~ArrayPackedSet(){}
+    BoundedSet(){}
+    ~BoundedSet(){}
 
-    ArrayPackedSet(ObjectIntMapper<T> mapper):ArrayPackedSet<T>::ArrayPackedSet(mapper,llvm::BitVector(mapper.Size())){}
-    ArrayPackedSet(ObjectIntMapper<T> mapper, llvm::BitVector bits){this->map = mapper,this->bits = bits;}
-    ArrayPackedSet(const ArrayPackedSet& obj){
+    BoundedSet(BiMap<T> mapper):BoundedSet<T>::BoundedSet(mapper,llvm::BitVector(mapper.Size())){}
+    BoundedSet(BiMap<T> mapper, llvm::BitVector bits){this->map = mapper,this->bits = bits;}
+    BoundedSet(const BoundedSet& obj){
         this->map = obj.map;
         this->bits = obj.bits;
     }
-    ArrayPackedSet(llvm::Function* F){
+    BoundedSet(llvm::Function* F){
         auto universe = A::ValueUniverse<T>(F);
-    	auto mapper = A::ObjectIntMapper<T>(universe);
+    	auto mapper = A::BiMap<T>(universe);
 	    map = mapper;
         bits = llvm::BitVector(mapper.Size(),true);
     }
@@ -45,11 +45,11 @@ public:
     //   
     void Complement() override;
     void Complement(ISet<T>* dest) override;
-	ArrayPackedSet<T>* TopSet() override;
+	BoundedSet<T>* TopSet() override;
     //
 
-    ArrayPackedSet<T>* Clone() override;
-    ArrayPackedSet<T>* EmptySet() override;
+    BoundedSet<T>* Clone() override;
+    BoundedSet<T>* EmptySet() override;
     void Copy(ISet<T>* dest) override;
     void Clear() override;
     void Union(ISet<T>* other) override;
@@ -80,7 +80,7 @@ public:
 	Iterator(){
 	    idx = -1;
 	}
-	Iterator(ArrayPackedSet<T>* obj){
+	Iterator(BoundedSet<T>* obj){
 	    if(obj->IsEmpty()){
 		idx = -1;
 	    }else{
@@ -115,7 +115,7 @@ public:
 	    return setObject->map.GetObject(idx);
 	}
     private:
-	ArrayPackedSet<T>* setObject;
+	BoundedSet<T>* setObject;
 	int idx;
     };
     Iterator begin(){
@@ -125,167 +125,167 @@ public:
 	return Iterator();
     }
 private:
-    ObjectIntMapper<T> map;
+    BiMap<T> map;
     llvm::BitVector bits;
 
     bool SameType(ISet<T>* o);
-    llvm::BitVector CopyBitSet(ArrayPackedSet<T>* o);
+    llvm::BitVector CopyBitSet(BoundedSet<T>* o);
     std::vector<T> ToList(llvm::BitVector bits, int base);
     std::vector<T> ToList(int low, int high); //  TODO
 };
 
 template<typename T>
-void ArrayPackedSet<T>::Complement(){
+void BoundedSet<T>::Complement(){
     auto tmp = bits;
     bits.clear();
     bits = tmp.flip();
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Complement(ISet<T>* destFlow){
+void BoundedSet<T>::Complement(ISet<T>* destFlow){
     if(this == destFlow){
         this->Complement();
         return;
     }
 
     if(SameType(destFlow)){
-        ArrayPackedSet<T>* dest = dynamic_cast<ArrayPackedSet<T>*>(destFlow);
+        BoundedSet<T>* dest = dynamic_cast<BoundedSet<T>*>(destFlow);
         assert(this->map == dest->map);
         // CopyBitSet(dest);
         dest->bits.clear();
         dest->bits = bits;
         dest->bits.flip();
     }else{
-        AbstractBoundedFlowSet<T>::Complement(destFlow);
+        ABoundedSet<T>::Complement(destFlow);
     }    
 }
 
 template<typename T>
-ArrayPackedSet<T>* ArrayPackedSet<T>::TopSet(){
-    auto tmp = new ArrayPackedSet(this->map,this->bits);
+BoundedSet<T>* BoundedSet<T>::TopSet(){
+    auto tmp = new BoundedSet(this->map,this->bits);
     auto b = tmp->bits;
     tmp->bits |= b.flip();
     return tmp;
 }
 
 template<typename T>
-ArrayPackedSet<T>* ArrayPackedSet<T>::Clone(){
-    return new ArrayPackedSet<T>(this->map,this->bits);
+BoundedSet<T>* BoundedSet<T>::Clone(){
+    return new BoundedSet<T>(this->map,this->bits);
 }
 
 template<typename T>
-ArrayPackedSet<T>* ArrayPackedSet<T>::EmptySet(){
-    return new ArrayPackedSet<T>(this->map);
+BoundedSet<T>* BoundedSet<T>::EmptySet(){
+    return new BoundedSet<T>(this->map);
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Copy(ISet<T>* dest){
+void BoundedSet<T>::Copy(ISet<T>* dest){
     if(dest == this){
         return;
     }
     if(SameType(dest)){
-        ArrayPackedSet<T>* tmp = dynamic_cast<ArrayPackedSet<T>*>(dest);
+        BoundedSet<T>* tmp = dynamic_cast<BoundedSet<T>*>(dest);
         CopyBitSet(tmp);
     }else{
-        AbstractBoundedFlowSet<T>::Copy(dest);
+        ABoundedSet<T>::Copy(dest);
     }
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Clear(){
+void BoundedSet<T>::Clear(){
     bits.reset();
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Union(ISet<T>* other){
+void BoundedSet<T>::Union(ISet<T>* other){
     if(this == other){
         return;
     }else{
         if(SameType(other))
             Union(other,this);
         else
-            AbstractBoundedFlowSet<T>::Union(other);
+            ABoundedSet<T>::Union(other);
     }
 }
 
 template<typename T>
-void A::ArrayPackedSet<T>::Union(A::ISet<T>* otherFlow, A::ISet<T>* destFlow){
+void A::BoundedSet<T>::Union(A::ISet<T>* otherFlow, A::ISet<T>* destFlow){
     if(SameType(otherFlow) && SameType(destFlow)){
-        A::ArrayPackedSet<T>* other = dynamic_cast<A::ArrayPackedSet<T>*>(otherFlow);
-        A::ArrayPackedSet<T>* dest = dynamic_cast<A::ArrayPackedSet<T>*>(destFlow);
+        A::BoundedSet<T>* other = dynamic_cast<A::BoundedSet<T>*>(otherFlow);
+        A::BoundedSet<T>* dest = dynamic_cast<A::BoundedSet<T>*>(destFlow);
 
         llvm::BitVector tmp(this->bits);
         tmp |= other->bits;
         dest->bits = tmp;
     }else{
-        A::AbstractBoundedFlowSet<T>::Union(otherFlow,destFlow);
+        A::ABoundedSet<T>::Union(otherFlow,destFlow);
     }
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Intersection(ISet<T>* other){
+void BoundedSet<T>::Intersection(ISet<T>* other){
     if(other == this){
         return;
     }else{
         if(SameType(other))
             Intersection(other,this);
         else
-            AbstractBoundedFlowSet<T>::Intersection(other);
+            ABoundedSet<T>::Intersection(other);
     }
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Intersection(ISet<T>* otherFlow, ISet<T>* destFlow){
+void BoundedSet<T>::Intersection(ISet<T>* otherFlow, ISet<T>* destFlow){
     if(SameType(otherFlow) && SameType(destFlow)){
-        ArrayPackedSet<T>* other = dynamic_cast<ArrayPackedSet<T>*>(otherFlow);
-        ArrayPackedSet<T>* dest  = dynamic_cast<ArrayPackedSet<T>*>(destFlow);
+        BoundedSet<T>* other = dynamic_cast<BoundedSet<T>*>(otherFlow);
+        BoundedSet<T>* dest  = dynamic_cast<BoundedSet<T>*>(destFlow);
 
         llvm::BitVector tmp(this->bits);
         tmp &= other->bits;
         dest->bits = tmp;
     }else{
-        AbstractBoundedFlowSet<T>::Intersection(otherFlow,destFlow);
+        ABoundedSet<T>::Intersection(otherFlow,destFlow);
     }
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Difference(ISet<T>* other){
+void BoundedSet<T>::Difference(ISet<T>* other){
     if(other == this){
-        bits.reset(dynamic_cast<ArrayPackedSet<T>*>(other)->bits);
+        bits.reset(dynamic_cast<BoundedSet<T>*>(other)->bits);
     }else{
         if(SameType(other))
             Difference(other,this);
         else
-            AbstractBoundedFlowSet<T>::Difference(other);
+            ABoundedSet<T>::Difference(other);
     }
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Difference(ISet<T>* otherFlow, ISet<T>* destFlow){
+void BoundedSet<T>::Difference(ISet<T>* otherFlow, ISet<T>* destFlow){
     if(SameType(otherFlow) && SameType(destFlow)){
-        ArrayPackedSet<T>* other = dynamic_cast<ArrayPackedSet<T>*>(otherFlow);
-        ArrayPackedSet<T>* dest  = dynamic_cast<ArrayPackedSet<T>*>(destFlow);
+        BoundedSet<T>* other = dynamic_cast<BoundedSet<T>*>(otherFlow);
+        BoundedSet<T>* dest  = dynamic_cast<BoundedSet<T>*>(destFlow);
 
         llvm::BitVector tmp(this->bits);
         tmp.reset(other->bits);
         dest->bits = tmp;
     }else{
-        AbstractBoundedFlowSet<T>::Difference(otherFlow,destFlow);
+        ABoundedSet<T>::Difference(otherFlow,destFlow);
     }
 }
 
 template<typename T>
-bool ArrayPackedSet<T>::IsEmpty(){
+bool BoundedSet<T>::IsEmpty(){
     return bits.empty();
 }
 
 template<typename T>
-int ArrayPackedSet<T>::Size(){
+int BoundedSet<T>::Size(){
     return bits.count();
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Add(T obj){
+void BoundedSet<T>::Add(T obj){
     if(map.Contains(obj))
         bits.set(map.GetInt(obj));
     else{
@@ -296,7 +296,7 @@ void ArrayPackedSet<T>::Add(T obj){
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Add(T obj, ISet<T>* dest){
+void BoundedSet<T>::Add(T obj, ISet<T>* dest){
     auto tmp = this->Clone();
     tmp->Add(obj);
     /// copy tmp to dest
@@ -304,13 +304,13 @@ void ArrayPackedSet<T>::Add(T obj, ISet<T>* dest){
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Remove(T obj){
+void BoundedSet<T>::Remove(T obj){
     if(map.Contains(obj))
         bits.reset(map.GetInt(obj));
 }
 
 template<typename T>
-void ArrayPackedSet<T>::Remove(T obj, ISet<T>* dest){
+void BoundedSet<T>::Remove(T obj, ISet<T>* dest){
     auto tmp = this->Clone();
     tmp->Remove(obj);
     /// copy tmp to dest
@@ -318,41 +318,41 @@ void ArrayPackedSet<T>::Remove(T obj, ISet<T>* dest){
 }
 
 template<typename T>
-bool ArrayPackedSet<T>::Contains(T obj){
+bool BoundedSet<T>::Contains(T obj){
     return map.Contains(obj) && bits.test(map.GetInt(obj));
 }
 
 template<typename T>
-bool ArrayPackedSet<T>::operator==(ISet<T>* otherFlow){
+bool BoundedSet<T>::operator==(ISet<T>* otherFlow){
     if(SameType(otherFlow)){
-        ArrayPackedSet<T>* other = dynamic_cast<ArrayPackedSet<T>*>(otherFlow);
+        BoundedSet<T>* other = dynamic_cast<BoundedSet<T>*>(otherFlow);
         return bits == other->bits;
     }else{
-        return AbstractBoundedFlowSet<T>::operator==(otherFlow);
+        return ABoundedSet<T>::operator==(otherFlow);
     }
 }
 
 template<typename T>
-bool ArrayPackedSet<T>::IsSubSet(ISet<T>* other){
+bool BoundedSet<T>::IsSubSet(ISet<T>* other){
     if(SameType(other)){
         llvm::BitVector tmp(this->bits);
-        tmp |= dynamic_cast<ArrayPackedSet<T>*>(other)->bits;
+        tmp |= dynamic_cast<BoundedSet<T>*>(other)->bits;
         if(this->bits == tmp){
             return true;
         }
         return false;
     }else{
-        return AbstractBoundedFlowSet<T>::IsSubSet(other);
+        return ABoundedSet<T>::IsSubSet(other);
     }
 }
 
 template<typename T>
-std::vector<T> ArrayPackedSet<T>::ToList(){
+std::vector<T> BoundedSet<T>::ToList(){
     return ToList(bits,0);
 }
 
 template<typename T>
-std::vector<T> ArrayPackedSet<T>::ToList(llvm::BitVector bits, int base){
+std::vector<T> BoundedSet<T>::ToList(llvm::BitVector bits, int base){
     if(bits.size() == 0){
         return std::vector<T>();
     }else{
@@ -367,19 +367,19 @@ std::vector<T> ArrayPackedSet<T>::ToList(llvm::BitVector bits, int base){
 }
 
 template<typename T>
-std::vector<T> ArrayPackedSet<T>::ToList(int low, int high){
+std::vector<T> BoundedSet<T>::ToList(int low, int high){
     //TODO
 }
 
 template<typename T>
-bool ArrayPackedSet<T>::SameType(ISet<T>* o){
-    if(dynamic_cast<ArrayPackedSet<T>*>(o) != nullptr)
+bool BoundedSet<T>::SameType(ISet<T>* o){
+    if(dynamic_cast<BoundedSet<T>*>(o) != nullptr)
         return true;
     return false;
 }
 
 template<typename T>
-llvm::BitVector ArrayPackedSet<T>::CopyBitSet(ArrayPackedSet<T>* o){
+llvm::BitVector BoundedSet<T>::CopyBitSet(BoundedSet<T>* o){
     assert(this->map == o->map);
     if(o != this){
         o->bits.clear();

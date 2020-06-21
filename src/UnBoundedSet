@@ -1,5 +1,5 @@
 /**
- * @file ArraySparseSet
+ * @file UnBoundedSet
  * @author your name (you@domain.com)
  * @brief 
  * @version 0.1
@@ -10,7 +10,7 @@
  */
 #ifndef _A_ARRAY_SPARSE_SET_H_
 #define _A_ARRAY_SPARSE_SET_H_
-#include "AbstractFlowSet"
+#include "AbSet"
 #include "ValueUniverse"
 #include <algorithm>
 #include <set>
@@ -18,19 +18,19 @@
 
 namespace A{
     template<typename T>
-    class ArraySparseSet : public AbstractFlowSet<T>{
+    class UnBoundedSet : public AbSet<T>{
     public:
-        ArraySparseSet(){
+        UnBoundedSet(){
             elements = std::set<T>();
         }
-        ArraySparseSet(const ArraySparseSet& obj){
+        UnBoundedSet(const UnBoundedSet& obj){
             elements = obj.elements;
         }
-        ArraySparseSet(llvm::Function* F);
-        ~ArraySparseSet(){}
+        UnBoundedSet(llvm::Function* F);
+        ~UnBoundedSet(){}
 
-        ArraySparseSet<T>* Clone() override;
-        ArraySparseSet<T>* EmptySet() override;
+        UnBoundedSet<T>* Clone() override;
+        UnBoundedSet<T>* EmptySet() override;
         void Copy(ISet<T>* dest) override;
         void Clear() override;
         void Union(ISet<T>* other) override;
@@ -61,169 +61,169 @@ namespace A{
 
     private:
         std::set<T> elements;
-        inline ArraySparseSet(const ArraySparseSet<T>* ref);
+        inline UnBoundedSet(const UnBoundedSet<T>* ref);
         bool SameType(A::ISet<T>* o);
     };    
 
 template<typename T>
-ArraySparseSet<T>::ArraySparseSet(const ArraySparseSet<T>* ref){
+UnBoundedSet<T>::UnBoundedSet(const UnBoundedSet<T>* ref){
     this->elements = ref->elements;
 }
 
 template<typename T>
-ArraySparseSet<T>::ArraySparseSet(llvm::Function* F){
+UnBoundedSet<T>::UnBoundedSet(llvm::Function* F){
     auto universe = ValueUniverse<T>(F);
     auto ele = universe.ToArray();
     this->elements = std::set<T>(ele.begin(),ele.end());
 }
 
 template<typename T>
-ArraySparseSet<T>* ArraySparseSet<T>::Clone(){
-    return new ArraySparseSet<T>(this);
+UnBoundedSet<T>* UnBoundedSet<T>::Clone(){
+    return new UnBoundedSet<T>(this);
 }
 
 template<typename T>
-ArraySparseSet<T>* ArraySparseSet<T>::EmptySet(){
-    return new ArraySparseSet<T>();
+UnBoundedSet<T>* UnBoundedSet<T>::EmptySet(){
+    return new UnBoundedSet<T>();
 }
 
 template<typename T>
-void ArraySparseSet<T>::Copy(ISet<T>* dest){
+void UnBoundedSet<T>::Copy(ISet<T>* dest){
     if(dest == this){
         return;
     }else{
         if(SameType(dest)){
-            ArraySparseSet<T> *tmp = dynamic_cast<ArraySparseSet<T>*>(dest);
+            UnBoundedSet<T> *tmp = dynamic_cast<UnBoundedSet<T>*>(dest);
             tmp->elements = this->elements;
         }else{
-            AbstractFlowSet<T>::Copy(dest);
+            AbSet<T>::Copy(dest);
         }
     }
 }
 
 template<typename T>
-void ArraySparseSet<T>::Clear(){
+void UnBoundedSet<T>::Clear(){
     this->elements.clear();
 }
 
 template<typename T>
-void ArraySparseSet<T>::Union(ISet<T>* other){
+void UnBoundedSet<T>::Union(ISet<T>* other){
     if(this == other){
         return;
     }else{
         if(SameType(other))
             Union(other,this);
         else
-            AbstractFlowSet<T>::Union(other);
+            AbSet<T>::Union(other);
     }
 }
 
 template<typename T>
-void ArraySparseSet<T>::Union(ISet<T>* otherFlow, ISet<T>* destFlow){
+void UnBoundedSet<T>::Union(ISet<T>* otherFlow, ISet<T>* destFlow){
     if(SameType(otherFlow) && SameType(destFlow)){
-        ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
-        ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
+        UnBoundedSet<T>* other = dynamic_cast<UnBoundedSet<T>*>(otherFlow);
+        UnBoundedSet<T>* dest = dynamic_cast<UnBoundedSet<T>*>(destFlow);
 
         if(this == other || *this == other){
             Copy(dest);
             return;
         }
 
-        ArraySparseSet<T> tmp;
+        UnBoundedSet<T> tmp;
         std::set_union(elements.begin(),elements.end(),
                         other->elements.begin(),other->elements.end(),
                         std::inserter(tmp.elements,tmp.elements.begin()));
         tmp.Copy(dest);
     }else{
-        this->AbstractFlowSet<T>::Union(otherFlow,destFlow);
+        this->AbSet<T>::Union(otherFlow,destFlow);
     }
 }
 
 template<typename T>
-void ArraySparseSet<T>::Intersection(ISet<T>* other){
+void UnBoundedSet<T>::Intersection(ISet<T>* other){
     if(this == other){
         return;
     }else{
         if(SameType(other))
             Intersection(other,this);
         else
-            AbstractFlowSet<T>::Intersection(other);
+            AbSet<T>::Intersection(other);
     }
 }
 
 template<typename T>
-void ArraySparseSet<T>::Intersection(ISet<T>* otherFlow, ISet<T>* destFlow){
+void UnBoundedSet<T>::Intersection(ISet<T>* otherFlow, ISet<T>* destFlow){
     if(SameType(otherFlow) && SameType(destFlow)){
-        ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
-        ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
+        UnBoundedSet<T>* other = dynamic_cast<UnBoundedSet<T>*>(otherFlow);
+        UnBoundedSet<T>* dest = dynamic_cast<UnBoundedSet<T>*>(destFlow);
 
         if(this == other || *this == other){
             Copy(dest);
             return;
         }
 
-        ArraySparseSet<T> tmp;
+        UnBoundedSet<T> tmp;
         std::set_intersection(elements.begin(),elements.end(),
                         other->elements.begin(),other->elements.end(),
                         std::inserter(tmp.elements,tmp.elements.begin()));
         tmp.Copy(dest);
     }else{
-        AbstractFlowSet<T>::Intersection(otherFlow,destFlow);
+        AbSet<T>::Intersection(otherFlow,destFlow);
     }
 }
 
 template<typename T>
-void ArraySparseSet<T>::Difference(ISet<T>* other){
+void UnBoundedSet<T>::Difference(ISet<T>* other){
     if(this == other){
         return;
     }else{
         if(SameType(other))
             Difference(other,this);
         else
-            AbstractFlowSet<T>::Difference(other);
+            AbSet<T>::Difference(other);
     }
 }
 
 template<typename T>
-void ArraySparseSet<T>::Difference(ISet<T>* otherFlow, ISet<T>* destFlow){
+void UnBoundedSet<T>::Difference(ISet<T>* otherFlow, ISet<T>* destFlow){
     if(SameType(otherFlow) && SameType(destFlow)){
-        ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
-        ArraySparseSet<T>* dest = dynamic_cast<ArraySparseSet<T>*>(destFlow);
+        UnBoundedSet<T>* other = dynamic_cast<UnBoundedSet<T>*>(otherFlow);
+        UnBoundedSet<T>* dest = dynamic_cast<UnBoundedSet<T>*>(destFlow);
 
         if(this == other || *this == other){
             dest->Clear();
             return;
         }
 
-        ArraySparseSet<T> tmp;
+        UnBoundedSet<T> tmp;
         std::set_difference(elements.begin(),elements.end(),
                         other->elements.begin(),other->elements.end(),
                         std::inserter(tmp.elements,tmp.elements.begin()));
         tmp.Copy(dest);
     }else{
-        AbstractFlowSet<T>::Difference(otherFlow,destFlow);
+        AbSet<T>::Difference(otherFlow,destFlow);
     }
 }
 
 template<typename T>
-bool ArraySparseSet<T>::IsEmpty(){
+bool UnBoundedSet<T>::IsEmpty(){
     return elements.empty();
 }
 
 template<typename T>
-int ArraySparseSet<T>::Size(){
+int UnBoundedSet<T>::Size(){
     return elements.size();
 }
 
 template<typename T>
-void ArraySparseSet<T>::Add(T obj){
+void UnBoundedSet<T>::Add(T obj){
     if(!Contains(obj)){
         elements.insert(obj);
     }
 }
 
 template<typename T>
-void ArraySparseSet<T>::Add(T obj, ISet<T>* dest){
+void UnBoundedSet<T>::Add(T obj, ISet<T>* dest){
     auto tmp = this->Clone();
     tmp->Add(obj);
     /// copy tmp to dest
@@ -231,12 +231,12 @@ void ArraySparseSet<T>::Add(T obj, ISet<T>* dest){
 }
 
 template<typename T>
-void ArraySparseSet<T>::Remove(T obj){
+void UnBoundedSet<T>::Remove(T obj){
     elements.erase(obj);
 }
 
 template<typename T>
-void ArraySparseSet<T>::Remove(T obj, ISet<T>* dest){
+void UnBoundedSet<T>::Remove(T obj, ISet<T>* dest){
     auto tmp = this->Clone();
     tmp->Remove(obj);
     /// copy tmp to dest
@@ -244,41 +244,41 @@ void ArraySparseSet<T>::Remove(T obj, ISet<T>* dest){
 }
 
 template<typename T>
-bool A::ArraySparseSet<T>::Contains(T obj){
+bool A::UnBoundedSet<T>::Contains(T obj){
     if(elements.find(obj) != elements.end())
         return true;
     return false;
 }
 
 template<typename T>
-bool ArraySparseSet<T>::operator==(ISet<T>* otherFlow){
+bool UnBoundedSet<T>::operator==(ISet<T>* otherFlow){
     if(SameType(otherFlow)){
-        ArraySparseSet<T> *flow = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
+        UnBoundedSet<T> *flow = dynamic_cast<UnBoundedSet<T>*>(otherFlow);
         return elements == flow->elements;
     }else{
-        return AbstractFlowSet<T>::operator==(otherFlow);
+        return AbSet<T>::operator==(otherFlow);
     }
 }
 
 template<typename T>
-bool ArraySparseSet<T>::IsSubSet(ISet<T>* otherFlow){
+bool UnBoundedSet<T>::IsSubSet(ISet<T>* otherFlow){
     if(SameType(otherFlow)){
-        ArraySparseSet<T>* other = dynamic_cast<ArraySparseSet<T>*>(otherFlow);
+        UnBoundedSet<T>* other = dynamic_cast<UnBoundedSet<T>*>(otherFlow);
         return std::includes(elements.begin(),elements.end(),other->elements.begin(),other->elements.end());
     }else{
-        return AbstractFlowSet<T>::IsSubSet(otherFlow);
+        return AbSet<T>::IsSubSet(otherFlow);
     }
 }
 
 template<typename T>
-std::vector<T> ArraySparseSet<T>::ToList(){
+std::vector<T> UnBoundedSet<T>::ToList(){
     std::vector<T> objects(elements.begin(),elements.end());
     return objects;
 }
 
 template<typename T>
-bool ArraySparseSet<T>::SameType(ISet<T>* o){
-    if(dynamic_cast<ArraySparseSet<T>*>(o) != nullptr)
+bool UnBoundedSet<T>::SameType(ISet<T>* o){
+    if(dynamic_cast<UnBoundedSet<T>*>(o) != nullptr)
         return true;
     return false;
 }

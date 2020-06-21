@@ -73,10 +73,10 @@ EXTRACT(Variable){
 }
 
 namespace {
-    BACKWARDANALYSIS(LA,ArrayPackedSet,Variable){
+    BACKWARDANALYSIS(LA,BoundedSet,Variable){
         static char ID;
         string funcName;
-        ArrayPackedSet<Variable> *domain;
+        BoundedSet<Variable> *domain;
  
         LA(string f): funcName(f), FunctionPass(ID){}
         
@@ -86,22 +86,22 @@ namespace {
             //    return false;
 			errs() << "function name: " << demangleName(F) << '\n';
 
-            domain = new ArrayPackedSet<Variable>(&F);
+            domain = new BoundedSet<Variable>(&F);
             DoAnalysis();
             return false;
         }
 
-        AP_INITIALVALUE(){	return domain->EmptySet();}
+        BS_INITIALVALUE(){	return domain->EmptySet();}
 
-        AP_ENTRYVALUE(){	return domain->EmptySet();}
+        BS_ENTRYVALUE(){	return domain->EmptySet();}
 
-		AP_MERGE(Variable){	in1->Union(in2,out);}
+		BS_MERGE(Variable){	in1->Union(in2,out);}
 
-		AP_COPY(Variable){	in1->Copy(in2);}
+		BS_COPY(Variable){	in1->Copy(in2);}
         
-		AP_FLOWTH(Variable){
-            ArrayPackedSet<Variable>* def = domain->EmptySet();
-            ArrayPackedSet<Variable>* use = domain->EmptySet();
+		BS_FLOWTH(Variable){
+            BoundedSet<Variable>* def = domain->EmptySet();
+            BoundedSet<Variable>* use = domain->EmptySet();
             
             if(&func->getEntryBlock() == node && func->arg_size()>0){
                 for(auto arg_it=func->arg_begin(); arg_it != func->arg_end(); ++arg_it){
@@ -142,7 +142,7 @@ namespace {
                 }
             }   //
 
-            ArrayPackedSet<Variable>* tmp = domain->EmptySet();
+            BoundedSet<Variable>* tmp = domain->EmptySet();
             in->Difference(def,tmp);
             tmp->Union(use,out);
         }

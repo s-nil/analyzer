@@ -1,5 +1,5 @@
 /**
- * @file AbstractFlowSet
+ * @file AbSet
  * @author Sunil Singh (sunilp896@gmail.com)
  * @brief 
  * @version 0.1
@@ -16,9 +16,9 @@
 
 namespace A{
 template<class T>
-class ArrayPackedSet;
+class BoundedSet;
 template<class T>
-class ArraySparseSet;
+class UnBoundedSet;
 
 /**
  * @brief 
@@ -26,9 +26,9 @@ class ArraySparseSet;
  * @tparam T 
  */
 template <class T>
-class AbstractFlowSet : public ISet<T>{
+class AbSet : public ISet<T>{
 protected:
-    AbstractFlowSet(){};
+    AbSet(){};
 public:
     /// Used when called by a ISet pointer
     ISet<T>* Clone();
@@ -72,37 +72,37 @@ public:
 };
 
 template<class T>
-ISet<T>* AbstractFlowSet<T>::Clone(){
+ISet<T>* AbSet<T>::Clone(){
     /// According to the type of the current object, calls the corresponding Clone()
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
-        dynamic_cast<A::ArrayPackedSet<T>*>(this)->Clone();
+    if(dynamic_cast<A::BoundedSet<T>*>(this)){
+        dynamic_cast<A::BoundedSet<T>*>(this)->Clone();
     }
-    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
-        dynamic_cast<A::ArraySparseSet<T>*>(this)->Clone();
+    if(dynamic_cast<A::UnBoundedSet<T>*>(this)){
+        dynamic_cast<A::UnBoundedSet<T>*>(this)->Clone();
     }
 }
 
 template<class T>
-ISet<T>* AbstractFlowSet<T>::EmptySet(){
+ISet<T>* AbSet<T>::EmptySet(){
     A::ISet<T>* tmp = this->Clone();
     tmp->Clear();
     return tmp;
 }
 
 template<class T>
-void AbstractFlowSet<T>::Copy(ISet<T>* dest){
+void AbSet<T>::Copy(ISet<T>* dest){
     if(this == dest){
         return;
     }else{
             /// clear the destination and add each element of this to dest one by one
         dest->Clear();
-        if(dynamic_cast<ArrayPackedSet<T>*>(this)){
-            for(auto d : *dynamic_cast<ArrayPackedSet<T>*>(this)){
+        if(dynamic_cast<BoundedSet<T>*>(this)){
+            for(auto d : *dynamic_cast<BoundedSet<T>*>(this)){
                 dest->Add(d);
             }
 	    }
-        if(dynamic_cast<ArraySparseSet<T>*>(this)){
-            for(auto d : *dynamic_cast<ArraySparseSet<T>*>(this)){
+        if(dynamic_cast<UnBoundedSet<T>*>(this)){
+            for(auto d : *dynamic_cast<UnBoundedSet<T>*>(this)){
                 dest->Add(d);
             }
 	    }
@@ -110,43 +110,43 @@ void AbstractFlowSet<T>::Copy(ISet<T>* dest){
 }
 
 template<class T>
-void AbstractFlowSet<T>::Clear(){
+void AbSet<T>::Clear(){
     /// According to the type of the current object, calls the corresponding Clear()
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
-        dynamic_cast<A::ArrayPackedSet<T>*>(this)->Clear();
+    if(dynamic_cast<A::BoundedSet<T>*>(this)){
+        dynamic_cast<A::BoundedSet<T>*>(this)->Clear();
     }
-    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
-        dynamic_cast<A::ArraySparseSet<T>*>(this)->Clear();
+    if(dynamic_cast<A::UnBoundedSet<T>*>(this)){
+        dynamic_cast<A::UnBoundedSet<T>*>(this)->Clear();
     }
 }
 
 template<class T>
-void AbstractFlowSet<T>::Union(ISet<T>* other){
+void AbSet<T>::Union(ISet<T>* other){
     if(this == other){
         return;
     }
     /// add each element of other to this one by one
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(other)){
-        for(auto d : *dynamic_cast<A::ArrayPackedSet<T>*>(other)){
+    if(dynamic_cast<A::BoundedSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::BoundedSet<T>*>(other)){
             this->Add(d);
         }
     }
-    if(dynamic_cast<A::ArraySparseSet<T>*>(other)){
-        for(auto d : *dynamic_cast<A::ArraySparseSet<T>*>(other)){
+    if(dynamic_cast<A::UnBoundedSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::UnBoundedSet<T>*>(other)){
             this->Add(d);
         }
     }
 }
 
 template<class T>
-void AbstractFlowSet<T>::Union(ISet<T>* other, ISet<T>* dest){
+void AbSet<T>::Union(ISet<T>* other, ISet<T>* dest){
     /// using Union(ISet) with a temporary
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+    if(dynamic_cast<A::BoundedSet<T>*>(this)){
         auto tmp = this->Clone();
         tmp->Union(other);
         tmp->Copy(dest);
     }
-    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+    if(dynamic_cast<A::UnBoundedSet<T>*>(this)){
         auto tmp = this->Clone();
         tmp->Union(other);
         tmp->Copy(dest);
@@ -154,23 +154,23 @@ void AbstractFlowSet<T>::Union(ISet<T>* other, ISet<T>* dest){
 }
 
 template<class T>
-void AbstractFlowSet<T>::Intersection(ISet<T>* other){
+void AbSet<T>::Intersection(ISet<T>* other){
     if(this == other){
         return;
     }
     /// get an empty object of this
     /// put every element of other which is in this also in tmp
     auto tmp = this->EmptySet();
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(other)){
-        for(auto d : *dynamic_cast<A::ArrayPackedSet<T>*>(other)){
-            if(dynamic_cast<A::ArraySparseSet<T>*>(this)->Contains(d)){
+    if(dynamic_cast<A::BoundedSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::BoundedSet<T>*>(other)){
+            if(dynamic_cast<A::UnBoundedSet<T>*>(this)->Contains(d)){
                 tmp->Add(d);
             }
         }
     }
-    if(dynamic_cast<A::ArraySparseSet<T>*>(other)){
-        for(auto d : *dynamic_cast<A::ArraySparseSet<T>*>(other)){
-            if(dynamic_cast<A::ArrayPackedSet<T>*>(this)->Contains(d)){
+    if(dynamic_cast<A::UnBoundedSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::UnBoundedSet<T>*>(other)){
+            if(dynamic_cast<A::BoundedSet<T>*>(this)->Contains(d)){
                 tmp->Add(d);
             }
         }
@@ -180,14 +180,14 @@ void AbstractFlowSet<T>::Intersection(ISet<T>* other){
 }
 
 template<class T>
-void AbstractFlowSet<T>::Intersection(ISet<T>* other, ISet<T>* dest){
+void AbSet<T>::Intersection(ISet<T>* other, ISet<T>* dest){
     /// using Intersection(ISet) with a temporary
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+    if(dynamic_cast<A::BoundedSet<T>*>(this)){
         auto tmp = this->Clone();
         tmp->Intersection(other);
         tmp->Copy(dest);
     }
-    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+    if(dynamic_cast<A::UnBoundedSet<T>*>(this)){
         auto tmp = this->Clone();
         tmp->Intersection(other);
         tmp->Copy(dest);
@@ -195,20 +195,20 @@ void AbstractFlowSet<T>::Intersection(ISet<T>* other, ISet<T>* dest){
 }
 
 template<class T>
-void AbstractFlowSet<T>::Difference(ISet<T>* other){
+void AbSet<T>::Difference(ISet<T>* other){
     if(this == other){
         return;
     }
     /// get an clone object of this
     /// remove every element of other from tmp
     auto tmp = this->Clone();
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(other)){
-        for(auto d : *dynamic_cast<A::ArrayPackedSet<T>*>(other)){
+    if(dynamic_cast<A::BoundedSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::BoundedSet<T>*>(other)){
             tmp->Remove(d);
         }
     }
-    if(dynamic_cast<A::ArraySparseSet<T>*>(other)){
-        for(auto d : *dynamic_cast<A::ArraySparseSet<T>*>(other)){
+    if(dynamic_cast<A::UnBoundedSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::UnBoundedSet<T>*>(other)){
             tmp->Remove(d);
         }
     }
@@ -217,14 +217,14 @@ void AbstractFlowSet<T>::Difference(ISet<T>* other){
 }
 
 template<class T>
-void AbstractFlowSet<T>::Difference(ISet<T>* other, ISet<T>* dest){
+void AbSet<T>::Difference(ISet<T>* other, ISet<T>* dest){
     /// using Difference(ISet) with a temporary
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+    if(dynamic_cast<A::BoundedSet<T>*>(this)){
         auto tmp = this->Clone();
         tmp->Difference(other);
         tmp->Copy(dest);
     }
-    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+    if(dynamic_cast<A::UnBoundedSet<T>*>(this)){
         auto tmp = this->Clone();
         tmp->Difference(other);
         tmp->Copy(dest);
@@ -232,74 +232,74 @@ void AbstractFlowSet<T>::Difference(ISet<T>* other, ISet<T>* dest){
 }
 
 template<class T>
-bool AbstractFlowSet<T>::IsEmpty(){
+bool AbSet<T>::IsEmpty(){
     /// According to the type of the current object, calls the corresponding IsEmpty()
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
-        return dynamic_cast<A::ArrayPackedSet<T>*>(this)->IsEmpty();
+    if(dynamic_cast<A::BoundedSet<T>*>(this)){
+        return dynamic_cast<A::BoundedSet<T>*>(this)->IsEmpty();
     }
-    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
-        return dynamic_cast<A::ArraySparseSet<T>*>(this)->IsEmpty();
+    if(dynamic_cast<A::UnBoundedSet<T>*>(this)){
+        return dynamic_cast<A::UnBoundedSet<T>*>(this)->IsEmpty();
     }
 }
 
 template<class T>
-int AbstractFlowSet<T>::Size(){
+int AbSet<T>::Size(){
     /// According to the type of the current object, calls the corresponding Size()
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
-        return dynamic_cast<A::ArrayPackedSet<T>*>(this)->Size();
+    if(dynamic_cast<A::BoundedSet<T>*>(this)){
+        return dynamic_cast<A::BoundedSet<T>*>(this)->Size();
     }
-    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
-        return dynamic_cast<A::ArraySparseSet<T>*>(this)->Size();
+    if(dynamic_cast<A::UnBoundedSet<T>*>(this)){
+        return dynamic_cast<A::UnBoundedSet<T>*>(this)->Size();
     }
 }
 
 template<class T>
-void AbstractFlowSet<T>::Add(T obj){
+void AbSet<T>::Add(T obj){
     /// According to the type of the current object, calls the corresponding Add()
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
-        dynamic_cast<A::ArrayPackedSet<T>*>(this)->Add(obj);
+    if(dynamic_cast<A::BoundedSet<T>*>(this)){
+        dynamic_cast<A::BoundedSet<T>*>(this)->Add(obj);
     }
-    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
-        dynamic_cast<A::ArraySparseSet<T>*>(this)->Add(obj);
+    if(dynamic_cast<A::UnBoundedSet<T>*>(this)){
+        dynamic_cast<A::UnBoundedSet<T>*>(this)->Add(obj);
     }
 }
 
 /// may not be used ever
 template<class T>
-void AbstractFlowSet<T>::Add(T obj, ISet<T>* dest){
+void AbSet<T>::Add(T obj, ISet<T>* dest){
     dest->Add(obj);
 }
 
 /// may not be used ever
 template<class T>
-void AbstractFlowSet<T>::Remove(T obj, ISet<T>* dest){
+void AbSet<T>::Remove(T obj, ISet<T>* dest){
     dest->Add(obj);
 }
 
 template<class T>
-void AbstractFlowSet<T>::Remove(T obj){
+void AbSet<T>::Remove(T obj){
     /// According to the type of the current object, calls the corresponding Remove()
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
-        dynamic_cast<A::ArrayPackedSet<T>*>(this)->Remove(obj);
+    if(dynamic_cast<A::BoundedSet<T>*>(this)){
+        dynamic_cast<A::BoundedSet<T>*>(this)->Remove(obj);
     }
-    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
-        dynamic_cast<A::ArraySparseSet<T>*>(this)->Remove(obj);
+    if(dynamic_cast<A::UnBoundedSet<T>*>(this)){
+        dynamic_cast<A::UnBoundedSet<T>*>(this)->Remove(obj);
     }
 }
 
 template<class T>
-bool AbstractFlowSet<T>::Contains(T obj){
+bool AbSet<T>::Contains(T obj){
     /// According to the type of the current object, calls the corresponding Contains()
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
-        return dynamic_cast<A::ArrayPackedSet<T>*>(this)->Contains(obj);
+    if(dynamic_cast<A::BoundedSet<T>*>(this)){
+        return dynamic_cast<A::BoundedSet<T>*>(this)->Contains(obj);
     } 
-    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
-        return dynamic_cast<A::ArraySparseSet<T>*>(this)->Contains(obj);
+    if(dynamic_cast<A::UnBoundedSet<T>*>(this)){
+        return dynamic_cast<A::UnBoundedSet<T>*>(this)->Contains(obj);
     }
 }
 
 template<class T>
-bool AbstractFlowSet<T>::operator==(ISet<T>* other){
+bool AbSet<T>::operator==(ISet<T>* other){
     if(this->Size() != other->Size())
         return  false;
   
@@ -308,17 +308,17 @@ bool AbstractFlowSet<T>::operator==(ISet<T>* other){
 
     /// when size is same
 
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+    if(dynamic_cast<A::BoundedSet<T>*>(this)){
         /// if any element of this is not in other, return false
-        for(auto d : *dynamic_cast<A::ArrayPackedSet<T>*>(this)){
+        for(auto d : *dynamic_cast<A::BoundedSet<T>*>(this)){
             if(!other->Contains(d)) return false;
         }
         return true;
     }
 
-    if(dynamic_cast<A::ArraySparseSet<T>*>(this)){
+    if(dynamic_cast<A::UnBoundedSet<T>*>(this)){
         /// if any element of this is not in other, return false
-        for(auto d : *dynamic_cast<A::ArraySparseSet<T>*>(this)){
+        for(auto d : *dynamic_cast<A::UnBoundedSet<T>*>(this)){
             if(!other->Contains(d)) return false;
         }
         return true;
@@ -326,20 +326,20 @@ bool AbstractFlowSet<T>::operator==(ISet<T>* other){
 }
 
 template<class T>
-bool AbstractFlowSet<T>::IsSubSet(ISet<T>* other){
+bool AbSet<T>::IsSubSet(ISet<T>* other){
     if(this->Size() == 0 && other->Size() == 0)
         return  true;
 
-    if(dynamic_cast<A::ArrayPackedSet<T>*>(other)){
+    if(dynamic_cast<A::BoundedSet<T>*>(other)){
         /// if any element of other is not in this, return false
-        for(auto d : *dynamic_cast<A::ArrayPackedSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::BoundedSet<T>*>(other)){
             if(!this->Contains(d)) return false;
         }
         return true;
     }
 
-    if(dynamic_cast<A::ArraySparseSet<T>*>(other)){
-        for(auto d : *dynamic_cast<A::ArraySparseSet<T>*>(other)){
+    if(dynamic_cast<A::UnBoundedSet<T>*>(other)){
+        for(auto d : *dynamic_cast<A::UnBoundedSet<T>*>(other)){
         /// if any element of other is not in this, return false
             if(!this->Contains(d)) return false;
         }

@@ -13,7 +13,7 @@
 
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/Analysis/CFGPrinter.h"
-#include "AbstractFlowAnalysis"
+#include "IAnalysis"
 #include "NodeData"
 #include "G"
 #include <stack>
@@ -26,7 +26,7 @@ namespace A{
      * @tparam T 
      */
     template<typename T>
-    class FlowAnalysis : public AbstractFlowAnalysis<T>{
+    class FlowAnalysis : public IAnalysis<T>{
     public:
         FlowAnalysis(){}
         ~FlowAnalysis(){}

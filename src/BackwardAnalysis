@@ -1,6 +1,6 @@
 /**
- * @file BackwardFlowAnalysis.h
- * @author your name (you@domain.com)
+ * @file BackwardAnalysis
+ * @author Sunil Singh (sunilp896@gmail.com)
  * @brief 
  * @version 0.1
  * @date 2020-02-20
@@ -19,10 +19,10 @@ namespace A{
      * @tparam T 
      */
     template<typename T>
-    class BackwardFlowAnalysis : public FlowAnalysis<T>{
+    class BackwardAnalysis : public FlowAnalysis<T>{
     public:
-        BackwardFlowAnalysis(){}
-        ~BackwardFlowAnalysis(){}
+        BackwardAnalysis(){}
+        ~BackwardAnalysis(){}
 
         void DoAnalysis() override;
         bool IsForward() override;
@@ -30,12 +30,12 @@ namespace A{
     };    
 
 template<typename T>
-void BackwardFlowAnalysis<T>::DoAnalysis(){
+void BackwardAnalysis<T>::DoAnalysis(){
     this->Compute();
 }
 
 template<typename T>
-inline bool BackwardFlowAnalysis<T>::IsForward(){
+inline bool BackwardAnalysis<T>::IsForward(){
     return false;
 }
 }
