@@ -35,7 +35,11 @@ namespace A{
         T* GetFlowAfter(llvm::BasicBlock*);
         llvm::DenseMap<llvm::BasicBlock*,T*> GetIn();
         llvm::DenseMap<llvm::BasicBlock*,T*> GetOut();
-        
+
+		void Copy(T* in1, T* in2) override{	in1->Copy(in2);}
+       	T* GetGen(llvm::BasicBlock* n){	if(genkillMap.count(n) == 1) return genkillMap[n].first; else return nullptr;}
+		T* GetKill(llvm::BasicBlock* n){	if(killMap.count(n) == 1)return genkillMap[n].second; else return nullptr;} 
+		void AddGenKill(llvm::BasicBlock* n, T* g, T* k){ if(genkillMap.count(n) == 1) return; else genkillMap[n] = {g,k};}
         void Compute();
     private:
         void SetFlowBefore(llvm::BasicBlock* node, T*);
@@ -48,6 +52,8 @@ namespace A{
         void InitializeFlows(std::vector<NodeData<T>*>&);
 
         void PrintResult(std::vector<NodeData<T>*>&);
+		llvm::DenseMap<llvm::BasicBlock*,std::pair<T*,T*>> genkillMap;
+		llvm::DenseMap<llvm::BasicBlock*,T*> killMap;
         llvm::DenseMap<llvm::BasicBlock*,T*> inSet;
         llvm::DenseMap<llvm::BasicBlock*,T*> outSet;
     };
@@ -92,15 +98,15 @@ void FlowAnalysis<T>::Compute(){
 
         if(node->GetINcomingN().size() < 0)
             continue;
-
-        /// Merge
+        
+		/// Merge
         if(node->GetINcomingN().size() > 1){
             bool copy = false;
             for (unsigned i = 0; i < node->GetINcomingN().size(); ++i){
                 auto outFlow = node->GetINcomingN()[i]->GetOutFlow();
-                if(!copy)
+                if(!copy){
                     this->Copy(outFlow,node->GetInFlow()), copy = true;
-                else{
+                }else{
                     auto tmp = this->NewInitialFlowSet();
                     /// using overriden Merge and Copy
                     this->Merge(outFlow,node->GetInFlow(),tmp);
@@ -133,6 +139,23 @@ void FlowAnalysis<T>::Compute(){
 
 template<typename T>
 void FlowAnalysis<T>::PrintResult(std::vector<NodeData<T>*>& lstNodes){
+	llvm::errs() << "Gen and Kill of each BB: \n";
+	llvm::errs() << "============================================\n";
+	for(auto& e : genkillMap){
+		llvm::errs() << "Basic Block: " << e.first->getName().str() << '\n' << " Gen: ";
+		for(auto e1 : *e.second.first){
+			llvm::errs() << e1 << " ";
+		}
+		llvm::errs() << '\n';
+		llvm::errs() << " Kill: ";
+		for(auto e1 : *e.second.second){
+			llvm::errs() << e1 << " ";
+		}
+		llvm::errs() << '\n';
+	}
+
+	llvm::errs() << "\nResult values of each BB: \n";
+	llvm::errs() << "===========================================\n";
     for(NodeData<T>* u : lstNodes){
         llvm::errs() <<"Basic Block : "<< u->GetNodeName() << '\n';
 
@@ -158,14 +181,14 @@ std::vector<NodeData<T>*> FlowAnalysis<T>::NodesDataList(){
     std::vector<llvm::BasicBlock*> entries;
     FunctionCFG* g = this->graph;
 	
-	// based on the direction of the analysis the entry in different
+	/// based on the direction of the analysis the entry in different
     if(this->IsForward()){
         entries = g->GetHeads();
     }else{
         entries = g->GetTails();
     }
 
-	//  
+	///  
     llvm::DenseMap<llvm::BasicBlock*,NodeData<T>*> visited;
     int n = -1;
     NodeData<T> *dummyEntry = new NodeData<T>();
@@ -187,8 +210,13 @@ std::vector<NodeData<T>*> FlowAnalysis<T>::NodesDataList(){
 
         if(!s->IsVisited()){
             s->MarkVisit(++n);
-            std::vector<llvm::BasicBlock*> outs = g->GetOut(g->GetNode(s->GetNode()),Direction::BACKWARD);
-            AddOutData(visited,outs,s);
+			if(this->IsForward()){
+	            std::vector<llvm::BasicBlock*> outs = g->GetOut(g->GetNode(s->GetNode()),Direction::FORWARD);
+				AddOutData(visited,outs,s);
+			}else{
+	    	    std::vector<llvm::BasicBlock*> outs = g->GetOut(g->GetNode(s->GetNode()),Direction::BACKWARD);
+				AddOutData(visited,outs,s);
+            }
         }
 
         llvm::SmallVector<NodeData<T>*,0> tmp = s->GetOutgoingN();

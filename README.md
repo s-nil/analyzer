@@ -59,7 +59,7 @@ Example is showing how to do liveness analysis. It can be found in passes/livene
   }
   ```
 
-  Replace ```analysis_name``` with any name you want to give to your analysis, ```storage_class_name``` with ```ArrayPackedSet``` or ```ArraySparseSet``` and property_class_name with a user defined class. 
+  Replace ```analysis_name``` with any name you want to give to your analysis, ```storage_class_name``` with ```BoundedSet``` or ```UnBoundedSet``` and property_class_name with a user defined class. 
   
   - a property_class is a user defined class to extract the properties from the LLVM IR. In the example given in ```passes/liveness_analysis```, ```Variable``` is the property_class. Because the objects of property_class are being stored in ```map``` or ```set```, the implementation should have an overloaded < operator for the comparison of keys. It'll be more useful if more operators such as ```==```,```!=```, and ```<<``` are also overloaded.
   
@@ -119,13 +119,13 @@ BACKWARDANALYSIS(analysis_name,storage_class_name,property_class_name){
     
     RUN(){	//	run the analysis
         SETUP_FUNCTION();	//	function setup call
-		domain = new ArrayPackedSet<Variable>(&F);	//	extracting properties and assign
+		domain = new BoundedSet<Variable>(&F);	//	extracting properties and assign
         DoAnalysis();	//	start the analysis
         return false;
     }
 }
 ```
-- To provide initial value and entry value, use ```AP_INITIALVALUE()```and ```AP_ENTRYVALUE()``` when using ```ArrayPackedSet```, and ```AS_INTIALVALUE()``` and ```AS_ENTRYVALUE()``` when using ```ArraySparseSet```. In these functions give your definitions.
+- To provide initial value and entry value, use ```BS_INITIALVALUE()```and ```BS_ENTRYVALUE()``` when using ```BoundedSet```, and ```UBS_INTIALVALUE()``` and ```UBS_ENTRYVALUE()``` when using ```UnBoundedSet```. In these functions give your definitions.
 	example:
 ```cpp
 // define a property class here
@@ -144,15 +144,15 @@ BACKWARDANALYSIS(analysis_name,storage_class_name,property_class_name){
     
     RUN(){	//	run the analysis
         SETUP_FUNCTION();	//	function setup call
-		domain = new ArrayPackedSet<Variable>(&F);	//	extracting properties and assign
+		domain = new BoundedSet<Variable>(&F);	//	extracting properties and assign
         DoAnalysis();	//	start the analysis
         return false;
     }
-    AP_INITIALVALUE(){  return domain->EmptySet();}	//	setting initial value to emptyset
-    AP_ENTRYVALUE(){    return domain->EmptySet();}	//	setting entry value to emptyset
+    BS_INITIALVALUE(){  return domain->EmptySet();}	//	setting initial value to emptyset
+    BS_ENTRYVALUE(){    return domain->EmptySet();}	//	setting entry value to emptyset
 }
 ```
-- To provide definitions for meet, copy, and flow function, use ```AP_MERGE(property_class_name)```, ```AP_COPY(property_class_name)```, ```AP_FLOWTH(property_class_name)``` when using ```ArrayPackedSet```, and ```AS_MERGE(property_class_name)```, ```AS_COPY(property_class_name)```, ```AS_FLOWTH(property_class_name)``` when using ```ArraySparseSet```.
+- To provide definitions for meet, copy, and flow function, use ```BS_MERGE(property_class_name)```, ```BS_COPY(property_class_name)```, ```BS_FLOWTH(property_class_name)``` when using ```BoundedSet```, and ```UBS_MERGE(property_class_name)```, ```UBS_COPY(property_class_name)```, ```UBS_FLOWTH(property_class_name)``` when using ```UnBoundedSet```.
 	    example:
 ```cpp
 // define a property class here
@@ -175,11 +175,11 @@ BACKWARDANALYSIS(analysis_name,storage_class_name,property_class_name){
         DoAnalysis();	//	start the analysis
         return false;
     }
-    AP_INITIALVALUE(){  return domain->EmptySet();}	//	setting initial value to emptyset
-    AP_ENTRYVALUE(){    return domain->EmptySet();}	//	setting entry value to emptyset 
-    AP_MERGE(property_class_name){ in1->Union(in2,out);}		//	setting meet operator to union
-    AP_COPY(property_class_name){  in1->Copy(in2);}	//	providing copy definition
-	AP_FLOWTH(property_class_name){			//	definition for flow function
+    BS_INITIALVALUE(){  return domain->EmptySet();}	//	setting initial value to emptyset
+    BS_ENTRYVALUE(){    return domain->EmptySet();}	//	setting entry value to emptyset 
+    BS_MERGE(property_class_name){ in1->Union(in2,out);}		//	setting meet operator to union
+    BS_COPY(property_class_name){  in1->Copy(in2);}	//	providing copy definition
+	BS_FLOWTH(property_class_name){			//	definition for flow function
     	// define kill
     	// define gen
 
