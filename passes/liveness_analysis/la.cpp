@@ -24,11 +24,16 @@ public:
     void SetValue(llvm::Value* v){value = v;}
     ~Variable(){}
 
+	//  good to overload the following two operator
     bool operator==(const Variable& rhs) const{	return value == rhs.value;}
     bool operator!=(const Variable& rhs) const{	return value != rhs.value;}
 
+	//  objects of this class will be stored in a map or set
+    //  for the comparison of the keys(map and set requires an order among objects)
+    //  overload this operator (necessary)
     bool operator<(const Variable& rhs) const{	return rhs.id < this->id; }
 
+	//  overload this for printing the result
     friend llvm::raw_ostream& operator<<(llvm::raw_ostream& out, Variable& v){
         out << (v.value)->getName();return out;
     }
@@ -41,8 +46,6 @@ private:
 };
 
 EXTRACT(Variable){
-//template<>
-//A::ValueUniverse<Variable>::ValueUniverse(Function* f){
     //errs() << f->getName()<<'\n';
     bool noCallSite = 1;
     elements = std::vector<Variable>();
@@ -91,9 +94,9 @@ namespace {
             return false;
         }
 
-        BS_INITIALVALUE(){	return domain->EmptySet();}
+        BS_INITIALVALUE(Variable){	return domain->EmptySet();}
 
-        BS_ENTRYVALUE(){	return domain->EmptySet();}
+        BS_ENTRYVALUE(Variable){	return domain->EmptySet();}
 
 		BS_MERGE(Variable){	in1->Union(in2,out);}
 
