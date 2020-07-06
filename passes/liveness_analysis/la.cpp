@@ -97,9 +97,8 @@ namespace {
 
 		BS_MERGE(Variable){	in1->Union(in2,out);}
 
-		BS_COPY(Variable){	in1->Copy(in2);}
-        
 		BS_FLOWTH(Variable){
+			if(!GetGen(node) && !GetKill(node)){
             BoundedSet<Variable>* def = domain->EmptySet();
             BoundedSet<Variable>* use = domain->EmptySet();
             
@@ -124,7 +123,11 @@ namespace {
                     def->Add(Variable(&*I));
                 }                
             }
-
+			AddGenKill(node,use,def);
+			}
+			BoundedSet<Variable>* def = GetKill(node);
+            BoundedSet<Variable>* use = GetGen(node);
+    
             // Handling PHI node 
             {
                 auto gNode = graph->GetNode(node);
@@ -140,7 +143,7 @@ namespace {
                         }                        
                     }
                 }
-            }   //
+            }//
 
             BoundedSet<Variable>* tmp = domain->EmptySet();
             in->Difference(def,tmp);
