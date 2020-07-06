@@ -51,11 +51,11 @@
 #define FORWARDANALYSIS(m_pass_name,m_storetype,m_property)    \
         struct m_pass_name: public FunctionPass, public ForwardAnalysis<m_storetype<m_property>>
 
-#define BS_INITIALVALUE()       \
-        BoundedSet<Variable>* NewInitialFlowSet() override
+#define BS_INITIALVALUE(m_property)       \
+        BoundedSet<m_property>* NewInitialFlowSet() override
 
-#define BS_ENTRYVALUE()       \
-        BoundedSet<Variable>* EntryInitialFlowSet() override
+#define BS_ENTRYVALUE(m_property)       \
+        BoundedSet<m_property>* EntryInitialFlowSet() override
 
 #define BS_MERGE(m_property)      \
         void Merge(BoundedSet<m_property>* in1, BoundedSet<m_property>* in2, BoundedSet<m_property>* out) override
@@ -66,20 +66,20 @@
 #define BS_FLOWTH(m_property)   \
         void FlowThrough(llvm::BasicBlock* node, BoundedSet<m_property>* in, BoundedSet<m_property>* out) override
 
-#define UBS_INITIALVALUE()       \
-        ArraySparseSet<Variable>* NewInitialFlowSet() override
+#define UBS_INITIALVALUE(m_property)       \
+        UnBoundedSet<m_property>* NewInitialFlowSet() override
 
-#define UBS_ENTRYVALUE()       \
-        ArraySparseSet<Variable>* EntryInitialFlowSet() override
+#define UBS_ENTRYVALUE(m_property)       \
+        UnBoundedSet<m_property>* EntryInitialFlowSet() override
 
 #define UBS_MERGE(m_property)      \
-        void Merge(ArraySparseSet<m_property>* in1, ArraySparseSet<m_property>* in2, ArraySparseSet<m_property>* out) override
+        void Merge(UnBoundedSet<m_property>* in1, UnBoundedSet<m_property>* in2, UnBoundedSet<m_property>* out) override
 
 #define UBS_COPY(m_property)       \
-        void Copy(ArraySparseSet<m_property>* in1, ArraySparseSet<m_property>* in2) override
+        void Copy(UnBoundedSet<m_property>* in1, UnBoundedSet<m_property>* in2) override
 
 #define UBS_FLOWTH(m_property)   \
-        void FlowThrough(llvm::BasicBlock* node, ArraySparseSet<m_property>* in, ArraySparseSet<m_property>* out) override
+        void FlowThrough(llvm::BasicBlock* node, UnBoundedSet<m_property>* in, UnBoundedSet<m_property>* out) override
 
 #define RUN()   \
         virtual bool runOnFunction(Function &F) override
